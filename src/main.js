@@ -91,3 +91,11 @@ window.addEventListener('message', (e) => {
 });
 
 apply();
+
+// 子站初始上报可能早于本 listener 注册（时序不定）而丢失，
+// listener 就绪后向两个 iframe 发 ping，子站收到会补报一次当前地址
+for (const tab of IFRAME_TABS) {
+  iframeOf(tab).addEventListener('load', () => {
+    iframeOf(tab).contentWindow.postMessage({ source: 'bexino-hub-ping' }, CHILD_ORIGINS[tab]);
+  });
+}
