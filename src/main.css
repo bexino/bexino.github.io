@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Geist VF —— 全站字体（来自 @fontsource-variable/geist） */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Material Design Icon sprite 图标默认尺寸 */
+.md-icon {
+  display: inline-block;
+  fill: currentColor;
+  width: 1em;
+  height: 1em;
+}
+
+/* Bottom Navigation 图标状态（smartisan-ui Bottom Nav；选中用锤子蓝强调色） */
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  color: theme('colors.s.icon.disabled');
+}
+.nav-icon--active {
+  color: theme('colors.s.blue.300');
+}
+
+/* 底栏向上投影（柔和淡阴影，比 preset 的 shadow-s-bar 更轻） */
+#bottom-nav {
+  box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}

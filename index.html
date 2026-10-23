@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Bexino</title>
+  </head>
+  <body class="font-s bg-s-page text-s-grey-900">
+    <div id="app" class="mx-auto flex min-h-screen max-w-s-screen flex-col">
+      <!-- App Bar：iframe 页隐藏 -->
+      <header id="appbar" class="relative flex h-s-bar shrink-0 items-center border-b border-s-appbar-border bg-s-white">
+        <span class="flex-1"></span>
+        <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
+        <span class="flex-1"></span>
+      </header>
+
+      <!-- 视图区 -->
+      <main class="relative min-h-0 flex-1">
+        <section data-tab="home" class="absolute inset-0"></section>
+        <section data-tab="repo" class="absolute inset-0 hidden"></section>
+        <section data-tab="pt" class="absolute inset-0 hidden">
+          <iframe data-src="https://pt.bexino.dpdns.org/?hide=theme#/" src="https://pt.bexino.dpdns.org/?hide=theme#/" class="h-full w-full border-0" title="提示词" loading="lazy"></iframe>
+        </section>
+        <section data-tab="sched" class="absolute inset-0 hidden">
+          <iframe data-src="https://sched.bexino.dpdns.org/?hide=footer,theme" src="https://sched.bexino.dpdns.org/?hide=footer,theme" class="h-full w-full border-0" title="智能排班" loading="lazy"></iframe>
+        </section>
+        <section data-tab="me" class="absolute inset-0 hidden"></section>
+      </main>
+
+      <!-- Bottom Navigation：始终显示 -->
+      <nav id="bottom-nav" class="flex h-s-action shrink-0 items-center justify-center gap-1 bg-s-white">
+        <a href="#/" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="home">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-home" /></svg>
+          <span class="text-s-nav">主页</span>
+        </a>
+        <a href="#/repo" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="repo">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-folder" /></svg>
+          <span class="text-s-nav">仓库</span>
+        </a>
+        <a href="#/pt" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="pt">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-chat" /></svg>
+          <span class="text-s-nav">提示词</span>
+        </a>
+        <a href="#/sched" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="sched">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-calendar_month" /></svg>
+          <span class="text-s-nav">排班</span>
+        </a>
+        <a href="#/me" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="me">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-person" /></svg>
+          <span class="text-s-nav">我的</span>
+        </a>
+      </nav>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
