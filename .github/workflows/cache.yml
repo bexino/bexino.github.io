@@ -1,0 +1,42 @@
+name: Cache homepage data
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # UTC 16:00 = 北京时间 0 点
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cache
+  cancel-in-progress: false
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 抓取个人资料 / README / ghstats 徽章副本 → public/cache/
+      # 徽章副本存在的原因：ghstats.dev 在部分网络不可达，由本 Action（海外 runner）代抓并托管到本站
+      - name: Fetch homepage data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/fetch-home-data.mjs
+
+      - name: Commit cache
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/cache
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "chore: 更新主页数据缓存 [skip ci]"
+          git push

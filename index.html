@@ -6,49 +6,91 @@
     <title>Bexino</title>
   </head>
   <body class="font-s bg-s-page text-s-grey-900">
-    <div id="app" class="mx-auto flex min-h-screen max-w-s-screen flex-col">
+    <div id="app" class="flex min-h-screen flex-col">
       <!-- App Bar：iframe 页隐藏 -->
-      <header id="appbar" class="relative flex h-s-bar shrink-0 items-center border-b border-s-appbar-border bg-s-white">
+      <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white">
+        <div class="relative mx-auto flex h-s-bar max-w-s-screen items-center">
         <span class="flex-1"></span>
         <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
         <span class="flex-1"></span>
+        </div>
       </header>
 
-      <!-- 视图区 -->
-      <main class="relative min-h-0 flex-1">
-        <section data-tab="home" class="absolute inset-0"></section>
+      <!-- 视图区：宽屏时为固定侧栏让出左侧空间 -->
+      <main class="relative min-h-0 flex-1 sm:pl-16">
+        <section data-tab="home" class="absolute inset-0">
+          <div class="flex h-full flex-col bg-s-page">
+            <!-- 加载态：全部数据就绪后才切换到内容 -->
+            <div id="home-loading" class="flex flex-1 flex-col items-center justify-center gap-3">
+              <svg class="home-spinner" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.18"></circle>
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="26 57"></circle>
+              </svg>
+              <p class="text-s-12 text-s-text-desc">加载中…</p>
+            </div>
+
+            <div id="home-content" class="hidden flex-1 overflow-y-auto">
+              <div class="mx-auto flex max-w-s-screen flex-col gap-3 p-4 pb-6">
+                <!-- GitHub 个人信息卡片 -->
+                <article class="flex items-center gap-4 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
+                  <div class="relative h-16 w-16 shrink-0">
+                    <img id="gh-avatar" class="h-16 w-16 rounded-full border-s-sm border-s-grey-400 bg-s-grey-200 object-cover" alt="" hidden />
+                    <span id="gh-avatar-fallback" class="absolute inset-0 flex items-center justify-center rounded-full bg-s-grey-200 text-s-grey-500">
+                      <svg class="md-icon" style="width: 32px; height: 32px;"><use href="./icons-sprite.svg#si-person" /></svg>
+                    </span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p id="gh-name" class="text-s-18 font-bold text-s-grey-900">—</p>
+                    <a id="gh-login" href="https://github.com/bexino" target="_blank" rel="noopener" class="text-s-14 text-s-blue-300"></a>
+                    <p id="gh-bio" class="mt-1 whitespace-pre-line text-s-14 leading-relaxed text-s-text-body"></p>
+                  </div>
+                </article>
+
+                <!-- README.zh-CN.md 卡片 -->
+                <article class="rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
+                  <div id="readme-body" class="markdown-s text-s-14 leading-relaxed text-s-text-body"></div>
+                </article>
+
+                <!-- 数据来源状态小字 -->
+                <p id="home-data-status" class="text-center text-s-12 text-s-text-desc"></p>
+              </div>
+            </div>
+          </div>
+        </section>
         <section data-tab="repo" class="absolute inset-0 hidden"></section>
         <section data-tab="pt" class="absolute inset-0 hidden">
           <iframe data-src="https://pt.bexino.dpdns.org/?hide=theme#/" src="https://pt.bexino.dpdns.org/?hide=theme#/" class="h-full w-full border-0" title="提示词" loading="lazy"></iframe>
         </section>
         <section data-tab="sched" class="absolute inset-0 hidden">
-          <iframe data-src="https://sched.bexino.dpdns.org/?hide=footer,theme" src="https://sched.bexino.dpdns.org/?hide=footer,theme" class="h-full w-full border-0" title="智能排班" loading="lazy"></iframe>
+          <iframe data-src="https://sched.bexino.dpdns.org/?hide=theme" src="https://sched.bexino.dpdns.org/?hide=theme" class="h-full w-full border-0" title="智能排班" loading="lazy"></iframe>
         </section>
         <section data-tab="me" class="absolute inset-0 hidden"></section>
       </main>
 
-      <!-- Bottom Navigation：始终显示 -->
-      <nav id="bottom-nav" class="flex h-s-action shrink-0 items-center justify-center gap-1 bg-s-white">
-        <a href="#/" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="home">
+      <!-- Bottom Navigation：窄屏为底栏；宽屏固定为左侧竖向浮层（覆盖顶栏，最高层级） -->
+      <nav id="bottom-nav" class="shrink-0 bg-s-white">
+        <div class="mx-auto flex h-s-action max-w-s-screen items-center justify-center gap-1 sm:mx-0 sm:h-full sm:w-full sm:max-w-none sm:flex-col sm:items-center sm:justify-center sm:gap-2 sm:px-1 sm:py-3">
+        <a href="#/" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="home">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-home" /></svg>
           <span class="text-s-nav">主页</span>
         </a>
-        <a href="#/repo" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="repo">
+        <a href="#/repo" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="repo">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-folder" /></svg>
           <span class="text-s-nav">仓库</span>
         </a>
-        <a href="#/pt" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="pt">
+        <a href="#/pt" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="pt">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-chat" /></svg>
           <span class="text-s-nav">提示词</span>
         </a>
-        <a href="#/sched" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="sched">
+        <a href="#/sched" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="sched">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-calendar_month" /></svg>
           <span class="text-s-nav">排班</span>
         </a>
-        <a href="#/me" class="flex w-[64px] flex-col items-center justify-between py-[3px]" data-tab-link="me">
+        <a href="#/me" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="me">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-person" /></svg>
           <span class="text-s-nav">我的</span>
         </a>
+        </div>
       </nav>
     </div>
 
