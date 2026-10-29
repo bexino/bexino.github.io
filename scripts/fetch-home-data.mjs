@@ -19,7 +19,7 @@ const CACHE_DIR = join(ROOT, 'public', 'cache');
 const BADGE_DIR = join(CACHE_DIR, 'badges');
 
 const USER_API = 'https://api.github.com/users/bexino';
-const README_REPO_API = 'https://api.github.com/repos/bexino/bexino/readme';
+const README_REPO_API = 'https://api.github.com/repos/bexino/bexino/contents/README.zh-CN.md?ref=main';
 // README 原文的备源：raw.githubusercontent 在部分网络不可达
 const README_SOURCES = [
   'https://raw.githubusercontent.com/bexino/bexino/main/README.zh-CN.md',
@@ -27,7 +27,7 @@ const README_SOURCES = [
   'https://testingcf.jsdelivr.net/gh/bexino/bexino@main/README.zh-CN.md',
 ];
 
-const GH_TOKEN = process.env.GITHUB_TOKEN;
+const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
 // 复用 GitHub Action 的凭证；没有时用匿名请求（限流更严，但够用）
 function ghHeaders(extra = {}) {
@@ -43,7 +43,7 @@ async function get(url, { headers = {}, raw = false, timeout = 20000 } = {}) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeout);
   try {
-    const res = await fetch(url, { headers, signal: ctrl.signal });
+    const res = await fetch(url, { headers, signal: ctrl.signal, cache: 'no-store' });
     if (!res.ok) throw new Error(`${res.status} ${res.statusText} — ${url}`);
     return raw ? Buffer.from(await res.arrayBuffer()) : await res.text();
   } finally {
@@ -88,35 +88,47 @@ function findBadges(markdown) {
   return [...urls];
 }
 
-// README 原文：按备源顺序取，第一个成功即可
+// 优先 Contents API，准确获取中文文件，避免分支 CDN 缓存延迟。
 async function fetchReadme() {
+  try {
+    const json = JSON.parse(await get(README_REPO_API, { headers: ghHeaders() }));
+    if (json.encoding !== 'base64' || typeof json.content !== 'string' || !json.content.trim()) {
+      throw new Error('GitHub API did not return base64 README content');
+    }
+    console.log(`  readme from GitHub Contents API (blob ${json.sha})`);
+    return Buffer.from(json.content, 'base64').toString('utf8');
+  } catch (e) {
+    console.warn(`  GitHub Contents API failed: ${e.message}`);
+  }
   for (const url of README_SOURCES) {
     try {
-      const text = await get(url, { headers: ghHeaders() });
+      // GitHub 凭证只发送给 api.github.com，不发送到镜像或图片服务。
+      const text = await get(url);
+      if (!text.trim() || /^\s*(?:<!doctype html|<html\b)/i.test(text)) {
+        throw new Error('source returned an empty README or HTML error page');
+      }
+      if (url.includes('jsdelivr.net')) console.warn('  warning: CDN fallback may lag behind GitHub');
       console.log(`  readme from ${url}`);
       return text;
     } catch (e) {
       console.warn(`  readme source failed ${url}: ${e.message}`);
     }
   }
-  // 全部备源失败 → 走 GitHub Contents API（base64 编码的正文）
-  const json = JSON.parse(await get(`${README_REPO_API}?ref=main`, { headers: ghHeaders() }));
-  console.log('  readme from GitHub Contents API');
-  return Buffer.from(json.content, 'base64').toString('utf8');
+  throw new Error('Unable to fetch README.zh-CN.md from GitHub or any fallback source');
 }
 
 // 徽章字节：优先直连 ghstats.dev；不可达时用 GitHub 渲染 README 后的
 // camo 快照（GitHub 自己抓到并缓存的同一张图，仍是活数据，只是更新稍慢）
 async function fetchBadge(url) {
   try {
-    return await get(url, { headers: ghHeaders(), raw: true });
+    return await get(url, { raw: true });
   } catch (e) {
     console.warn(`  direct failed, trying camo: ${e.message}`);
   }
   // camo 路径第二段是原图 URL 的 hex 编码。GitHub 对非 ASCII 查询参数用百分号编码
   // （UTF-8 字节），因此原文 URL 与百分号编码形态都要试。
   const html = await get(
-    'https://api.github.com/repos/bexino/bexino/contents/README.zh-CN.md',
+    README_REPO_API,
     { headers: ghHeaders({ Accept: 'application/vnd.github.html' }) },
   );
   const pct = url.replace(/[^\x21-\x7e]/g, (c) =>
@@ -128,7 +140,7 @@ async function fetchBadge(url) {
     const m = html.match(re);
     if (!m) continue;
     console.log('  badge from camo');
-    return await get(m[0], { headers: ghHeaders(), raw: true });
+    return await get(m[0], { raw: true });
   }
   throw new Error('camo snapshot not found');
 }
@@ -179,6 +191,8 @@ async function main() {
     }
   }
   console.log(`badges: ${ok}/${badges.length}`);
+  console.log(`Cache written to ${CACHE_DIR}`);
+  console.log('Refresh the local dev page, or build and deploy this website to publish the snapshot.');
 }
 
 main().catch((e) => {

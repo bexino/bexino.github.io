@@ -73,6 +73,16 @@
   }
 }
 
+/* 数据来源分段控件：细描边、浅渐变与灰色内凹选中态。 */
+.source-switch-option {
+  @apply flex h-full items-center justify-center border-r-s-xs border-s-grey-400 bg-s-white text-s-12 font-bold text-s-grey-800;
+  @apply active:bg-s-white-pressed peer-checked:bg-none peer-checked:bg-s-grey-500 peer-checked:text-s-white peer-checked:shadow-s-inset-tab;
+  @apply peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-s-blue-300;
+}
+.source-switch label:last-child .source-switch-option {
+  @apply border-r-0;
+}
+
 /* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
 .home-spinner {
   color: theme('colors.s.blue.300');

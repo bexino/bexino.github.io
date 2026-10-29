@@ -1,9 +1,5 @@
-<!-- fetchedAt: 2026-10-29T07:42:21.396Z -->
-<div align="center">
-
+<!-- fetchedAt: 2026-10-29T08:16:16.709Z -->
 # 你好 👋，<br>我叫我`北新`🤗。
-
-</div>
 
 > 也叫做: `Benito Fu`，`bexino`。
 

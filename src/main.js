@@ -38,7 +38,7 @@ function apply() {
 window.addEventListener('hashchange', apply);
 apply();
 
-// ── 主页数据加载：GitHub 个人信息 + README.zh-CN.md（实时优先，Action 缓存回退） ──
+// ── 主页数据加载：CDN 与 Actions 缓存互相独立，默认使用缓存 ──
 const GH_USER_API = 'https://api.github.com/users/bexino';
 const README_MIRRORS = [
   'https://gcore.jsdelivr.net/gh/bexino/bexino@main/README.zh-CN.md',
@@ -47,7 +47,7 @@ const README_MIRRORS = [
 const CACHE_DIR = './cache/';
 // 徽章镜像：ghstats.dev 在部分网络下不可达，改用 GitHub Action 抓取后托管在本站的副本
 const BADGE_DIR = './cache/badges/';
-// 实时请求总预算：超时后直接回退到本站部署的缓存副本
+// 单次数据请求的时间预算；失败时不切换数据来源。
 const LOAD_TIMEOUT_MS = 3000;
 
 // fetch 超时包装：AbortController + 计时器
@@ -56,7 +56,7 @@ async function fetchWithTimeout(url, timeoutMs, headers) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, { signal: ctrl.signal, headers });
+    const res = await fetch(url, { signal: ctrl.signal, headers, cache: 'no-store' });
     if (!res.ok) return null;
     return await res.text();
   } catch {
@@ -169,16 +169,23 @@ function sha1Hex(str) {
   return H.map((h) => h.toString(16).padStart(8, '0')).join('');
 }
 
-// 渲染 README：marked 转 HTML（GitHub 严格换行：单换行不换行，行尾两空格才换行），
-// 徽章地址改写到本站副本，链接统一新窗口打开
-function renderReadme(md) {
+// 渲染 README：CDN 模式使用原始徽章，其余模式使用 Actions 副本。
+// GitHub 严格换行：单换行不换行，行尾两空格才换行；链接统一新窗口打开。
+function renderReadme(md, mode) {
   // 去掉缓存文件首行的 fetchedAt 注释（不进入渲染）
   const cleaned = md.replace(/^<!--\s*fetchedAt:.*?-->\s*/, '');
   const html = marked.parse(cleaned, { breaks: false, gfm: true });
   const body = document.getElementById('readme-body');
   body.innerHTML = html;
+  const badgeVersion = Date.now();
   body.querySelectorAll('img[src]').forEach((img) => {
-    img.src = rewriteBadgeUrl(img.src);
+    if (mode !== 'cdn') {
+      const badgeUrl = rewriteBadgeUrl(img.src);
+      // 手动查看缓存时也刷新徽章，避免浏览器沿用上次部署的图片。
+      img.src = mode === 'cache' && badgeUrl.startsWith(BADGE_DIR)
+        ? `${badgeUrl}?v=${badgeVersion}`
+        : badgeUrl;
+    }
     img.loading = 'lazy';
     img.onerror = () => {
       // 副本也没有 → 隐藏破图
@@ -191,57 +198,41 @@ function renderReadme(md) {
   });
 }
 
-// 状态小字：按实时/回退组合显示
-function renderStatus(profileLive, readmeLive, fetchedAt) {
-  const el = document.getElementById('home-data-status');
-  const time = fetchedAt ? new Date(fetchedAt).toLocaleString('zh-CN') : '';
-  let text;
-  if (profileLive && readmeLive) {
-    text = '您所见的都是实时最新数据';
-  } else if (profileLive) {
-    text = `简介已于 ${time} 更新，其余为实时最新数据`;
-  } else if (readmeLive) {
-    text = `个人信息已于 ${time} 更新，其余为实时最新数据`;
-  } else {
-    text = `所有信息已于 ${time} 更新`;
-  }
-  el.textContent = text;
-}
-
-// 缓存文件的 fetchedAt：md 首行注释 `<!-- fetchedAt: ... -->`
-function parseMdFetchedAt(md) {
-  const m = md.match(/^<!--\s*fetchedAt:\s*(.+?)\s*-->/);
-  return m ? m[1] : null;
-}
-
 // 加载完成 → 展示内容、隐藏转圈
 function showHomeContent() {
   document.getElementById('home-loading').classList.add('hidden');
   document.getElementById('home-content').classList.remove('hidden');
 }
 
-// 主页数据只加载一次
-let homeDataLoaded = false;
+// 每次切换重新请求；过期请求完成后不能覆盖新模式。
+let homeLoadId = 0;
 
-async function loadHomeData() {
-  if (homeDataLoaded) return;
-  homeDataLoaded = true;
+async function loadHomeData(mode = 'cache') {
+  const loadId = ++homeLoadId;
+  document.getElementById('home-loading').classList.remove('hidden');
+  document.getElementById('home-content').classList.add('hidden');
+  document.getElementById('home-content').setAttribute('aria-busy', 'true');
 
-  // 全局截止时间：实时链与缓存并行，缓存（同源、体积小）几乎瞬时拿到。
-  // 两条实时链各自独立计时，避免其中一条慢把另一条饿死。
-  const profileDeadline = Date.now() + LOAD_TIMEOUT_MS;
-  const readmeDeadline = Date.now() + LOAD_TIMEOUT_MS;
-  const [liveProfile, liveReadme, cachedProfile, cachedReadme] = await Promise.all([
-    fetchFirst([GH_USER_API], profileDeadline),
-    fetchFirst(README_MIRRORS, readmeDeadline),
+  const deadline = Date.now() + LOAD_TIMEOUT_MS;
+  const [profileText, readmeText] = await Promise.all(mode === 'cdn' ? [
+    fetchFirst([GH_USER_API], deadline),
+    fetchFirst(README_MIRRORS, deadline),
+  ] : [
     fetchWithTimeout(`${CACHE_DIR}github-user.json`, LOAD_TIMEOUT_MS),
     fetchWithTimeout(`${CACHE_DIR}readme-zh.md`, LOAD_TIMEOUT_MS),
   ]);
+  if (loadId !== homeLoadId) return;
 
-  // 个人信息：实时失败 → 用缓存
-  let profileLive = false;
-  let profileFetchedAt = null;
-  const profileText = liveProfile || cachedProfile;
+  // 清空旧模式的数据，单一来源失败时也不会残留其它来源的内容。
+  document.getElementById('gh-name').textContent = '—';
+  document.getElementById('gh-login').textContent = '';
+  document.getElementById('gh-bio').textContent = '';
+  const avatar = document.getElementById('gh-avatar');
+  avatar.hidden = true;
+  avatar.removeAttribute('src');
+  document.getElementById('gh-avatar-fallback').hidden = false;
+  document.getElementById('readme-body').replaceChildren();
+
   if (profileText) {
     let obj = null;
     try {
@@ -250,27 +241,43 @@ async function loadHomeData() {
       obj = null;
     }
     if (obj && obj.fetchedAt && obj.profile) {
-      profileFetchedAt = obj.fetchedAt; // 缓存 JSON：带抓取时间
       obj = obj.profile;
     }
     if (obj) {
-      profileLive = Boolean(liveProfile);
       renderProfile(obj);
     }
   }
 
-  // README：实时失败 → 用缓存
-  let readmeLive = false;
-  let readmeFetchedAt = null;
-  const readmeText = liveReadme || cachedReadme;
   if (readmeText) {
-    readmeFetchedAt = parseMdFetchedAt(readmeText);
-    readmeLive = Boolean(liveReadme);
-    renderReadme(readmeText);
+    renderReadme(readmeText, mode);
   }
 
-  renderStatus(profileLive, readmeLive, profileFetchedAt || readmeFetchedAt);
+  document.getElementById('home-content').setAttribute('aria-busy', 'false');
   showHomeContent();
 }
 
-loadHomeData();
+const sourceControl = document.getElementById('home-data-source');
+let homeSource;
+
+function syncHomeSource() {
+  const mode = new URL(location.href).searchParams.get('source') === 'cdn' ? 'cdn' : 'cache';
+  sourceControl.querySelectorAll('input[name="data-source"]').forEach((input) => {
+    input.checked = input.value === mode;
+  });
+  if (mode === homeSource) return;
+  homeSource = mode;
+  loadHomeData(mode);
+}
+
+sourceControl.addEventListener('change', (event) => {
+  if (event.target.matches('input[name="data-source"]')) {
+    const url = new URL(location.href);
+    if (event.target.value === 'cdn') url.searchParams.set('source', 'cdn');
+    else url.searchParams.delete('source');
+    history.pushState(null, '', url);
+    syncHomeSource();
+  }
+});
+
+window.addEventListener('popstate', syncHomeSource);
+syncHomeSource();

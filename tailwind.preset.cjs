@@ -11,7 +11,7 @@ module.exports = {
         s: {
           white: '#ffffff',
           grey: { 100: '#fafafa', 200: '#f2f2f2', 300: '#eeeeee', 400: '#e2e2e2', 500: '#bababa', 600: '#9d9d9d', 700: '#7f7f7f', 800: '#636363', 900: '#333333' },
-          blue: { 100: '#e7edfd', 300: '#5985eb', 400: '#5079d9', 500: '#3f68e2', 600: '#2f54d7', pressed: '#4772e6', top: '#5b87eb', bottom: '#5883eb' },
+          blue: { 100: '#e7edfd', 200: '#a0b9f4', 300: '#5985eb', 400: '#5079d9', 500: '#3f68e2', 600: '#2f54d7', pressed: '#4772e6', top: '#5b87eb', bottom: '#5883eb' },
           page: '#f5f5f5',
           'page-real': '#f0f0f0',
           'sheet-body': '#efefef',

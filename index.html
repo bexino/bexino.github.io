@@ -51,8 +51,16 @@
                   <div id="readme-body" class="markdown-s text-s-14 leading-relaxed text-s-text-body"></div>
                 </article>
 
-                <!-- 数据来源状态小字 -->
-                <p id="home-data-status" class="text-center text-s-12 text-s-text-desc"></p>
+              <fieldset id="home-data-source" class="source-switch mx-auto mt-1 flex h-7 w-36 shrink-0 overflow-hidden rounded-s-md border-s-xs border-s-grey-400" aria-label="数据来源">
+                <label class="relative flex-1 cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="cdn" />
+                  <span class="source-switch-option">CDN</span>
+                </label>
+                <label class="relative flex-1 cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="cache" checked />
+                  <span class="source-switch-option">缓存</span>
+                </label>
+              </fieldset>
               </div>
             </div>
           </div>
