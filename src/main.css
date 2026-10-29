@@ -315,37 +315,46 @@
   @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-grey-400 bg-s-white px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
 }
 .repo-button.is-pressed { @apply bg-s-white-pressed shadow-s-inset-tab; }
-.repo-back { @apply ml-3 inline-flex items-center text-s-14 font-bold text-s-grey-800; }
+.repo-back {
+  @apply inline-flex items-center text-s-14 font-bold text-s-grey-800;
+  position: absolute;
+  left: var(--repo-back-left, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
 .repo-back[hidden] { display: none; }
 .repo-back .md-icon { width: 24px; height: 24px; }
 #appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .repo-meta {
-  @apply my-4 grid grid-cols-3 rounded-s-md border-s-sm border-s-grey-400 bg-s-white py-4 shadow-s-card-sm;
+  @apply my-4 grid rounded-s-md border-s-sm border-s-grey-400 bg-s-white py-4 shadow-s-card-sm;
+  grid-template-columns: repeat(3, 1fr);
+  min-width: max-content;
 }
 .repo-stat {
   @apply flex min-w-0 flex-col items-center justify-start gap-1 border-r-s-sm border-s-grey-200 px-2 text-center;
 }
 .repo-stat:last-child { border-right: 0; }
 .repo-stat > .md-icon { @apply order-1 h-5 w-5 shrink-0 text-s-blue-300; }
-.repo-stat-value { @apply order-2 text-s-18 font-bold leading-tight text-s-grey-900; overflow-wrap: anywhere; }
+.repo-stat-value { @apply order-2 whitespace-nowrap text-s-18 font-bold leading-tight text-s-grey-900; overflow-wrap: normal; }
 .repo-stat-value--long { @apply text-s-14; }
 .repo-stat-label { @apply order-3 mt-auto text-s-12 text-s-grey-600; }
 .repo-profile, .repo-readme-column { min-width: 0; }
+.repo-profile > .repo-summary { overflow-x: auto; }
 /* Match the home page's centered profile and independently scrolling README. */
 @media (min-width: 960px) {
-  .repo-shell--detail { width: 816px; max-width: none; }
+  .repo-shell--detail { width: max-content; max-width: 100%; }
   .repo-shell--detail #repo-scroll { overflow: hidden; padding: 0; }
   .repo-shell--detail #repo-content {
     height: 100%; min-height: 0; flex-direction: row; gap: 24px; padding: 16px;
   }
   .repo-shell--detail .repo-profile {
-    display: flex; flex-direction: column; width: 280px; min-height: 0; flex-shrink: 0; overflow-y: auto;
+    display: flex; flex-direction: column; width: max-content; min-width: 280px; max-width: calc(100% - 344px); min-height: 0; flex-shrink: 0; overflow-y: auto;
   }
   .repo-shell--detail .repo-profile > .repo-summary {
     width: 100%; flex-shrink: 0; margin-block: auto; text-align: right;
   }
   .repo-shell--detail .repo-readme-column {
-    display: flex; flex-direction: column; width: 480px; min-height: 0; flex-shrink: 0;
+    display: flex; flex-direction: column; width: 480px; min-width: 320px; min-height: 0; flex-shrink: 1;
     overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px;
   }
   .repo-shell--detail .repo-readme-body { flex-shrink: 0; margin-block: auto; }
@@ -362,8 +371,8 @@
   box-shadow: inset 3px 0 0 var(--alert-color);
   --alert-color: theme('colors.s.blue.300');
 }
-.markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.chip.blue-text'); }
-.markdown-s .markdown-alert--important { --alert-color: theme('colors.s.blue.500'); }
+.markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.alert.tip'); }
+.markdown-s .markdown-alert--important { --alert-color: theme('colors.s.alert.important'); }
 .markdown-s .markdown-alert--warning { --alert-color: theme('colors.s.chip.yellow-text'); }
 .markdown-s .markdown-alert--caution { --alert-color: theme('colors.s.chip.red-text'); }
 .markdown-s .markdown-alert-title {

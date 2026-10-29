@@ -12,6 +12,18 @@ let generation = 0;
 let currentList = null;
 let selectedRepo = null;
 
+// Keep the app-bar action on the summary card's edge, including intrinsic width changes.
+const appbarContent = back.parentElement.parentElement;
+function alignBack() {
+  const card = content.querySelector('.repo-profile > .repo-summary');
+  if (!card || back.hidden) return;
+  const left = card.getBoundingClientRect().left - appbarContent.getBoundingClientRect().left;
+  back.style.setProperty('--repo-back-left', `${left}px`);
+}
+const layoutObserver = new ResizeObserver(alignBack);
+layoutObserver.observe(shell);
+layoutObserver.observe(appbarContent);
+
 function element(tag, className, text) {
   const node = document.createElement(tag);
   node.className = className;
@@ -141,6 +153,9 @@ function showList(data, category) {
 }
 
 function showDetail(repo) {
+  layoutObserver.disconnect();
+  layoutObserver.observe(shell);
+  layoutObserver.observe(appbarContent);
   const card = element('article', 'repo-summary');
   card.append(element('h1', 'text-s-18 font-bold text-s-blue-300', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
   const meta = element('dl', 'repo-meta');
@@ -167,6 +182,8 @@ function showDetail(repo) {
   readmeColumn.append(readme);
   content.replaceChildren(profile, readmeColumn);
   shell.classList.add('repo-shell--detail');
+  layoutObserver.observe(card);
+  alignBack();
   if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref });
   else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', '暂无自述文件'));
   scroll.scrollTop = 0;
