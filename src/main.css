@@ -32,6 +32,13 @@
   color: theme('colors.s.blue.300');
 }
 
+/* 顶栏向下投影，与底栏、桌面侧栏使用相同的柔和淡阴影。 */
+#appbar {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
 /* 底栏向上投影（柔和淡阴影，比 preset 的 shadow-s-bar 更轻） */
 #bottom-nav {
   box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.04);
