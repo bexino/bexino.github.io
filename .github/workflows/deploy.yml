@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # GITHUB_TOKEN 提交缓存不会触发 push 工作流；拉取结束后部署最新快照（含删除）。
+  workflow_run:
+    workflows: [Cache homepage data]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
