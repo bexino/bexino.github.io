@@ -1,4 +1,4 @@
-<!-- fetchedAt: 2026-10-29T09:07:05.603Z -->
+<!-- fetchedAt: 2026-10-29T12:16:36.460Z -->
 # 你好 👋，<br>我叫我`北新`🤗。
 
 > 也叫做: `Benito Fu`，`bexino`。
@@ -13,7 +13,7 @@
 <div align="center">
 
 <a href="https://github.com/bexino?tab=stars">
-  <img src="https://ghstats.dev/api/mini?username=bexino&metric=repos&color=58a6ff&style=minimal" width="101" />
+  <img src="https://ghstats.dev/api/mini?username=bexino&metric=repos&color=58a6ff&style=plastic" width="101" />
 </a>
 
 ![GitHub Stats Card](https://ghstats.dev/api/card?username=bexino&theme=light&show_ring=false&hide_title=true&size=compact&compact_count=3&hide=stars%2Cprs%2Cissues%2Cstreak%2Cweek%2Ctrend%2Cgrade%2Cactive_day%2Cavg%2Cfollowers%2Crepos)

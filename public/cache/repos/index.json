@@ -1,0 +1,95 @@
+{
+  "fetchedAt": "2026-10-29T12:16:38.834Z",
+  "categories": [
+    {
+      "id": "UL_kwDOBawuZ84Ai3-Y",
+      "name": "For Windows",
+      "slug": "for-windows",
+      "repositories": [
+        "bexino/userdata-changer",
+        "bexino/FTP-Silver",
+        "bexino/MrsLiusSon",
+        "bexino/napa-pdf"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-t",
+      "name": "Contribute",
+      "slug": "contribute",
+      "repositories": [
+        "bexino/sonnet"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-a",
+      "name": "For Linux",
+      "slug": "for-linux",
+      "repositories": [
+        "bexino/magicbook14_fixed",
+        "bexino/oh-my-rime-config",
+        "bexino/qqmusic-linux-fix"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-g",
+      "name": "Web & Agent",
+      "slug": "web-agent",
+      "repositories": [
+        "bexino/siss",
+        "bexino/prompt"
+      ]
+    }
+  ],
+  "repositories": {
+    "bexino/userdata-changer": {
+      "name": "userdata-changer",
+      "fullName": "bexino/userdata-changer",
+      "description": "Migrates Chrome user data off C: via mlink junction, lossless."
+    },
+    "bexino/FTP-Silver": {
+      "name": "FTP-Silver",
+      "fullName": "bexino/FTP-Silver",
+      "description": "A lightweight tool to easily start an FTP server."
+    },
+    "bexino/MrsLiusSon": {
+      "name": "MrsLiusSon",
+      "fullName": "bexino/MrsLiusSon",
+      "description": "Adds Markdown to the Windows right-click New menu."
+    },
+    "bexino/napa-pdf": {
+      "name": "napa-pdf",
+      "fullName": "bexino/napa-pdf",
+      "description": "Add file names to PDF headers in batches."
+    },
+    "bexino/sonnet": {
+      "name": "sonnet",
+      "fullName": "bexino/sonnet",
+      "description": "Claude Typora theme."
+    },
+    "bexino/magicbook14_fixed": {
+      "name": "magicbook14_fixed",
+      "fullName": "bexino/magicbook14_fixed",
+      "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux."
+    },
+    "bexino/oh-my-rime-config": {
+      "name": "oh-my-rime-config",
+      "fullName": "bexino/oh-my-rime-config",
+      "description": "Linux 输入法解决方案。"
+    },
+    "bexino/qqmusic-linux-fix": {
+      "name": "qqmusic-linux-fix",
+      "fullName": "bexino/qqmusic-linux-fix",
+      "description": "修复 Flatpak 版 QQ 音乐显示问题。"
+    },
+    "bexino/siss": {
+      "name": "siss",
+      "fullName": "bexino/siss",
+      "description": "值日分配系统。"
+    },
+    "bexino/prompt": {
+      "name": "prompt",
+      "fullName": "bexino/prompt",
+      "description": "静态提示词浏览站点。"
+    }
+  }
+}
