@@ -18,8 +18,7 @@ npm run preview  # 预览构建产物
 
 ## 架构
 
-- **单页应用，无框架**：`index.html` 内含 App Bar、5 个预建的 `<section>` 视图（各 tab 一个，iframe 页的 iframe 常驻、只加载一次）和 Bottom Navigation。`src/main.js` 监听 `hashchange`，解析 `#/repo`、`#/pt`、`#/sched`、`#/me`（无 hash → 主页），切换 section 显隐、更新底栏 `aria-current` 和顶栏标题。
-- **iframe 页约定**：`pt`（提示词）和 `sched`（排班）两个 tab 内嵌外部站点；这两个 tab 隐藏自有 App Bar，Bottom Navigation 永远显示。`src/main.js` 的 `IFRAME_TABS` 集合控制此行为。
+- **单页应用，无框架**：`index.html` 内含 App Bar、3 个预建的 `<section>` 视图（各 tab 一个）和 Bottom Navigation。`src/main.js` 监听 `hashchange`，解析 `#/repo`、`#/me`（无 hash 或未知路由 → 主页），切换 section 显隐、更新底栏 `aria-current` 和顶栏标题。App Bar 与 Bottom Navigation 始终显示。
 - **Tailwind v3 + smartisan-ui preset**：`tailwind.preset.cjs` 是 Smartisan OS UI Kit 的官方 preset（`.cjs` 后缀是必需的——package.json 为 `"type": "module"`，PostCSS 以 CJS 加载它）。**禁止硬编码圆角、HEX 色值**，一律用 preset 的工具类（`bg-s-grey-100`、`rounded-s-lg`、`shadow-s-card`、`border-s-md`…），否则 preset 失效。
 - **图标**：构建时由 `vite.config.js` 的 `mdi-sprite` 插件从 `@material-design-icons/svg`（filled）生成 `public/icons-sprite.svg`（`<symbol id="si-*">`）。新增图标只需往该文件的 `ICONS` 数组加名字，运行时用 `<svg class="md-icon"><use href="./icons-sprite.svg#si-名字"/></svg>`。
 - **字体**：Geist VF，来自 `@fontsource-variable/geist`，在 `src/main.css` 的 `@font-face` 声明，置于 `tailwind.config.js` 的 `font-s` 栈首位。

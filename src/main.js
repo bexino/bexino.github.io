@@ -4,79 +4,16 @@ import { marked } from 'marked';
 const TITLES = {
   home: '主页',
   repo: '仓库',
-  pt: '提示词',
-  sched: '智能排班',
   me: '我的',
 };
-// iframe 页不显示自有 App Bar
-const IFRAME_TABS = new Set(['pt', 'sched']);
 
-// 两个子站的 origin 白名单（安全：防止恶意 u= 参数造成 open-redirect / 钓鱼）
-const CHILD_ORIGINS = {
-  pt: 'https://pt.bexino.dpdns.org',
-  sched: 'https://sched.bexino.dpdns.org',
-};
-
-// iframe 页地址同步：地址栏形如 #/pt?u=<encodeURIComponent(完整子站 URL)>
-// 子站 embed-report.js 把地址变化 postMessage 上来，实时回写地址栏；
-// 打开带 u= 的链接时还原成 iframe src，保证复制地址在别处打开同一子页面。
-// 子站默认 src 由 index.html 的 data-src 提供，u= 缺失或非法时回退。
 function parseHash() {
-  const raw = location.hash.replace(/^#\/?/, '');
-  const i = raw.indexOf('?');
-  const tab = i === -1 ? raw : raw.slice(0, i);
-  const query = i === -1 ? '' : raw.slice(i + 1);
-  const u = query ? new URLSearchParams(query).get('u') : null;
-  return { tab: tab in TITLES ? tab : 'home', url: u };
-}
-
-function encodeHash(tab, url) {
-  const qs = url ? `?u=${encodeURIComponent(url)}` : '';
-  return `#/${tab}${qs}`;
-}
-
-// 只接受对应子站 origin 的地址
-function isSafeChildUrl(url, tab) {
-  try {
-    return new URL(url).origin === CHILD_ORIGINS[tab];
-  } catch {
-    return false;
-  }
-}
-
-// 本地调试：子站的 embed-report.js 只认生产 origin（https://bexino.github.io），
-// localhost 下 postMessage 双向丢弃，地址栏永远拿不到 u= 参数。
-// 开发时用 vite 反代把子站挂到 /child-pt/ 、/child-sched/，与父页同源，
-// 即可直接读子站真实地址（含 ?step= 、# 路由），换算回生产地址写进 u=。
-const IS_LOCAL_DEV = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-
-// 生产地址 ⇄ 本地反代地址
-function toProdUrl(devUrl, tab) {
-  try {
-    const u = new URL(devUrl, location.href);
-    const path = u.pathname.replace(/^\/child-(pt|sched)\/?/, '/') || '/';
-    return `${CHILD_ORIGINS[tab]}${path}${u.search}${u.hash}`;
-  } catch {
-    return null;
-  }
-}
-
-function toDevUrl(prodUrl, tab) {
-  try {
-    const u = new URL(prodUrl);
-    const path = u.pathname === '/' ? '/' : u.pathname;
-    return `/child-${tab}${path}${u.search}${u.hash}`;
-  } catch {
-    return null;
-  }
-}
-
-function iframeOf(tab) {
-  return document.querySelector(`section[data-tab="${tab}"] iframe`);
+  const tab = location.hash.replace(/^#\/?/, '');
+  return Object.hasOwn(TITLES, tab) ? tab : 'home';
 }
 
 function apply() {
-  const { tab, url } = parseHash();
+  const tab = parseHash();
 
   // 视图切换
   document.querySelectorAll('main > section[data-tab]').forEach((s) => {
@@ -95,69 +32,11 @@ function apply() {
     label.classList.toggle('text-s-grey-600', !active);
   });
 
-  // App Bar：iframe 页隐藏
-  document.getElementById('appbar').classList.toggle('hidden', IFRAME_TABS.has(tab));
   document.getElementById('appbar-title').textContent = TITLES[tab];
-
-  // iframe src：深度链接 u= 优先（校验 origin），否则回默认页
-  if (IFRAME_TABS.has(tab)) {
-    const iframe = iframeOf(tab);
-    const prod = url && isSafeChildUrl(url, tab) ? url : iframe.dataset.src;
-    // 本地开发：改用 vite 反代地址（与父页同源），生产地址映射到 /child-*/
-    const target = IS_LOCAL_DEV ? toDevUrl(prod, tab) : prod;
-    if (iframe.src !== new URL(target, location.href).href) iframe.src = target;
-  }
 }
 
 window.addEventListener('hashchange', apply);
-
-// 子站上报：iframe 内地址变化 → 编码进地址栏。
-// replaceState 不触发 hashchange，不会回到 apply 形成回环。
-window.addEventListener('message', (e) => {
-  const tab = Object.keys(CHILD_ORIGINS).find((t) => CHILD_ORIGINS[t] === e.origin);
-  if (!tab || e.data?.source !== 'bexino-hub') return;
-  if (!isSafeChildUrl(e.data.url, tab)) return;
-  // 该子站 iframe 未在当前视图时忽略上报（避免另一 iframe 的初始地址覆盖地址栏）
-  if (parseHash().tab !== tab) return;
-  history.replaceState(null, '', encodeHash(tab, e.data.url));
-});
-
 apply();
-
-// 本地开发：子站与父页同源（vite 反代），直接读 iframe 内的真实地址，
-// 换算成生产地址写进 u=，让本地调试也能看到/复制完整的页面参数。
-// 生产环境靠子站的 postMessage 上报即可，无需此段。
-if (IS_LOCAL_DEV) {
-  const syncFromChild = (tab) => {
-    if (parseHash().tab !== tab) return;
-    const iframe = iframeOf(tab);
-    let childUrl;
-    try {
-      childUrl = iframe.contentWindow?.location.href;
-    } catch {
-      return; // 跨域（未走反代）读不到，忽略
-    }
-    const prod = childUrl && toProdUrl(childUrl, tab);
-    if (!prod) return;
-    if (parseHash().url !== prod) history.replaceState(null, '', encodeHash(tab, prod));
-  };
-
-  for (const tab of IFRAME_TABS) {
-    const iframe = iframeOf(tab);
-    iframe.addEventListener('load', () => syncFromChild(tab));
-    // 子站内部路由变化（hash / replaceState）不会触发父页 load，
-    // 轮询子站地址；同源读取很轻量，仅本地开发启用。
-    setInterval(() => syncFromChild(tab), 400);
-  }
-}
-
-// 子站初始上报可能早于本 listener 注册（时序不定）而丢失，
-// listener 就绪后向两个 iframe 发 ping，子站收到会补报一次当前地址
-for (const tab of IFRAME_TABS) {
-  iframeOf(tab).addEventListener('load', () => {
-    iframeOf(tab).contentWindow.postMessage({ source: 'bexino-hub-ping' }, CHILD_ORIGINS[tab]);
-  });
-}
 
 // ── 主页数据加载：GitHub 个人信息 + README.zh-CN.md（实时优先，Action 缓存回退） ──
 const GH_USER_API = 'https://api.github.com/users/bexino';

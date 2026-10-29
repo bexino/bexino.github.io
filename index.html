@@ -7,7 +7,7 @@
   </head>
   <body class="font-s bg-s-page text-s-grey-900">
     <div id="app" class="flex min-h-screen flex-col">
-      <!-- App Bar：iframe 页隐藏 -->
+      <!-- App Bar -->
       <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white">
         <div class="relative mx-auto flex h-s-bar max-w-s-screen items-center">
         <span class="flex-1"></span>
@@ -58,12 +58,6 @@
           </div>
         </section>
         <section data-tab="repo" class="absolute inset-0 hidden"></section>
-        <section data-tab="pt" class="absolute inset-0 hidden">
-          <iframe data-src="https://pt.bexino.dpdns.org/?hide=theme#/" src="https://pt.bexino.dpdns.org/?hide=theme#/" class="h-full w-full border-0" title="提示词" loading="lazy"></iframe>
-        </section>
-        <section data-tab="sched" class="absolute inset-0 hidden">
-          <iframe data-src="https://sched.bexino.dpdns.org/?hide=theme" src="https://sched.bexino.dpdns.org/?hide=theme" class="h-full w-full border-0" title="智能排班" loading="lazy"></iframe>
-        </section>
         <section data-tab="me" class="absolute inset-0 hidden"></section>
       </main>
 
@@ -77,14 +71,6 @@
         <a href="#/repo" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="repo">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-folder" /></svg>
           <span class="text-s-nav">仓库</span>
-        </a>
-        <a href="#/pt" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="pt">
-          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-chat" /></svg>
-          <span class="text-s-nav">提示词</span>
-        </a>
-        <a href="#/sched" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="sched">
-          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-calendar_month" /></svg>
-          <span class="text-s-nav">排班</span>
         </a>
         <a href="#/me" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="me">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-person" /></svg>

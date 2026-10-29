@@ -51,6 +51,19 @@
     border-right: 1px solid theme('colors.s.appbar-border');
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.04);
   }
+
+  /* 左上角填色覆盖侧栏宽度，与顶栏内容及底边等高，不占布局空间。 */
+  #bottom-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(theme('spacing.s-bar') + 1px);
+    background-color: theme('colors.s.grey.200');
+    box-shadow: inset 0 -1px 0 theme('colors.s.appbar-border');
+    pointer-events: none;
+  }
 }
 
 /* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
@@ -111,8 +124,10 @@
   color: theme('colors.s.blue.300');
 }
 .markdown-s img {
+  /* 覆盖 Tailwind Preflight 的块级图片，让徽标遵循 Markdown 的行内换行规则。 */
+  display: inline-block;
+  vertical-align: middle;
   max-width: 100%;
-  border-radius: theme('borderRadius.s-md');
 }
 .markdown-s blockquote {
   border-left: 3px solid theme('colors.s.grey.400');
