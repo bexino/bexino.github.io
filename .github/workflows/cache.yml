@@ -28,12 +28,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 先清空 public/cache/，再抓取本次的个人资料 / 压缩头像 / README / ghstats 徽章副本
+      # 只清理主页文件，保留仓库缓存，再抓取本次的个人资料 / 压缩头像 / README / ghstats 徽章副本
       # 徽章副本存在的原因：ghstats.dev 在部分网络不可达，由本 Action（海外 runner）代抓并托管到本站
       - name: Fetch homepage data
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/fetch-home-data.mjs
+
+      - name: Fetch repository data
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.REPO_DATA_TOKEN }}
+        run: |
+          if [ -n "$GH_TOKEN" ]; then
+            node scripts/fetch-repo-data.mjs
+          else
+            echo "REPO_DATA_TOKEN is not configured; repository cache is unchanged"
+          fi
 
       - name: Commit cache
         # 抓取失败也提交删除结果，避免仓库继续保留旧数据；失败状态仍会保留。
@@ -43,5 +54,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- public/cache
           git diff --cached --quiet && echo "no changes" && exit 0
-          git commit -m "chore: 更新主页数据缓存 [skip ci]"
+          git commit -m "chore: 更新网站数据缓存 [skip ci]"
           git push

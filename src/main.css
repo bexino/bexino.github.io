@@ -176,10 +176,15 @@
 .markdown-s h4,
 .markdown-s h5,
 .markdown-s h6 {
-  color: theme('colors.s.grey.900');
+  color: theme('colors.s.blue.300');
   font-weight: bold;
   margin: 0.8em 0 0.4em;
 }
+.markdown-s h2 { font-size: 1.5em; }
+.markdown-s h3 { font-size: 1.25em; }
+.markdown-s h4 { font-size: 1.1em; }
+.markdown-s h5 { font-size: 1em; }
+.markdown-s h6 { font-size: 0.95em; }
 .markdown-s p {
   margin: 0.5em 0;
 }
@@ -197,6 +202,9 @@
   list-style: decimal;
   padding-left: 1.4em;
   margin: 0.5em 0;
+}
+.markdown-s ol > li::marker {
+  color: theme('colors.s.blue.300');
 }
 /* 圆点与引用竖线共用左边界，正文均缩进 1.4em。 */
 .markdown-s ul > li {
@@ -272,3 +280,65 @@
   background: theme('colors.s.grey.100');
   font-weight: bold;
 }
+
+/* Repository pages use the same inset segmented controls and grouped rows as Settings. */
+.repo-categories { overflow-x: auto; scrollbar-width: thin; }
+.repo-tabs {
+  @apply flex w-max min-w-full overflow-hidden rounded-s-md border-s-xs border-s-grey-400 bg-s-white;
+}
+.repo-tab {
+  @apply flex-1 whitespace-nowrap border-r-s-sm border-s-grey-200 px-3 py-2 text-s-12 font-bold text-s-grey-800;
+}
+.repo-tab:last-child { border-right: 0; }
+.repo-tab[aria-selected="true"] {
+  @apply bg-s-grey-500 text-s-white shadow-s-inset-tab;
+}
+.repo-tab.is-pressed { @apply bg-s-white-pressed; }
+.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible {
+  @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
+}
+.repo-list, .repo-summary {
+  @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
+}
+.repo-summary { @apply min-w-0 p-4; overflow-wrap: anywhere; }
+.repo-row {
+  @apply flex min-h-s-row items-center gap-3 border-b-s-md border-s-grey-200 px-4 py-3;
+}
+.repo-row:last-child { border-bottom: 0; }
+.repo-name { @apply text-s-16 font-bold text-s-blue-300; overflow-wrap: anywhere; }
+.repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
+.repo-row > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
+.repo-row.is-pressed { @apply bg-s-blue-300; }
+.repo-row.is-pressed :is(h2,p,svg) { @apply text-s-white; }
+.repo-state { @apply flex flex-col items-center gap-3 py-12 text-center; }
+.repo-button {
+  @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-grey-400 bg-s-white px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
+}
+.repo-button.is-pressed { @apply bg-s-white-pressed shadow-s-inset-tab; }
+.repo-back { @apply ml-3 inline-flex items-center text-s-14 font-bold text-s-grey-800; }
+.repo-back[hidden] { display: none; }
+.repo-back .md-icon { width: 24px; height: 24px; }
+#appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo-meta { @apply my-4 grid gap-x-3 gap-y-2 border-y-s-sm border-s-grey-200 py-3 text-s-12; grid-template-columns: auto minmax(0, 1fr); }
+.repo-meta dd { text-align: right; overflow-wrap: anywhere; }
+.repo-external { @apply text-s-14 text-s-blue-300 underline underline-offset-2; }
+.markdown-table { max-width: 100%; overflow-x: auto; }
+.markdown-s .markdown-table table { width: max-content; min-width: 100%; }
+.markdown-s details { @apply my-2; }
+.markdown-s summary { @apply cursor-pointer text-s-blue-300; }
+.markdown-s input[type="checkbox"] { @apply mr-1; accent-color: theme('colors.s.blue.300'); }
+.markdown-s li:has(> input[type="checkbox"])::before { display: none; }
+.markdown-s .markdown-alert {
+  @apply rounded-s-md border-s-sm border-s-grey-400 bg-s-grey-100 p-3 text-s-text-body;
+  box-shadow: inset 3px 0 0 var(--alert-color);
+  --alert-color: theme('colors.s.blue.300');
+}
+.markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.chip.blue-text'); }
+.markdown-s .markdown-alert--important { --alert-color: theme('colors.s.blue.500'); }
+.markdown-s .markdown-alert--warning { --alert-color: theme('colors.s.chip.yellow-text'); }
+.markdown-s .markdown-alert--caution { --alert-color: theme('colors.s.chip.red-text'); }
+.markdown-s .markdown-alert-title {
+  display: flex; align-items: center; gap: 6px; margin-top: 0; font-weight: bold; color: var(--alert-color);
+}
+.markdown-alert-title .md-icon { width: 18px; height: 18px; }
+.markdown-s [id] { scroll-margin-top: 12px; }

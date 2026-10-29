@@ -11,6 +11,13 @@ const ICONS = [
   'folder',
   'person',
   'settings',
+  'chevron_left',
+  'chevron_right',
+  'info',
+  'lightbulb',
+  'announcement',
+  'warning',
+  'report',
 ];
 
 const OUT = 'public/icons-sprite.svg';

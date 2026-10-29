@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "fetch-home-data": "node scripts/fetch-home-data.mjs"
+    "fetch-home-data": "node scripts/fetch-home-data.mjs",
+    "fetch-repo-data": "node scripts/fetch-repo-data.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
+    "dompurify": "^3.4.17",
     "marked": "^18.1.1"
   }
 }

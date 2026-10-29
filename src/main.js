@@ -1,5 +1,7 @@
 import './main.css';
-import { marked } from 'marked';
+import './smartisan.js';
+import { renderMarkdown } from './markdown.js';
+import { renderRepos, leaveRepos } from './repos.js';
 
 const TITLES = {
   home: '主页',
@@ -8,12 +10,18 @@ const TITLES = {
 };
 
 function parseHash() {
-  const tab = location.hash.replace(/^#\/?/, '');
+  const route = location.hash.replace(/^#\/?/, '');
+  const tab = route.split('/')[0];
+  if (tab !== 'repo' && route !== tab) return 'home';
   return Object.hasOwn(TITLES, tab) ? tab : 'home';
 }
 
 function apply() {
+  if (/^#\/?repo\/?$/.test(location.hash)) {
+    history.replaceState(null, '', `${location.pathname}${location.search}#/repo/web-and-agent`);
+  }
   const tab = parseHash();
+  if (tab !== 'repo') leaveRepos();
 
   // 视图切换
   document.querySelectorAll('main > section[data-tab]').forEach((s) => {
@@ -33,6 +41,8 @@ function apply() {
   });
 
   document.getElementById('appbar-title').textContent = TITLES[tab];
+  document.getElementById('repo-back').hidden = true;
+  if (tab === 'repo') renderRepos();
 }
 
 window.addEventListener('hashchange', apply);
@@ -178,53 +188,14 @@ function sha1Hex(str) {
 // 渲染 README：CDN 模式使用原始徽章，其余模式使用 Actions 副本。
 // GitHub 严格换行：单换行不换行，行尾两空格才换行；链接统一新窗口打开。
 function renderReadme(md, mode) {
-  // 去掉缓存文件首行的 fetchedAt 注释（不进入渲染）
-  const cleaned = md.replace(/^<!--\s*fetchedAt:.*?-->\s*/, '');
-  const html = marked.parse(cleaned, { breaks: false, gfm: true });
-  const body = document.getElementById('readme-body');
-  const template = document.createElement('template');
-  template.innerHTML = html;
-  const cards = document.createDocumentFragment();
-  let card;
-  const startCard = () => {
-    card = document.createElement('article');
-    card.className = 'markdown-s min-w-0 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 text-s-14 leading-relaxed text-black shadow-s-card';
-  };
-  const finishCard = () => {
-    if (Array.from(card.childNodes).some((node) => node.nodeType === Node.ELEMENT_NODE || node.textContent.trim())) {
-      cards.append(card);
-    }
-  };
-  startCard();
-  // 只按顶层分割线拆卡，保留引用、列表、代码块与 HTML 内部结构。
-  for (const node of Array.from(template.content.childNodes)) {
-    if (node.nodeName === 'HR') {
-      finishCard();
-      startCard();
-    } else {
-      card.append(node);
-    }
-  }
-  finishCard();
-  body.replaceChildren(cards);
-  const badgeVersion = Date.now();
-  body.querySelectorAll('img[src]').forEach((img) => {
-    if (mode !== 'cdn') {
-      const badgeUrl = rewriteBadgeUrl(img.src);
-      // 手动查看缓存时也刷新徽章，避免浏览器沿用上次部署的图片。
-      img.src = mode === 'cache' && badgeUrl.startsWith(BADGE_DIR)
-        ? `${badgeUrl}?v=${badgeVersion}`
-        : badgeUrl;
-    }
-    img.loading = 'lazy';
-    img.onerror = () => {
-      // 副本也没有 → 隐藏破图
-      img.style.display = 'none';
-    };
-  });
-  body.querySelectorAll('a[href]').forEach((a) => {
-    a.setAttribute('target', '_blank');
-    a.setAttribute('rel', 'noopener');
+  const version = Date.now();
+  renderMarkdown(document.getElementById('readme-body'), md, {
+    repository: 'bexino/bexino', readmePath: 'README.zh-CN.md', ref: 'main',
+    transformImage: url => {
+      if (mode === 'cdn') return url;
+      const rewritten = rewriteBadgeUrl(url);
+      return mode === 'cache' && rewritten.startsWith(BADGE_DIR) ? `${rewritten}?v=${version}` : rewritten;
+    },
   });
 }
 

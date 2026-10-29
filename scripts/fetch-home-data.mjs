@@ -10,7 +10,7 @@
 //
 // 用法：node scripts/fetch-home-data.mjs
 
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, rm, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -148,8 +148,14 @@ async function fetchBadge(url) {
 }
 
 async function main() {
-  // 每次全量重建：删除上次的资料、头像、README 和所有徽章，失败也不回用旧数据。
-  await rm(CACHE_DIR, { recursive: true, force: true });
+  // 每次全量重建主页文件：删除上次的资料、头像、README 和所有徽章，失败也不回用旧数据。
+  await mkdir(CACHE_DIR, { recursive: true });
+  // Only remove homepage-owned files; repo snapshots have their own lifecycle.
+  for (const entry of await readdir(CACHE_DIR)) {
+    if (entry === 'github-user.json' || entry === 'readme-zh.md' || entry === 'badges' || /^avatar-[a-f0-9]+\.webp$/.test(entry)) {
+      await rm(join(CACHE_DIR, entry), { recursive: true, force: true });
+    }
+  }
   await mkdir(BADGE_DIR, { recursive: true });
   const fetchedAt = new Date().toISOString();
 
