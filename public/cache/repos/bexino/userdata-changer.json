@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-29T15:52:26.236Z",
+  "fetchedAt": "2026-10-29T15:57:36.664Z",
   "name": "userdata-changer",
   "fullName": "bexino/userdata-changer",
   "description": "Migrates Chrome user data off C: via mlink junction, lossless.",
