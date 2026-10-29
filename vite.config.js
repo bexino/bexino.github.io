@@ -18,6 +18,9 @@ const ICONS = [
   'announcement',
   'warning',
   'report',
+  'balance',
+  'commit',
+  'account_tree',
 ];
 
 const OUT = 'public/icons-sprite.svg';

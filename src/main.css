@@ -319,8 +319,37 @@
 .repo-back[hidden] { display: none; }
 .repo-back .md-icon { width: 24px; height: 24px; }
 #appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.repo-meta { @apply my-4 grid gap-x-3 gap-y-2 border-y-s-sm border-s-grey-200 py-3 text-s-12; grid-template-columns: auto minmax(0, 1fr); }
-.repo-meta dd { text-align: right; overflow-wrap: anywhere; }
+.repo-meta {
+  @apply my-4 grid grid-cols-3 rounded-s-md border-s-sm border-s-grey-400 bg-s-white py-4 shadow-s-card-sm;
+}
+.repo-stat {
+  @apply flex min-w-0 flex-col items-center justify-start gap-1 border-r-s-sm border-s-grey-200 px-2 text-center;
+}
+.repo-stat:last-child { border-right: 0; }
+.repo-stat > .md-icon { @apply order-1 h-5 w-5 shrink-0 text-s-blue-300; }
+.repo-stat-value { @apply order-2 text-s-18 font-bold leading-tight text-s-grey-900; overflow-wrap: anywhere; }
+.repo-stat-value--long { @apply text-s-14; }
+.repo-stat-label { @apply order-3 mt-auto text-s-12 text-s-grey-600; }
+.repo-profile, .repo-readme-column { min-width: 0; }
+/* Match the home page's centered profile and independently scrolling README. */
+@media (min-width: 960px) {
+  .repo-shell--detail { width: 816px; max-width: none; }
+  .repo-shell--detail #repo-scroll { overflow: hidden; padding: 0; }
+  .repo-shell--detail #repo-content {
+    height: 100%; min-height: 0; flex-direction: row; gap: 24px; padding: 16px;
+  }
+  .repo-shell--detail .repo-profile {
+    display: flex; flex-direction: column; width: 280px; min-height: 0; flex-shrink: 0; overflow-y: auto;
+  }
+  .repo-shell--detail .repo-profile > .repo-summary {
+    width: 100%; flex-shrink: 0; margin-block: auto; text-align: right;
+  }
+  .repo-shell--detail .repo-readme-column {
+    display: flex; flex-direction: column; width: 480px; min-height: 0; flex-shrink: 0;
+    overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px;
+  }
+  .repo-shell--detail .repo-readme-body { flex-shrink: 0; margin-block: auto; }
+}
 .repo-external { @apply text-s-14 text-s-blue-300 underline underline-offset-2; }
 .markdown-table { max-width: 100%; overflow-x: auto; }
 .markdown-s .markdown-table table { width: max-content; min-width: 100%; }

@@ -4,6 +4,7 @@ const content = document.getElementById('repo-content');
 const categories = document.getElementById('repo-categories');
 const scroll = document.getElementById('repo-scroll');
 const back = document.getElementById('repo-back');
+const shell = document.querySelector('.repo-shell');
 const positions = new Map();
 const details = new Map();
 let indexPromise;
@@ -50,6 +51,7 @@ function loadDetail(fullName) {
   return details.get(fullName);
 }
 function message(title, description, retry = false, returnUrl) {
+  shell.classList.remove('repo-shell--detail');
   const box = element('div', 'repo-state');
   box.append(element('p', 'text-s-16 font-bold text-s-grey-800', title), element('p', 'text-s-14 text-s-text-desc', description));
   if (retry) {
@@ -142,16 +144,29 @@ function showDetail(repo) {
   const card = element('article', 'repo-summary');
   card.append(element('h1', 'text-s-18 font-bold text-s-blue-300', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
   const meta = element('dl', 'repo-meta');
-  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '未声明许可证'], ['Commits', String(repo.commitCount)], ['默认分支', repo.defaultBranch || '暂无默认分支']];
-  for (const [label, value] of entries) meta.append(element('dt', 'text-s-text-desc', label), element('dd', 'text-s-grey-800', value));
+  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '未声明许可证', 'balance'], ['Commits', String(repo.commitCount), 'commit'], ['默认分支', repo.defaultBranch || '暂无默认分支', 'account_tree']];
+  for (const [label, value, glyph] of entries) {
+    const item = element('div', 'repo-stat');
+    const term = element('dt', 'repo-stat-label', label);
+    const description = element('dd', 'repo-stat-value', value);
+    description.title = value;
+    if (value.length > 6) description.classList.add('repo-stat-value--long');
+    item.append(term, icon(glyph), description);
+    meta.append(item);
+  }
   card.append(meta);
   const github = element('a', 'repo-external', '在 GitHub 查看');
   github.href = `https://github.com/${repo.fullName}`;
   github.target = '_blank';
   github.rel = 'noopener noreferrer';
   card.append(github);
-  const readme = element('div', 'flex min-w-0 flex-col gap-3');
-  content.replaceChildren(card, readme);
+  const profile = element('div', 'repo-profile');
+  profile.append(card);
+  const readmeColumn = element('div', 'repo-readme-column');
+  const readme = element('div', 'repo-readme-body flex min-w-0 flex-col gap-3');
+  readmeColumn.append(readme);
+  content.replaceChildren(profile, readmeColumn);
+  shell.classList.add('repo-shell--detail');
   if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref });
   else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', '暂无自述文件'));
   scroll.scrollTop = 0;
