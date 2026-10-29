@@ -159,13 +159,12 @@ function showDetail(repo) {
   const card = element('article', 'repo-summary');
   card.append(element('h1', 'text-s-18 font-bold text-s-blue-300', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
   const meta = element('dl', 'repo-meta');
-  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '未声明许可证', 'balance'], ['Commits', String(repo.commitCount), 'commit'], ['默认分支', repo.defaultBranch || '暂无默认分支', 'account_tree']];
+  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '保留所有权利', 'balance'], ['Commits', String(repo.commitCount), 'commit'], ['默认分支', repo.defaultBranch || '暂无默认分支', 'account_tree']];
   for (const [label, value, glyph] of entries) {
     const item = element('div', 'repo-stat');
     const term = element('dt', 'repo-stat-label', label);
     const description = element('dd', 'repo-stat-value', value);
     description.title = value;
-    if (value.length > 6) description.classList.add('repo-stat-value--long');
     item.append(term, icon(glyph), description);
     meta.append(item);
   }

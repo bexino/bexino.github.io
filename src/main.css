@@ -336,7 +336,6 @@
 .repo-stat:last-child { border-right: 0; }
 .repo-stat > .md-icon { @apply order-1 h-5 w-5 shrink-0 text-s-blue-300; }
 .repo-stat-value { @apply order-2 whitespace-nowrap text-s-18 font-bold leading-tight text-s-grey-900; overflow-wrap: normal; }
-.repo-stat-value--long { @apply text-s-14; }
 .repo-stat-label { @apply order-3 mt-auto text-s-12 text-s-grey-600; }
 .repo-profile, .repo-readme-column { min-width: 0; }
 .repo-profile > .repo-summary { overflow-x: auto; }
