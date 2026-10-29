@@ -1,5 +1,6 @@
 // 抓取主页所需的 GitHub 数据到 public/cache/：
 //   - github-user.json：个人资料（含 fetchedAt）
+//   - avatar-<内容指纹>.webp：压缩后的 128×128 头像
 //   - readme-zh.md：README.zh-CN.md 原文（首行插入 fetchedAt 注释）
 //   - badges/*.svg：README 里 ghstats.dev 徽章的本地副本
 //
@@ -13,6 +14,7 @@ import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, 'public', 'cache');
@@ -146,13 +148,27 @@ async function fetchBadge(url) {
 }
 
 async function main() {
-  // 每次全量重建：删除上次的资料、README 和所有徽章，失败也不回用旧数据。
+  // 每次全量重建：删除上次的资料、头像、README 和所有徽章，失败也不回用旧数据。
   await rm(CACHE_DIR, { recursive: true, force: true });
   await mkdir(BADGE_DIR, { recursive: true });
   const fetchedAt = new Date().toISOString();
 
   // 1. 个人资料
   const user = JSON.parse(await get(USER_API, { headers: ghHeaders() }));
+  // 64 CSS px 的头像保留两倍像素；下载时也限制尺寸，减少原图传输。
+  // 每次主动刷新上游，产物按内容命名，换头像后不会命中浏览器里的旧副本。
+  const avatarUrl = new URL(user.avatar_url);
+  avatarUrl.searchParams.set('s', '256');
+  avatarUrl.searchParams.set('_refresh', fetchedAt);
+  const originalAvatar = await get(avatarUrl.href, { raw: true });
+  const avatar = await sharp(originalAvatar)
+    .rotate()
+    .resize(128, 128, { fit: 'cover' })
+    .webp({ quality: 80, effort: 6 })
+    .toBuffer();
+  const avatarName = `avatar-${createHash('sha256').update(avatar).digest('hex').slice(0, 16)}.webp`;
+  await writeFile(join(CACHE_DIR, avatarName), avatar);
+  console.log(`✓ ${avatarName}  128×128  ${originalAvatar.length} → ${avatar.length} bytes`);
   await writeFile(
     join(CACHE_DIR, 'github-user.json'),
     `${JSON.stringify(
@@ -161,7 +177,7 @@ async function main() {
         profile: {
           login: user.login,
           name: user.name,
-          avatar_url: user.avatar_url,
+          avatar_url: `./cache/${avatarName}`,
           bio: user.bio,
         },
       },

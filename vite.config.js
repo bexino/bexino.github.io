@@ -10,6 +10,7 @@ const ICONS = [
   'home',
   'folder',
   'person',
+  'settings',
 ];
 
 const OUT = 'public/icons-sprite.svg';

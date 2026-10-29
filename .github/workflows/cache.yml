@@ -25,7 +25,10 @@ jobs:
         with:
           node-version: 20
 
-      # 先清空 public/cache/，再抓取本次的个人资料 / README / ghstats 徽章副本
+      - name: Install dependencies
+        run: npm ci
+
+      # 先清空 public/cache/，再抓取本次的个人资料 / 压缩头像 / README / ghstats 徽章副本
       # 徽章副本存在的原因：ghstats.dev 在部分网络不可达，由本 Action（海外 runner）代抓并托管到本站
       - name: Fetch homepage data
         env:

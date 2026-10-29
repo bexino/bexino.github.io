@@ -4,7 +4,7 @@ import { marked } from 'marked';
 const TITLES = {
   home: '主页',
   repo: '仓库',
-  me: '我的',
+  me: '设置',
 };
 
 function parseHash() {
@@ -86,11 +86,17 @@ function renderProfile(p) {
   document.getElementById('gh-bio').textContent = p.bio || '';
   const img = document.getElementById('gh-avatar');
   const fallback = document.getElementById('gh-avatar-fallback');
+  img.onload = () => {
+    img.hidden = false;
+    fallback.classList.add('hidden');
+  };
+  img.onerror = () => {
+    img.hidden = true;
+    fallback.classList.remove('hidden');
+  };
   if (p.avatar_url) {
     img.src = p.avatar_url;
     img.alt = p.name || p.login || '';
-    img.hidden = false;
-    fallback.hidden = true;
   }
 }
 
@@ -176,7 +182,31 @@ function renderReadme(md, mode) {
   const cleaned = md.replace(/^<!--\s*fetchedAt:.*?-->\s*/, '');
   const html = marked.parse(cleaned, { breaks: false, gfm: true });
   const body = document.getElementById('readme-body');
-  body.innerHTML = html;
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  const cards = document.createDocumentFragment();
+  let card;
+  const startCard = () => {
+    card = document.createElement('article');
+    card.className = 'markdown-s min-w-0 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 text-s-14 leading-relaxed text-black shadow-s-card';
+  };
+  const finishCard = () => {
+    if (Array.from(card.childNodes).some((node) => node.nodeType === Node.ELEMENT_NODE || node.textContent.trim())) {
+      cards.append(card);
+    }
+  };
+  startCard();
+  // 只按顶层分割线拆卡，保留引用、列表、代码块与 HTML 内部结构。
+  for (const node of Array.from(template.content.childNodes)) {
+    if (node.nodeName === 'HR') {
+      finishCard();
+      startCard();
+    } else {
+      card.append(node);
+    }
+  }
+  finishCard();
+  body.replaceChildren(cards);
   const badgeVersion = Date.now();
   body.querySelectorAll('img[src]').forEach((img) => {
     if (mode !== 'cdn') {
@@ -228,9 +258,11 @@ async function loadHomeData(mode = 'cache') {
   document.getElementById('gh-login').textContent = '';
   document.getElementById('gh-bio').textContent = '';
   const avatar = document.getElementById('gh-avatar');
+  avatar.onload = null;
+  avatar.onerror = null;
   avatar.hidden = true;
   avatar.removeAttribute('src');
-  document.getElementById('gh-avatar-fallback').hidden = false;
+  document.getElementById('gh-avatar-fallback').classList.remove('hidden');
   document.getElementById('readme-body').replaceChildren();
 
   if (profileText) {

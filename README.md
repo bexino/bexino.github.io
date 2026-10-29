@@ -21,21 +21,24 @@ npm run preview  # 预览构建产物
 
 ### 本地拉取主页信息
 
-需要 Node.js 20.19+ 或 22.12+。在本仓库目录执行（脚本本身不依赖 npm 包）：
+需要 Node.js 20.19+ 或 22.12+。在本仓库目录执行：
 
 ```bash
+npm ci
 npm run fetch-home-data
 npm run dev
 ```
 
-脚本拉取 GitHub 用户资料、`bexino/bexino` 的 `main/README.zh-CN.md` 和其中的
-ghstats mini 徽章，写入 `public/cache/`，日志显示来源、README blob SHA 与徽章成功数。
+脚本拉取 GitHub 用户资料、头像、`bexino/bexino` 的 `main/README.zh-CN.md` 和其中的
+ghstats mini 徽章，写入 `public/cache/`，日志显示来源、头像压缩前后大小、README blob SHA 与徽章成功数。
+头像通过 sharp 自动裁切、缩放并压缩为 128×128 WebP，适配页面 64px 头像的两倍像素显示。
+缓存资料中的头像地址指向本站文件，文件名含内容指纹，头像变化后会使用新地址。
 优先读取 GitHub Contents API，失败后依次尝试 raw 和 CDN 镜像；CDN 可能有更新延迟。
 可通过环境变量 `GITHUB_TOKEN` 或 `GH_TOKEN` 提高 API 请求额度，令牌只发送给 GitHub API。
 每次运行会先清空旧缓存，拉取失败也不会恢复旧文件；请先确认本机可以访问 GitHub。
 
 网站只展示中文 README，更新英文 `README.md` 不会改变中文简介。
-浏览器优先读取远程镜像，本地文件仅作为失败回退，因此拉取后页面仍可能显示镜像缓存。
+浏览器默认读取本站缓存；切换到 CDN 模式时使用远程资料和原始 GitHub 头像。
 ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 mini 徽章缓存范围内。
 
 本地拉取不会更新线上网站。确认结果后提交并推送本仓库的 `public/cache/`，触发部署。
@@ -43,7 +46,7 @@ ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 
 也可在本网站仓库 Actions 中手动运行 **Cache homepage data**。
 
 主页数据由 `.github/workflows/cache.yml` 定时或手动拉取。每次执行先删除
-`public/cache/` 中的全部旧数据，再写入本次成功获取的资料、README 和徽章，
+`public/cache/` 中的全部旧数据，再写入本次成功获取的资料、压缩头像、README 和徽章，
 不会合并或回用旧文件。拉取失败也会提交清理结果，并保留 Action 的失败状态。
 
 ### GitHub Pages（自动）
