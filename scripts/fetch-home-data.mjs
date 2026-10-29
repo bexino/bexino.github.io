@@ -9,7 +9,7 @@
 //
 // 用法：node scripts/fetch-home-data.mjs
 
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -134,6 +134,8 @@ async function fetchBadge(url) {
 }
 
 async function main() {
+  // 每次全量重建：删除上次的资料、README 和所有徽章，失败也不回用旧数据。
+  await rm(CACHE_DIR, { recursive: true, force: true });
   await mkdir(BADGE_DIR, { recursive: true });
   const fetchedAt = new Date().toISOString();
 

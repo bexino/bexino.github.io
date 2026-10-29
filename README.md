@@ -19,6 +19,10 @@ npm run preview  # 预览构建产物
 
 ## 部署
 
+主页数据由 `.github/workflows/cache.yml` 定时或手动拉取。每次执行先删除
+`public/cache/` 中的全部旧数据，再写入本次成功获取的资料、README 和徽章，
+不会合并或回用旧文件。拉取失败也会提交清理结果，并保留 Action 的失败状态。
+
 ### GitHub Pages（自动）
 
 推送到 `main` 即触发 `.github/workflows/deploy.yml`。首次使用需在仓库 **Settings → Pages → Source** 选择 **GitHub Actions**。
