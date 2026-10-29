@@ -1,6 +1,16 @@
 {
-  "fetchedAt": "2026-10-29T12:16:38.834Z",
+  "fetchedAt": "2026-10-29T13:54:55.652Z",
   "categories": [
+    {
+      "id": "UL_kwDOBawuZ84Ai3-g",
+      "name": "Web & Agent",
+      "slug": "web-agent",
+      "repositories": [
+        "bexino/siss",
+        "bexino/prompt",
+        "bexino/bexino.github.io"
+      ]
+    },
     {
       "id": "UL_kwDOBawuZ84Ai3-Y",
       "name": "For Windows",
@@ -29,18 +39,24 @@
         "bexino/oh-my-rime-config",
         "bexino/qqmusic-linux-fix"
       ]
-    },
-    {
-      "id": "UL_kwDOBawuZ84Ai3-g",
-      "name": "Web & Agent",
-      "slug": "web-agent",
-      "repositories": [
-        "bexino/siss",
-        "bexino/prompt"
-      ]
     }
   ],
   "repositories": {
+    "bexino/siss": {
+      "name": "siss",
+      "fullName": "bexino/siss",
+      "description": "值日分配系统。"
+    },
+    "bexino/prompt": {
+      "name": "prompt",
+      "fullName": "bexino/prompt",
+      "description": "静态提示词浏览站点。"
+    },
+    "bexino/bexino.github.io": {
+      "name": "bexino.github.io",
+      "fullName": "bexino/bexino.github.io",
+      "description": null
+    },
     "bexino/userdata-changer": {
       "name": "userdata-changer",
       "fullName": "bexino/userdata-changer",
@@ -80,16 +96,6 @@
       "name": "qqmusic-linux-fix",
       "fullName": "bexino/qqmusic-linux-fix",
       "description": "修复 Flatpak 版 QQ 音乐显示问题。"
-    },
-    "bexino/siss": {
-      "name": "siss",
-      "fullName": "bexino/siss",
-      "description": "值日分配系统。"
-    },
-    "bexino/prompt": {
-      "name": "prompt",
-      "fullName": "bexino/prompt",
-      "description": "静态提示词浏览站点。"
     }
   }
 }
