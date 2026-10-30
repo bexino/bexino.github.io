@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-30T03:18:06.898Z",
+  "fetchedAt": "2026-10-30T05:38:40.660Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -13,8 +13,8 @@
     },
     {
       "id": "UL_kwDOBawuZ84Ai3-Y",
-      "name": "For Windows",
-      "slug": "for-windows",
+      "name": "Windows",
+      "slug": "windows",
       "repositories": [
         "bexino/userdata-changer",
         "bexino/FTP-Silver",
@@ -32,8 +32,8 @@
     },
     {
       "id": "UL_kwDOBawuZ84Ai3-a",
-      "name": "For Linux",
-      "slug": "for-linux",
+      "name": "Linux",
+      "slug": "linux",
       "repositories": [
         "bexino/magicbook14_fixed",
         "bexino/oh-my-rime-config",
