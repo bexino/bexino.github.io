@@ -92,12 +92,14 @@ npm run dev
 
 - `index.json`：`fetchedAt`、`categories`（id/name/slug/repositories）以及按 `owner/repo`
   索引的 `repositories` 摘要（name/fullName/description）。
-- `<owner>/<repo>.json`：抓取时间、仓库资料、许可证、默认分支、该分支累计提交数，
+- `<owner>/<repo>.json`：抓取时间、仓库资料、Website（`homepageUrl`）、许可证、默认分支、该分支累计提交数，
   以及 README 的 path/ref/markdown。相同仓库跨分类只保存一次详情。
 
 部署后的 `./cache/repos/index.json` 和详情 JSON 是公开只读静态数据接口。
 分类索引完整加载后才展示列表，详情按需加载；仓库页始终使用本站缓存，不受主页的
 缓存/CDN 设置影响。所有时间都是快照时间，页面不实时请求 GitHub。
+详情页提供“目录”和“GitHub”按钮；缓存中存在有效的 HTTP/HTTPS Website 时，额外显示
+带地球图标的“在线体验”按钮，在新标签页打开该地址。旧缓存需重新抓取后才会包含 Website。
 
 README 优先读取 `README.zh-CN.md`，依次检查根目录、`docs/`、`.github/`；缺少中文时，
 按相同目录顺序查找默认 README（支持 `.md`、`.markdown` 和无扩展名）。文件名匹配

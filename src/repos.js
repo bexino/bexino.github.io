@@ -180,13 +180,23 @@ function showDetail(repo) {
   const action = element('div', 'repo-action');
   const outline = element('button', 'repo-outline-trigger repo-github');
   outline.type = 'button';
-  outline.append(icon('format_list_bulleted'), element('span', '', '自述文件大纲'));
+  outline.append(icon('format_list_bulleted'), element('span', '', '目录'));
   const github = element('a', 'repo-github');
-  github.append(icon('open_in_new'), element('span', '', '在 GitHub 中查看'));
+  github.append(icon('github'), element('span', '', 'GitHub'));
   github.href = `https://github.com/${repo.fullName}`;
   github.target = '_blank';
   github.rel = 'noopener noreferrer';
   action.append(outline, github);
+  let website;
+  try { website = new URL(repo.homepageUrl); } catch { /* Missing or invalid Website. */ }
+  if (website && ['https:', 'http:'].includes(website.protocol)) {
+    const demo = element('a', 'repo-github');
+    demo.append(icon('public'), element('span', '', '在线体验'));
+    demo.href = website.href;
+    demo.target = '_blank';
+    demo.rel = 'noopener noreferrer';
+    action.append(demo);
+  }
   metaCard.append(metaTitle, meta, action);
   const profile = element('div', 'repo-profile');
   profile.append(card, metaCard);

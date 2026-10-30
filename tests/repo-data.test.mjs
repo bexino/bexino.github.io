@@ -51,17 +51,22 @@ test('empty repositories have zero commits and no README tree request', async ()
   assert.equal(result.commitCount, 0);
   assert.equal(result.readme, null);
   assert.equal(result.license, null);
+  assert.equal(result.homepageUrl, null);
 });
 
 test('README and metadata use one pinned default-branch revision', async () => {
   const calls = [];
   const result = await fetchDetail('owner/app', async (query, variables) => {
     calls.push(variables);
-    if (query.includes('licenseInfo')) return { repository: { name: 'app', nameWithOwner: 'owner/app', defaultBranchRef: { name: 'main', target: { oid: 'abc', history: { totalCount: 42 } } } } };
+    if (query.includes('licenseInfo')) {
+      assert.match(query, /\bhomepageUrl\b/);
+      return { repository: { name: 'app', nameWithOwner: 'owner/app', homepageUrl: 'https://example.com/', defaultBranchRef: { name: 'main', target: { oid: 'abc', history: { totalCount: 42 } } } } };
+    }
     if (query.includes('$root:')) return { repository: { root: { entries: [{ name: 'README.md', type: 'blob' }] }, docs: { entries: [{ name: 'README.zh-CN.md', type: 'blob' }] } } };
     return { repository: { object: { text: '# 中文', isBinary: false } } };
   });
   assert.equal(result.commitCount, 42);
+  assert.equal(result.homepageUrl, 'https://example.com/');
   assert.deepEqual(result.readme, { path: 'docs/README.zh-CN.md', ref: 'abc', markdown: '# 中文' });
   assert.equal(calls[2].expression, 'abc:docs/README.zh-CN.md');
 });
