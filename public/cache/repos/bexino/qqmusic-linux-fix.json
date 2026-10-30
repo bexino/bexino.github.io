@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "qqmusic-linux-fix",
   "fullName": "bexino/qqmusic-linux-fix",
   "description": "修复 Flatpak 版 QQ 音乐显示问题。",
   "url": "https://github.com/bexino/qqmusic-linux-fix",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

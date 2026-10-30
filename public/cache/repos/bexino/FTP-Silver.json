@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "FTP-Silver",
   "fullName": "bexino/FTP-Silver",
   "description": "A lightweight tool to easily start an FTP server.",
   "url": "https://github.com/bexino/FTP-Silver",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "napa-pdf",
   "fullName": "bexino/napa-pdf",
   "description": "Add file names to PDF headers in batches.",
   "url": "https://github.com/bexino/napa-pdf",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "prompt",
   "fullName": "bexino/prompt",
   "description": "静态提示词浏览站点。",
   "url": "https://github.com/bexino/prompt",
+  "homepageUrl": "https://bexino.github.io/prompt/",
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

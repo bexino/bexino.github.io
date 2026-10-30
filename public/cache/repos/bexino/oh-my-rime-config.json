@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "oh-my-rime-config",
   "fullName": "bexino/oh-my-rime-config",
   "description": "Linux 输入法解决方案。",
   "url": "https://github.com/bexino/oh-my-rime-config",
+  "homepageUrl": null,
   "license": {
     "name": "GNU Affero General Public License v3.0",
     "spdxId": "AGPL-3.0",

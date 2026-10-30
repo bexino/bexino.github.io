@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "magicbook14_fixed",
   "fullName": "bexino/magicbook14_fixed",
   "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux.",
   "url": "https://github.com/bexino/magicbook14_fixed",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

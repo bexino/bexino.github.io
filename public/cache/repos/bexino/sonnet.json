@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "sonnet",
   "fullName": "bexino/sonnet",
   "description": "Claude Typora theme.",
   "url": "https://github.com/bexino/sonnet",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

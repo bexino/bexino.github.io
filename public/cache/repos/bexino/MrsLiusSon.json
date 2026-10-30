@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "MrsLiusSon",
   "fullName": "bexino/MrsLiusSon",
   "description": "Adds Markdown to the Windows right-click New menu.",
   "url": "https://github.com/bexino/MrsLiusSon",
+  "homepageUrl": null,
   "license": {
     "name": "GNU Affero General Public License v3.0",
     "spdxId": "AGPL-3.0",

@@ -1,9 +1,10 @@
 {
-  "fetchedAt": "2026-10-30T05:38:40.660Z",
+  "fetchedAt": "2026-10-30T05:57:42.920Z",
   "name": "userdata-changer",
   "fullName": "bexino/userdata-changer",
   "description": "Migrates Chrome user data off C: via mlink junction, lossless.",
   "url": "https://github.com/bexino/userdata-changer",
+  "homepageUrl": null,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",
