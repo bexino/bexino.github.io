@@ -5,6 +5,7 @@
   "description": "Claude Typora theme.",
   "url": "https://github.com/bexino/sonnet",
   "homepageUrl": null,
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

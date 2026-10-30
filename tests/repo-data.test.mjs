@@ -52,6 +52,17 @@ test('empty repositories have zero commits and no README tree request', async ()
   assert.equal(result.readme, null);
   assert.equal(result.license, null);
   assert.equal(result.homepageUrl, null);
+  assert.equal(result.hasReleases, false);
+});
+
+test('release detection handles no releases, one release, and multiple releases without a default branch', async () => {
+  for (const totalCount of [0, 1, 3]) {
+    const result = await fetchDetail('owner/app', async query => {
+      assert.match(query, /releases\(first:1\)\{totalCount\}/);
+      return { repository: { name: 'app', nameWithOwner: 'owner/app', releases: { totalCount }, defaultBranchRef: null } };
+    });
+    assert.equal(result.hasReleases, totalCount > 0);
+  }
 });
 
 test('README and metadata use one pinned default-branch revision', async () => {

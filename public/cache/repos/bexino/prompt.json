@@ -5,6 +5,7 @@
   "description": "静态提示词浏览站点。",
   "url": "https://github.com/bexino/prompt",
   "homepageUrl": "https://bexino.github.io/prompt/",
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

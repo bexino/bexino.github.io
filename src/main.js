@@ -5,9 +5,10 @@ import './theme.js';
 import { renderMarkdown } from './markdown.js';
 import { renderRepos, leaveRepos } from './repos.js';
 import { isReadme, parseProfile } from './home-data.js';
+import { dataSource } from './github-data.js';
 
 const TITLES = {
-  home: '主页',
+  home: '',
   repo: '',
   me: '设置',
 };
@@ -44,6 +45,8 @@ function apply() {
   });
 
   document.getElementById('appbar-title').textContent = t(TITLES[tab]);
+  document.getElementById('appbar-title').hidden = tab === 'home';
+  document.getElementById('language-control').hidden = tab !== 'home';
   document.getElementById('repo-back').hidden = true;
   document.getElementById('repo-categories').hidden = true;
   if (tab === 'repo') renderRepos();
@@ -53,7 +56,7 @@ window.addEventListener('hashchange', apply);
 translatePage();
 apply();
 
-// ── 主页数据加载：CDN 与 Actions 缓存互相独立，默认使用缓存 ──
+// ── 主页数据加载：缓存、CDN、GitHub 直连互相独立，默认使用缓存 ──
 const GH_USER_API = 'https://api.github.com/users/bexino';
 const readmePath = () => getLanguage() === 'en' ? 'README.md' : 'README.zh-CN.md';
 const readmeMirrors = () => [
@@ -222,7 +225,10 @@ async function loadHomeData(mode = 'cache') {
   document.getElementById('home-content').setAttribute('aria-busy', 'true');
 
   const deadline = Date.now() + LOAD_TIMEOUT_MS;
-  const [profileText, readmeText] = await Promise.all(mode === 'cdn' ? [
+  const [profileText, readmeText] = await Promise.all(mode === 'direct' ? [
+    fetchWithTimeout(GH_USER_API, LOAD_TIMEOUT_MS),
+    fetchWithTimeout(`https://api.github.com/repos/bexino/bexino/contents/${readmePath()}?ref=main`, LOAD_TIMEOUT_MS, { Accept: 'application/vnd.github.raw+json' }),
+  ] : mode === 'cdn' ? [
     fetchFirst([GH_USER_API], deadline),
     fetchFirst(readmeMirrors(), deadline),
   ] : [
@@ -273,19 +279,20 @@ const sourceControl = document.getElementById('home-data-source');
 let homeSource;
 
 function syncHomeSource() {
-  const mode = new URL(location.href).searchParams.get('source') === 'cdn' ? 'cdn' : 'cache';
+  const mode = dataSource();
   sourceControl.querySelectorAll('input[name="data-source"]').forEach((input) => {
     input.checked = input.value === mode;
   });
   if (mode === homeSource) return;
   homeSource = mode;
   loadHomeData(mode);
+  if (parseHash() === 'repo') renderRepos();
 }
 
 sourceControl.addEventListener('change', (event) => {
   if (event.target.matches('input[name="data-source"]')) {
     const url = new URL(location.href);
-    if (event.target.value === 'cdn') url.searchParams.set('source', 'cdn');
+    if (event.target.value !== 'cache') url.searchParams.set('source', event.target.value);
     else url.searchParams.delete('source');
     history.pushState(null, '', url);
     syncHomeSource();

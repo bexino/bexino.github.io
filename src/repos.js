@@ -1,6 +1,7 @@
 import { t, getLanguage } from './i18n.js';
 import { renderMarkdown } from './markdown.js';
 import { mountRepoOutline } from './repo-outline.js';
+import { dataSource, directSummary, directDetail } from './github-data.js';
 
 const content = document.getElementById('repo-content');
 const categories = document.getElementById('repo-categories');
@@ -63,6 +64,7 @@ function loadIndex() {
   }).catch(error => { indexPromise = null; throw error; });
 }
 function loadDetail(fullName) {
+  if (dataSource() === 'direct') return directDetail(fullName, getLanguage());
   if (!details.has(fullName)) {
     details.set(fullName, loadJson(`${fullName.split('/').map(encodeURIComponent).join('/')}.json`).then(data => {
       if (data.fullName !== fullName || typeof data.name !== 'string') throw new Error(t('详情缓存无效'));
@@ -193,6 +195,14 @@ function showDetail(repo) {
   github.href = `https://github.com/${repo.fullName}`;
   github.hidden = false;
   action.append(outline);
+  if (repo.hasReleases) {
+    const download = element('a', 'repo-github');
+    download.append(icon('download'), element('span', '', t('下载')));
+    download.href = `https://github.com/${repo.fullName}/releases`;
+    download.target = '_blank';
+    download.rel = 'noopener noreferrer';
+    action.append(download);
+  }
   let website;
   try { website = new URL(repo.homepageUrl); } catch { /* Missing or invalid Website. */ }
   if (website && ['https:', 'http:'].includes(website.protocol)) {
@@ -241,7 +251,8 @@ export async function renderRepos() {
     back.hidden = false;
     back.href = categoryUrl(slug);
   }
-  message(t('加载中…'), t('正在读取仓库缓存'));
+  const direct = dataSource() === 'direct';
+  message(t('加载中…'), t(direct ? '正在连接 GitHub' : '正在读取仓库缓存'));
   try {
     const data = await loadIndex();
     if (id !== generation) return;
@@ -263,7 +274,11 @@ export async function renderRepos() {
     }
     if (!isDetail) {
       renderCategories(data, slug);
-      showList(data, category);
+      // GitHub Lists have no unauthenticated public endpoint; only membership
+      // comes from the index cache. Fetch displayed metadata directly.
+      const repositories = direct ? Object.fromEntries(await Promise.all(category.repositories.map(async fullName => [fullName, await directSummary(fullName)]))) : data.repositories;
+      if (id !== generation) return;
+      showList({ ...data, repositories }, category);
       return;
     }
     const fullName = `${owner}/${name}`;
@@ -276,7 +291,7 @@ export async function renderRepos() {
     document.getElementById('appbar-title').textContent = repo.name;
     showDetail(repo);
   } catch {
-    if (id === generation) message(t('暂时无法加载'), t('仓库缓存尚未生成或读取失败，请稍后重试。'), true, isDetail ? categoryUrl(slug) : undefined);
+    if (id === generation) message(t('暂时无法加载'), t(direct ? 'GitHub 请求失败或已达到访问频率限制，请稍后重试。' : '仓库缓存尚未生成或读取失败，请稍后重试。'), true, isDetail ? categoryUrl(slug) : undefined);
   } finally {
     if (id === generation) content.setAttribute('aria-busy', 'false');
   }

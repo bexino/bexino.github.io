@@ -5,6 +5,7 @@
   "description": "Adds Markdown to the Windows right-click New menu.",
   "url": "https://github.com/bexino/MrsLiusSon",
   "homepageUrl": null,
+  "hasReleases": true,
   "license": {
     "name": "GNU Affero General Public License v3.0",
     "spdxId": "AGPL-3.0",

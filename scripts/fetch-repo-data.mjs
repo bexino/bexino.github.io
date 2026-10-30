@@ -58,7 +58,7 @@ export async function collectRepos(run) {
 
 export async function fetchDetail(fullName, run) {
   const [owner, name] = fullName.split('/');
-  const data = await run(`query($owner:String!,$name:String!){repository(owner:$owner,name:$name){name nameWithOwner description url homepageUrl isPrivate licenseInfo{name spdxId url} defaultBranchRef{name target{... on Commit{oid history{totalCount}}}}}}`, { owner, name });
+  const data = await run(`query($owner:String!,$name:String!){repository(owner:$owner,name:$name){name nameWithOwner description url homepageUrl isPrivate releases(first:1){totalCount} licenseInfo{name spdxId url} defaultBranchRef{name target{... on Commit{oid history{totalCount}}}}}}`, { owner, name });
   const repo = data.repository;
   if (!repo || repo.isPrivate) throw new Error(`Repository unavailable: ${fullName}`);
   const ref = repo.defaultBranchRef?.target?.oid;
@@ -85,7 +85,7 @@ export async function fetchDetail(fullName, run) {
     if (!blob || blob.isBinary || typeof blob.text !== 'string') throw new Error(`README unavailable: ${fullName}/${englishPath}`);
     readmeEn = { path: englishPath, ref, markdown: blob.text };
   }
-  return { name: repo.name, fullName: repo.nameWithOwner, description: repo.description, url: repo.url, homepageUrl: repo.homepageUrl || null, license: repo.licenseInfo, defaultBranch: repo.defaultBranchRef?.name || null, commitCount: repo.defaultBranchRef?.target?.history?.totalCount ?? 0, readme, readmeEn };
+  return { name: repo.name, fullName: repo.nameWithOwner, description: repo.description, url: repo.url, homepageUrl: repo.homepageUrl || null, hasReleases: (repo.releases?.totalCount ?? 0) > 0, license: repo.licenseInfo, defaultBranch: repo.defaultBranchRef?.name || null, commitCount: repo.defaultBranchRef?.target?.history?.totalCount ?? 0, readme, readmeEn };
 }
 
 export async function main({ token = process.env.GH_TOKEN, output = OUTPUT, run } = {}) {

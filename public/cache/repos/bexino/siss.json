@@ -5,6 +5,7 @@
   "description": "值日分配系统。",
   "url": "https://github.com/bexino/siss",
   "homepageUrl": "https://bexino.github.io/siss/",
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

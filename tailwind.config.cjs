@@ -1,4 +1,5 @@
 const smartisanPreset = require('./tailwind.preset.cjs');
+const siteFontFamily = ['Google Sans Flex', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', 'Source Han Sans SC', 'sans-serif'];
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -7,7 +8,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        s: ['Google Sans Flex', 'Smartisan Compact', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'sans-serif'],
+        s: siteFontFamily,
+        sans: siteFontFamily,
+        mono: siteFontFamily,
       },
     },
   },

@@ -5,6 +5,7 @@
   "description": "Personal Homepage.",
   "url": "https://github.com/bexino/bexino.github.io",
   "homepageUrl": "https://bexino.github.io/",
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

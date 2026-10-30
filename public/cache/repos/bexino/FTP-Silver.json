@@ -5,6 +5,7 @@
   "description": "A lightweight tool to easily start an FTP server.",
   "url": "https://github.com/bexino/FTP-Silver",
   "homepageUrl": null,
+  "hasReleases": true,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

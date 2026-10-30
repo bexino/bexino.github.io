@@ -5,6 +5,7 @@
   "description": "Migrates Chrome user data off C: via mlink junction, lossless.",
   "url": "https://github.com/bexino/userdata-changer",
   "homepageUrl": null,
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

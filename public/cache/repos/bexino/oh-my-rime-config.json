@@ -5,6 +5,7 @@
   "description": "Linux 输入法解决方案。",
   "url": "https://github.com/bexino/oh-my-rime-config",
   "homepageUrl": null,
+  "hasReleases": false,
   "license": {
     "name": "GNU Affero General Public License v3.0",
     "spdxId": "AGPL-3.0",

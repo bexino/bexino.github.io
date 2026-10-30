@@ -5,6 +5,7 @@
   "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux.",
   "url": "https://github.com/bexino/magicbook14_fixed",
   "homepageUrl": null,
+  "hasReleases": false,
   "license": {
     "name": "Apache License 2.0",
     "spdxId": "Apache-2.0",

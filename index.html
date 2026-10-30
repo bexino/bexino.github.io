@@ -19,6 +19,16 @@
         <span class="flex-1"><a id="repo-back" class="repo-back" href="#/repo/web-and-agent" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-chevron_left"/></svg><span data-i18n="返回">返回</span></a></span>
         <div id="repo-categories" class="repo-categories" hidden></div>
         <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
+        <fieldset id="language-control" class="source-switch home-language-tabs" aria-label="语言" data-i18n-label="语言" hidden>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="language" value="zh-CN" checked />
+            <span class="source-switch-option" lang="zh-CN">简体中文</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="language" value="en" />
+            <span class="source-switch-option" lang="en">English</span>
+          </label>
+        </fieldset>
         <span class="flex-1"><a id="repo-github-link" class="repo-appbar-github" target="_blank" rel="noopener noreferrer" aria-label="访问 GitHub 仓库（新窗口）" data-i18n-label="访问 GitHub 仓库（新窗口）" title="访问 GitHub" data-i18n-title="访问 GitHub" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-github"/></svg></a></span>
         </div>
       </header>
@@ -73,19 +83,6 @@
         <section data-tab="me" class="absolute inset-0 hidden overflow-y-auto">
           <div class="mx-auto flex max-w-s-screen flex-col gap-3 p-4">
             <div class="flex flex-wrap items-center justify-between gap-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
-              <span id="language-heading" class="shrink-0 whitespace-nowrap text-s-16 text-s-text-body" data-i18n="语言">语言</span>
-              <fieldset id="language-control" class="source-switch" aria-labelledby="language-heading">
-                <label class="relative cursor-pointer">
-                  <input class="peer sr-only" type="radio" name="language" value="zh-CN" checked />
-                  <span class="source-switch-option" lang="zh-CN">简体中文</span>
-                </label>
-                <label class="relative cursor-pointer">
-                  <input class="peer sr-only" type="radio" name="language" value="en" />
-                  <span class="source-switch-option" lang="en">English</span>
-                </label>
-              </fieldset>
-            </div>
-            <div class="flex flex-wrap items-center justify-between gap-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
               <span id="theme-heading" class="shrink-0 whitespace-nowrap text-s-16 text-s-text-body" data-i18n="外观">外观</span>
               <fieldset id="theme-control" class="source-switch" aria-labelledby="theme-heading">
                 <label class="relative cursor-pointer">
@@ -112,6 +109,10 @@
                 <label class="relative cursor-pointer">
                   <input class="peer sr-only" type="radio" name="data-source" value="cdn" />
                   <span class="source-switch-option">CDN</span>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="direct" />
+                  <span class="source-switch-option" data-i18n="直连">直连</span>
                 </label>
               </fieldset>
             </div>

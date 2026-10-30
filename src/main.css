@@ -154,6 +154,14 @@ html[lang="en"] #bottom-nav .text-s-nav {
   @apply border-r-0;
 }
 
+/* 主页顶栏语言 Tab：居中对称，沿用 Smartisan 内凹分段选中态。 */
+.home-language-tabs {
+  @apply absolute left-1/2 -translate-x-1/2;
+}
+.home-language-tabs[hidden] { display: none; }
+.home-language-tabs > label { @apply flex-1; }
+.home-language-tabs .source-switch-option { @apply min-w-24; }
+
 /* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
 .home-spinner {
   color: theme('colors.s.blue.300');
@@ -285,10 +293,10 @@ html[lang="en"] #bottom-nav .text-s-nav {
   border-top: 1px solid theme('colors.s.grey.300');
   margin: 1em 0;
 }
-/* 代码块/行内代码：黑体（微软雅黑优先） */
+/* 代码块/行内代码：与全站共用字体栈，Google Sans Flex 优先，中文回退到微软雅黑。 */
 .markdown-s code,
 .markdown-s pre {
-  font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', 'Source Han Sans SC', sans-serif;
+  @apply font-s;
 }
 .markdown-s code {
   background: theme('colors.s.grey.200');
@@ -557,6 +565,12 @@ html[lang="en"] #bottom-nav .text-s-nav {
 .markdown-s .markdown-alert {
   @apply my-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-3 text-s-grey-900 shadow-s-card;
   --alert-color: theme('colors.s.blue.300');
+}
+.markdown-s .markdown-alert ul > li::before {
+  background: theme('colors.s.grey.800');
+}
+.markdown-s .markdown-alert ol > li::marker {
+  color: theme('colors.s.grey.800');
 }
 .markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.alert.tip'); }
 .markdown-s .markdown-alert--important { --alert-color: theme('colors.s.alert.important'); }
