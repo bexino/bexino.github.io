@@ -5,6 +5,7 @@ const content = document.getElementById('repo-content');
 const categories = document.getElementById('repo-categories');
 const scroll = document.getElementById('repo-scroll');
 const back = document.getElementById('repo-back');
+const github = document.getElementById('repo-github-link');
 const shell = document.querySelector('.repo-shell');
 const positions = new Map();
 const details = new Map();
@@ -14,15 +15,20 @@ let currentList = null;
 let selectedRepo = null;
 let clearOutline;
 
-// Keep the app-bar action on the summary card's edge, including intrinsic width changes.
+// Align both app-bar actions with the detail columns, including intrinsic width changes.
 const appbarContent = back.parentElement.parentElement;
-function alignBack() {
+function alignActions() {
   const card = content.querySelector('.repo-profile > .repo-summary');
   if (!card || back.hidden) return;
   const left = card.getBoundingClientRect().left - appbarContent.getBoundingClientRect().left;
   back.style.setProperty('--repo-back-left', `${left}px`);
+  const readme = content.querySelector('.repo-readme-body');
+  if (readme && !github.hidden) {
+    const right = appbarContent.getBoundingClientRect().right - readme.getBoundingClientRect().right;
+    github.style.setProperty('--repo-github-right', `${right}px`);
+  }
 }
-const layoutObserver = new ResizeObserver(alignBack);
+const layoutObserver = new ResizeObserver(alignActions);
 layoutObserver.observe(shell);
 layoutObserver.observe(appbarContent);
 
@@ -85,6 +91,8 @@ function saveList() {
   currentList = null;
 }
 export function leaveRepos() {
+  github.hidden = true;
+  github.removeAttribute('href');
   clearOutline?.();
   clearOutline = null;
   saveList();
@@ -161,7 +169,7 @@ function showDetail(repo) {
   layoutObserver.observe(shell);
   layoutObserver.observe(appbarContent);
   const card = element('article', 'repo-summary');
-  card.append(element('h1', 'repo-summary-title', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
+  card.append(element('h1', 'repo-meta-title', repo.name), element('p', 'repo-summary-description', repo.description || '暂无简介'));
   const metaCard = element('section', 'repo-meta-card');
   const metaTitle = element('h2', 'repo-meta-title', '仓库信息');
   metaTitle.id = 'repo-meta-title';
@@ -181,12 +189,9 @@ function showDetail(repo) {
   const outline = element('button', 'repo-outline-trigger repo-github');
   outline.type = 'button';
   outline.append(icon('format_list_bulleted'), element('span', '', '目录'));
-  const github = element('a', 'repo-github');
-  github.append(icon('github'), element('span', '', 'GitHub'));
   github.href = `https://github.com/${repo.fullName}`;
-  github.target = '_blank';
-  github.rel = 'noopener noreferrer';
-  action.append(outline, github);
+  github.hidden = false;
+  action.append(outline);
   let website;
   try { website = new URL(repo.homepageUrl); } catch { /* Missing or invalid Website. */ }
   if (website && ['https:', 'http:'].includes(website.protocol)) {
@@ -206,7 +211,8 @@ function showDetail(repo) {
   content.replaceChildren(profile, readmeColumn);
   shell.classList.add('repo-shell--detail');
   layoutObserver.observe(card);
-  alignBack();
+  layoutObserver.observe(readme);
+  alignActions();
   if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref, splitAtRules: false });
   else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', '暂无自述文件'));
   scroll.scrollTop = 0;
@@ -214,6 +220,8 @@ function showDetail(repo) {
 }
 
 export async function renderRepos() {
+  github.hidden = true;
+  github.removeAttribute('href');
   clearOutline?.();
   clearOutline = null;
   saveList();

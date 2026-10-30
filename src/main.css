@@ -102,11 +102,14 @@
 
   .home-profile {
     display: flex;
-    width: 280px;
+    width: 312px;
     flex-shrink: 0;
     align-items: flex-start;
     min-height: 0;
     overflow-y: auto;
+    /* 为卡片投影留出绘制空间，负外边距抵消水平留白，保持列宽和间距。 */
+    padding: 0 16px 28px;
+    margin: 0 -16px;
   }
 
   .home-profile > article {
@@ -119,12 +122,13 @@
   .home-details {
     display: flex;
     flex-direction: column;
-    width: 480px;
+    width: 512px;
     min-height: 0;
     flex-shrink: 0;
     overflow-y: auto;
     scrollbar-gutter: stable;
-    padding: 0 4px 0 0;
+    padding: 0 20px 28px 16px;
+    margin: 0 -16px;
   }
 
   .home-details > #readme-body {
@@ -369,16 +373,15 @@
   @apply bg-s-grey-500 text-s-white shadow-s-inset-tab;
 }
 .repo-tab.is-pressed { @apply bg-s-white-pressed; }
-.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible, .repo-github:focus-visible {
+.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible, .repo-github:focus-visible, .repo-appbar-github:focus-visible {
   @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
 }
 .repo-list, .repo-summary {
   @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
 }
 .repo-summary { @apply min-w-0 p-4; overflow-wrap: anywhere; }
-.repo-profile > .repo-summary { @apply text-left; }
-.repo-summary-title { @apply text-s-16 font-bold leading-relaxed text-s-grey-800; }
-.repo-summary > .repo-description { @apply mt-3; }
+.repo-profile > .repo-summary { @apply p-0 text-left; }
+.repo-summary-description { @apply flex min-h-s-row items-center px-3 py-3 text-s-14 leading-relaxed text-s-grey-800; }
 .repo-row {
   @apply flex min-h-s-row items-center gap-3 border-b-s-md border-s-grey-200 px-4 py-3;
 }
@@ -402,6 +405,20 @@
 }
 .repo-back[hidden] { display: none; }
 .repo-back .md-icon { width: 24px; height: 24px; }
+.repo-appbar-github {
+  @apply inline-flex h-11 w-11 items-center justify-center text-s-grey-800;
+  position: absolute;
+  right: var(--repo-github-right, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.repo-appbar-github[hidden] { display: none; }
+.repo-appbar-github .md-icon { @apply h-6 w-6; transition: transform 120ms ease-out; }
+.repo-appbar-github:active, .repo-appbar-github.is-pressed { @apply text-s-grey-900; }
+.repo-appbar-github:active .md-icon, .repo-appbar-github.is-pressed .md-icon { transform: scale(1.33); }
+@media (prefers-reduced-motion: reduce) {
+  .repo-appbar-github .md-icon { transition: none; }
+}
 #appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .repo-meta-card {
   @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
