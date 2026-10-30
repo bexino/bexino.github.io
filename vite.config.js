@@ -1,5 +1,6 @@
+import { isReadme, parseProfile } from './src/home-data.js';
 import { defineConfig } from 'vite';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
@@ -32,6 +33,22 @@ const OUT = 'public/icons-sprite.svg';
 export default defineConfig({
   base: './',
   plugins: [
+    {
+      name: 'validate-home-cache',
+      buildStart() {
+        // Missing snapshots show the app's retry state; corrupt ones must not be deployed.
+        for (const [file, validate] of [
+          ['github-user.json', parseProfile],
+          ['readme-zh.md', isReadme],
+          ['readme-en.md', isReadme],
+        ]) {
+          const path = resolve('public/cache', file);
+          if (existsSync(path) && !validate(readFileSync(path, 'utf8'))) {
+            this.error(`Invalid homepage cache: public/cache/${file}. Resolve merge conflicts or refresh the cache before building.`);
+          }
+        }
+      },
+    },
     {
       name: 'mdi-sprite',
       // build 与 dev 启动时都生成一次

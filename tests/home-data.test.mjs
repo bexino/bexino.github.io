@@ -23,3 +23,20 @@ test('requires a valid profile rather than an API error or fallback HTML', () =>
   assert.equal(parseProfile('{"login":"bexino"}').login, 'bexino');
   assert.equal(parseProfile('{"fetchedAt":"now","profile":{"login":"bexino"}}').login, 'bexino');
 });
+
+
+test('rejects unresolved merge conflicts without rejecting Markdown heading underlines', () => {
+  assert.equal(isReadme('<<<<<<< HEAD\n# Old\n=======\n# New\n>>>>>>> branch'), false);
+  assert.equal(isReadme('<!-- fetchedAt: now -->\n# Intro\n>>>>>>> branch'), false);
+  assert.equal(isReadme('Title\n=======\nDescription'), true);
+});
+
+test('checked-in homepage caches are valid and contain no unresolved conflict markers', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const profile = await readFile(new URL('../public/cache/github-user.json', import.meta.url), 'utf8');
+  assert.ok(parseProfile(profile));
+  for (const language of ['zh', 'en']) {
+    const markdown = await readFile(new URL(`../public/cache/readme-${language}.md`, import.meta.url), 'utf8');
+    assert.ok(isReadme(markdown), `Invalid ${language} homepage cache`);
+  }
+});
