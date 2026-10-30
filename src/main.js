@@ -1,5 +1,7 @@
+import { t, getLanguage, translatePage, languageUrl } from './i18n.js';
 import './main.css';
 import './smartisan.js';
+import './theme.js';
 import { renderMarkdown } from './markdown.js';
 import { renderRepos, leaveRepos } from './repos.js';
 import { isReadme, parseProfile } from './home-data.js';
@@ -41,20 +43,22 @@ function apply() {
     label.classList.toggle('text-s-grey-600', !active);
   });
 
-  document.getElementById('appbar-title').textContent = TITLES[tab];
+  document.getElementById('appbar-title').textContent = t(TITLES[tab]);
   document.getElementById('repo-back').hidden = true;
   document.getElementById('repo-categories').hidden = true;
   if (tab === 'repo') renderRepos();
 }
 
 window.addEventListener('hashchange', apply);
+translatePage();
 apply();
 
 // ── 主页数据加载：CDN 与 Actions 缓存互相独立，默认使用缓存 ──
 const GH_USER_API = 'https://api.github.com/users/bexino';
-const README_MIRRORS = [
-  'https://gcore.jsdelivr.net/gh/bexino/bexino@main/README.zh-CN.md',
-  'https://testingcf.jsdelivr.net/gh/bexino/bexino@main/README.zh-CN.md',
+const readmePath = () => getLanguage() === 'en' ? 'README.md' : 'README.zh-CN.md';
+const readmeMirrors = () => [
+  `https://gcore.jsdelivr.net/gh/bexino/bexino@main/${readmePath()}`,
+  `https://testingcf.jsdelivr.net/gh/bexino/bexino@main/${readmePath()}`,
 ];
 const CACHE_DIR = './cache/';
 // 徽章镜像：ghstats.dev 在部分网络下不可达，改用 GitHub Action 抓取后托管在本站的副本
@@ -192,7 +196,8 @@ function sha1Hex(str) {
 function renderReadme(md, mode) {
   const version = Date.now();
   renderMarkdown(document.getElementById('readme-body'), md, {
-    repository: 'bexino/bexino', readmePath: 'README.zh-CN.md', ref: 'main',
+    repository: 'bexino/bexino', readmePath: readmePath(), ref: 'main',
+    hideShields: false,
     transformImage: url => {
       if (mode === 'cdn') return url;
       const rewritten = rewriteBadgeUrl(url);
@@ -219,10 +224,10 @@ async function loadHomeData(mode = 'cache') {
   const deadline = Date.now() + LOAD_TIMEOUT_MS;
   const [profileText, readmeText] = await Promise.all(mode === 'cdn' ? [
     fetchFirst([GH_USER_API], deadline),
-    fetchFirst(README_MIRRORS, deadline),
+    fetchFirst(readmeMirrors(), deadline),
   ] : [
     fetchWithTimeout(`${CACHE_DIR}github-user.json`, LOAD_TIMEOUT_MS),
-    fetchWithTimeout(`${CACHE_DIR}readme-zh.md`, LOAD_TIMEOUT_MS),
+    fetchWithTimeout(`${CACHE_DIR}readme-${getLanguage() === 'en' ? 'en' : 'zh'}.md`, LOAD_TIMEOUT_MS),
   ]);
   if (loadId !== homeLoadId) return;
 
@@ -240,14 +245,14 @@ async function loadHomeData(mode = 'cache') {
 
   const profile = parseProfile(profileText);
   if (profile) renderProfile(profile);
-  else document.getElementById('gh-bio').textContent = '个人资料暂不可用，请稍后重试。';
+  else document.getElementById('gh-bio').textContent = t('个人资料暂不可用，请稍后重试。');
 
   if (isReadme(readmeText)) {
     renderReadme(readmeText, mode);
   } else {
     const message = document.createElement('p');
     message.className = 'rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 text-s-14 text-s-text-desc shadow-s-card';
-    message.textContent = '主页简介暂不可用，请稍后重试。';
+    message.textContent = t('主页简介暂不可用，请稍后重试。');
     document.getElementById('readme-body').append(message);
   }
 
@@ -255,7 +260,7 @@ async function loadHomeData(mode = 'cache') {
     const retry = document.createElement('button');
     retry.type = 'button';
     retry.className = 'text-s-14 text-s-blue-300 p-3';
-    retry.textContent = '重新加载';
+    retry.textContent = t('重新加载');
     retry.addEventListener('click', () => loadHomeData(homeSource));
     document.getElementById('readme-body').append(retry);
   }
@@ -289,3 +294,18 @@ sourceControl.addEventListener('change', (event) => {
 
 window.addEventListener('popstate', syncHomeSource);
 syncHomeSource();
+
+let activeLanguage = getLanguage();
+function syncLanguage() {
+  if (activeLanguage === getLanguage()) return;
+  activeLanguage = getLanguage();
+  translatePage();
+  apply();
+  loadHomeData(homeSource);
+}
+document.getElementById('language-control').addEventListener('change', event => {
+  if (!event.target.matches('input[name="language"]')) return;
+  history.pushState(null, '', languageUrl(location.href, event.target.value));
+  syncLanguage();
+});
+window.addEventListener('popstate', syncLanguage);

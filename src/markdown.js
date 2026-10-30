@@ -1,3 +1,5 @@
+import { t } from './i18n.js';
+import { syncGhstatsTheme } from './ghstats-theme.js';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
@@ -42,7 +44,7 @@ function addCodeCopyButtons(content) {
     toolbar.className = 'markdown-code-toolbar';
     const language = document.createElement('span');
     language.className = 'markdown-code-language';
-    language.textContent = Array.from(code.classList).find(name => name.startsWith('language-'))?.slice(9) || '纯文本';
+    language.textContent = Array.from(code.classList).find(name => name.startsWith('language-'))?.slice(9) || t('纯文本');
     language.title = language.textContent;
     const status = document.createElement('span');
     status.className = 'markdown-copy-status';
@@ -50,8 +52,8 @@ function addCodeCopyButtons(content) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'markdown-copy-button';
-    button.textContent = '复制';
-    button.setAttribute('aria-label', '复制代码');
+    button.textContent = t('复制');
+    button.setAttribute('aria-label', t('复制代码'));
     let resetTimer;
     let copying = false;
     button.addEventListener('click', async () => {
@@ -62,16 +64,16 @@ function addCodeCopyButtons(content) {
       status.textContent = '';
       try {
         await copyCode(text);
-        button.textContent = '已复制';
-        status.textContent = '代码已复制';
+        button.textContent = t('已复制');
+        status.textContent = t('代码已复制');
       } catch {
-        button.textContent = '重试';
-        status.textContent = '复制失败，请重试或手动选择代码复制';
+        button.textContent = t('重试');
+        status.textContent = t('复制失败，请重试或手动选择代码复制');
       } finally {
         copying = false;
         button.removeAttribute('aria-busy');
         resetTimer = setTimeout(() => {
-          button.textContent = '复制';
+          button.textContent = t('复制');
           status.textContent = '';
         }, 2500);
       }
@@ -102,7 +104,7 @@ function removeBadge(element) {
   }
 }
 
-export function renderMarkdown(body, markdown, { repository, readmePath, ref, transformImage, splitAtRules = true } = {}) {
+export function renderMarkdown(body, markdown, { repository, readmePath, ref, transformImage, splitAtRules = true, hideShields = true } = {}) {
   const cleaned = markdown.replace(/^<!--\s*fetchedAt:.*?-->\s*/, '');
   const template = document.createElement('template');
   template.innerHTML = DOMPurify.sanitize(marked.parse(cleaned, { breaks: false, gfm: true }), {
@@ -144,14 +146,14 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
   }
   content.querySelectorAll('img[src],source[src],video[src],audio[src]').forEach(element => {
     element.setAttribute('src', relativeUrl(element.getAttribute('src'), rawBase));
-    // Filter before cache rewriting so every page and data mode uses the same rule.
-    if (isShieldsUrl(element.getAttribute('src'))) {
+    // Filter before cache rewriting unless the page explicitly keeps Shields badges.
+    if (hideShields && isShieldsUrl(element.getAttribute('src'))) {
       removeBadge(element);
       return;
     }
     if (element.tagName === 'IMG') {
       if (transformImage) element.setAttribute('src', transformImage(element.getAttribute('src')));
-      if (isShieldsUrl(element.getAttribute('src'))) {
+      if (hideShields && isShieldsUrl(element.getAttribute('src'))) {
         removeBadge(element);
         return;
       }
@@ -180,7 +182,7 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
     scroller.className = 'markdown-table';
     scroller.tabIndex = 0;
     scroller.setAttribute('role', 'region');
-    scroller.setAttribute('aria-label', '表格，可横向滚动');
+    scroller.setAttribute('aria-label', t('表格，可横向滚动'));
     table.replaceWith(scroller);
     scroller.append(table);
   });
@@ -200,5 +202,6 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
     else card.append(node);
   }
   finish();
+  syncGhstatsTheme(cards);
   body.replaceChildren(cards);
 }

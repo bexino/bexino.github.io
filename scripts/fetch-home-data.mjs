@@ -92,9 +92,11 @@ function findBadges(markdown) {
 }
 
 // 优先 Contents API，准确获取中文文件，避免分支 CDN 缓存延迟。
-async function fetchReadme() {
+async function fetchReadme(filename = 'README.zh-CN.md') {
+  const api = README_REPO_API.replace('README.zh-CN.md', filename);
+  const sources = README_SOURCES.map(url => url.replace('README.zh-CN.md', filename));
   try {
-    const json = JSON.parse(await get(README_REPO_API, { headers: ghHeaders() }));
+    const json = JSON.parse(await get(api, { headers: ghHeaders() }));
     if (json.encoding !== 'base64' || typeof json.content !== 'string' || !json.content.trim()) {
       throw new Error('GitHub API did not return base64 README content');
     }
@@ -105,7 +107,7 @@ async function fetchReadme() {
   } catch (e) {
     console.warn(`  GitHub Contents API failed: ${e.message}`);
   }
-  for (const url of README_SOURCES) {
+  for (const url of sources) {
     try {
       // GitHub 凭证只发送给 api.github.com，不发送到镜像或图片服务。
       const text = await get(url);
@@ -119,12 +121,12 @@ async function fetchReadme() {
       console.warn(`  readme source failed ${url}: ${e.message}`);
     }
   }
-  throw new Error('Unable to fetch README.zh-CN.md from GitHub or any fallback source');
+  throw new Error(`Unable to fetch ${filename} from GitHub or any fallback source`);
 }
 
 // 徽章字节：优先直连 ghstats.dev；不可达时用 GitHub 渲染 README 后的
 // camo 快照（GitHub 自己抓到并缓存的同一张图，仍是活数据，只是更新稍慢）
-async function fetchBadge(url) {
+async function fetchBadge(url, filename = 'README.zh-CN.md') {
   try {
     return await get(url, { raw: true });
   } catch (e) {
@@ -133,7 +135,7 @@ async function fetchBadge(url) {
   // camo 路径第二段是原图 URL 的 hex 编码。GitHub 对非 ASCII 查询参数用百分号编码
   // （UTF-8 字节），因此原文 URL 与百分号编码形态都要试。
   const html = await get(
-    README_REPO_API,
+    README_REPO_API.replace('README.zh-CN.md', filename),
     { headers: ghHeaders({ Accept: 'application/vnd.github.html' }) },
   );
   const pct = url.replace(/[^\x21-\x7e]/g, (c) =>
@@ -155,7 +157,7 @@ async function main() {
   await mkdir(CACHE_DIR, { recursive: true });
   // Only remove homepage-owned files; repo snapshots have their own lifecycle.
   for (const entry of await readdir(CACHE_DIR)) {
-    if (entry === 'github-user.json' || entry === 'readme-zh.md' || entry === 'badges' || /^avatar-[a-f0-9]+\.webp$/.test(entry)) {
+    if (entry === 'github-user.json' || entry === 'readme-zh.md' || entry === 'readme-en.md' || entry === 'badges' || /^avatar-[a-f0-9]+\.webp$/.test(entry)) {
       await rm(join(CACHE_DIR, entry), { recursive: true, force: true });
     }
   }
@@ -197,17 +199,21 @@ async function main() {
   console.log(`✓ github-user.json  ${user.login}`);
 
   // 2. README 原文（首行插入 fetchedAt 注释，客户端据此判断是否为缓存）
-  const markdown = await fetchReadme();
-  await writeFile(join(CACHE_DIR, 'readme-zh.md'), `<!-- fetchedAt: ${fetchedAt} -->\n${markdown}`);
-  console.log(`✓ readme-zh.md      ${markdown.length} bytes`);
+  const documents = await Promise.all([
+    fetchReadme('README.zh-CN.md'), fetchReadme('README.md'),
+  ]);
+  for (const [index, language] of ['zh', 'en'].entries()) {
+    await writeFile(join(CACHE_DIR, `readme-${language}.md`), `<!-- fetchedAt: ${fetchedAt} -->\n${documents[index]}`);
+    console.log(`✓ readme-${language}.md  ${documents[index].length} bytes`);
+  }
 
-  // 3. 徽章副本（失败不阻断整体流程）
-  const badges = findBadges(markdown);
+  // Include English labels, without deleting either language's badges.
+  const badges = [...new Set(documents.flatMap(findBadges))];
   let ok = 0;
   for (const url of badges) {
     const name = badgeFileName(url);
     try {
-      const buf = await fetchBadge(url);
+      const buf = await fetchBadge(url, findBadges(documents[1]).includes(url) ? 'README.md' : 'README.zh-CN.md');
       await writeFile(join(BADGE_DIR, name), buf);
       ok++;
       console.log(`✓ badge ${name}`);

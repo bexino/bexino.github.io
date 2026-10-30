@@ -1,9 +1,8 @@
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
+const smartisanPreset = require('./tailwind.preset.cjs');
 
 /** @type {import('tailwindcss').Config} */
-export default {
-  presets: [require('./tailwind.preset.cjs')],
+module.exports = {
+  presets: [smartisanPreset],
   content: ['./index.html', './src/**/*.{js,ts,html,css}'],
   theme: {
     extend: {

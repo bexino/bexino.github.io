@@ -32,6 +32,11 @@
   color: theme('colors.s.blue.300');
 }
 
+/* 英文导航标签略放大，中文仍使用 preset 的 8px。 */
+html[lang="en"] #bottom-nav .text-s-nav {
+  font-size: 10px;
+}
+
 /* 顶栏向下投影，与底栏、桌面侧栏使用相同的柔和淡阴影。 */
 #appbar {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
@@ -136,10 +141,13 @@
   }
 }
 
-/* 数据来源分段控件：细描边、浅渐变与灰色内凹选中态。 */
+/* 设置分段控件：按内容自适应宽度，统一高度并保持单行。 */
+.source-switch {
+  @apply flex h-7 w-max shrink-0 flex-nowrap overflow-hidden rounded-s-md border-s-xs border-s-grey-400;
+}
 .source-switch-option {
-  @apply flex h-full items-center justify-center border-r-s-xs border-s-grey-400 bg-s-white text-s-12 font-bold text-s-grey-800;
-  @apply active:bg-s-white-pressed peer-checked:bg-none peer-checked:bg-s-grey-500 peer-checked:text-s-white peer-checked:shadow-s-inset-tab;
+  @apply flex h-full items-center justify-center whitespace-nowrap border-r-s-xs border-s-grey-200 bg-s-tab-frame px-3 text-s-12 font-bold text-s-tab-text;
+  @apply active:bg-s-white-pressed peer-checked:bg-s-tab-selected peer-checked:text-s-on-selected peer-checked:shadow-s-inset-tab;
   @apply peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-s-blue-300;
 }
 .source-switch label:last-child .source-switch-option {
@@ -312,12 +320,12 @@
   max-width: 40%;
 }
 .markdown-copy-button {
-  @apply shrink-0 rounded-s-sm border-s-xs border-s-grey-400 bg-s-white px-3 text-s-12 font-semibold text-s-grey-800 shadow-s-card-sm;
+  @apply shrink-0 rounded-s-sm border-s-xs border-s-control-border bg-s-white bg-s-control px-3 text-s-12 font-semibold text-s-grey-800 shadow-s-card-sm;
   min-height: 32px;
 }
 .markdown-copy-button:active,
 .markdown-copy-button.is-pressed {
-  @apply bg-s-white-pressed shadow-s-inset-tab;
+  @apply bg-s-control-pressed shadow-s-inset-tab;
 }
 .markdown-copy-button:focus-visible {
   @apply outline outline-2 outline-offset-2 outline-s-blue-300;
@@ -370,9 +378,9 @@
 }
 .repo-tab:last-child { border-right: 0; }
 .repo-tab[aria-selected="true"] {
-  @apply bg-s-grey-500 text-s-white shadow-s-inset-tab;
+  @apply bg-s-tab-selected text-s-on-selected shadow-s-inset-tab;
 }
-.repo-tab.is-pressed { @apply bg-s-white-pressed; }
+.repo-tab.is-pressed:not([aria-selected="true"]) { @apply bg-s-white-pressed; }
 .repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible, .repo-github:focus-visible, .repo-appbar-github:focus-visible {
   @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
 }
@@ -390,12 +398,12 @@
 .repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
 .repo-row > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
 .repo-row.is-pressed { @apply bg-s-blue-300; }
-.repo-row.is-pressed :is(h2,p,svg) { @apply text-s-white; }
+.repo-row.is-pressed :is(h2,p,svg) { @apply text-s-on-selected; }
 .repo-state { @apply flex flex-col items-center gap-3 py-12 text-center; }
 .repo-button {
-  @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-grey-400 bg-s-white px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
+  @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
 }
-.repo-button.is-pressed { @apply bg-s-white-pressed shadow-s-inset-tab; }
+.repo-button:active, .repo-button.is-pressed { @apply bg-s-control-pressed shadow-s-inset-tab; }
 .repo-back {
   @apply inline-flex items-center text-s-14 font-bold text-s-grey-800;
   position: absolute;
@@ -442,13 +450,13 @@
 .repo-readme-column { min-width: 0; }
 .repo-action { @apply flex flex-col gap-3 border-t-s-md border-s-grey-200 bg-s-grey-100 p-3; }
 .repo-github {
-  @apply flex w-full items-center justify-center gap-3 rounded-s-md border-s-md border-s-grey-400 bg-s-white px-3 text-s-14 font-semibold text-s-grey-800 shadow-s-card-sm;
+  @apply flex w-full items-center justify-center gap-3 rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-3 text-s-14 font-semibold text-s-grey-800 shadow-s-card-sm;
   min-height: 48px;
   text-shadow: 0 1px 0 theme('colors.s.white');
 }
 .repo-github > .md-icon { @apply h-4 w-4 shrink-0 text-s-icon; }
 .repo-github:hover { @apply text-s-blue-400; }
-.repo-github:active, .repo-github.is-pressed { @apply bg-s-white-pressed shadow-s-inset-tab; }
+.repo-github:active, .repo-github.is-pressed { @apply bg-s-control-pressed shadow-s-inset-tab; }
 /* Keep the sidebar cards together at the upper right of the left column. */
 @media (min-width: 960px) {
   .repo-shell { width: 816px; max-width: 100%; }
@@ -492,7 +500,7 @@
 .repo-outline-item[aria-current] {
   @apply bg-s-white-pressed font-semibold text-s-blue-400 shadow-s-inset-tab;
 }
-.repo-outline-item:active, .repo-outline-item.is-pressed { @apply bg-s-blue-300 text-s-white; }
+.repo-outline-item:active, .repo-outline-item.is-pressed { @apply bg-s-blue-300 text-s-on-selected; }
 .repo-outline-item:focus-visible, .repo-outline-trigger:focus-visible {
   @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
 }
@@ -516,7 +524,7 @@
   @apply absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-s-16 font-bold;
   text-shadow: 0 1px 0 theme('colors.s.white');
 }
-.repo-outline-header .repo-button { @apply bg-s-white px-3; min-height: 36px; }
+.repo-outline-header .repo-button { @apply px-3; min-height: 36px; }
 .repo-outline-dialog .repo-outline-list {
   @apply mx-3 my-3 min-h-0 rounded-s-lg border-s-md border-s-grey-400 bg-s-white;
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -573,3 +581,18 @@
   background: var(--alert-color);
 }
 .markdown-s [id] { scroll-margin-top: 12px; }
+
+/* Avoid a light embossed edge on dark headings and buttons. */
+:root[data-theme="dark"] :is(.repo-meta-title, .repo-github, .repo-outline-header h2) {
+  text-shadow: none;
+}
+
+/* Distinguish chrome, flat cards and raised controls in both palettes. */
+#appbar, #bottom-nav { @apply bg-s-bar; }
+.repo-tabs { @apply bg-s-tab-frame; }
+.repo-tab { @apply text-s-tab-text; }
+.repo-tab[aria-selected="true"] { @apply text-s-on-selected; }
+.source-switch input:checked + .source-switch-option,
+.repo-tab[aria-selected="true"] {
+  @apply shadow-s-tab-selected border-r-transparent;
+}

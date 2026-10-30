@@ -31,8 +31,8 @@ export async function paginate(readPage) {
   } while (true);
 }
 
-export function selectReadme(entries) {
-  for (const filenames of [['readme.zh-cn.md'], ['readme.md', 'readme.markdown', 'readme']]) {
+export function selectReadme(entries, language = 'zh-CN') {
+  for (const filenames of (language === 'en' ? [['readme.en.md', 'readme.en-us.md'], ['readme.md', 'readme.markdown', 'readme']] : [['readme.zh-cn.md'], ['readme.md', 'readme.markdown', 'readme']])) {
     for (const directory of ['', 'docs/', '.github/']) {
       for (const filename of filenames) {
         const match = entries.find(e => e.type === 'blob' && e.path.toLowerCase() === directory + filename);
@@ -63,11 +63,13 @@ export async function fetchDetail(fullName, run) {
   if (!repo || repo.isPrivate) throw new Error(`Repository unavailable: ${fullName}`);
   const ref = repo.defaultBranchRef?.target?.oid;
   let path = null;
+  let englishPath = null;
   if (ref) {
     const trees = (await run(`query($owner:String!,$name:String!,$root:String!,$docs:String!,$github:String!){repository(owner:$owner,name:$name){root:object(expression:$root){... on Tree{entries{name type}}} docs:object(expression:$docs){... on Tree{entries{name type}}} github:object(expression:$github){... on Tree{entries{name type}}}}}`, { owner, name, root: `${ref}:`, docs: `${ref}:docs`, github: `${ref}:.github` })).repository;
     if (!trees?.root) throw new Error(`Repository tree unavailable: ${fullName}`);
     const entries = [['', trees.root], ['docs/', trees.docs], ['.github/', trees.github]].flatMap(([prefix, tree]) => (tree?.entries || []).map(e => ({ ...e, path: prefix + e.name })));
     path = selectReadme(entries);
+    englishPath = selectReadme(entries, 'en');
   }
   let readme = null;
   if (path && ref) {
@@ -76,7 +78,14 @@ export async function fetchDetail(fullName, run) {
     if (!blob || blob.isBinary || typeof blob.text !== 'string') throw new Error(`README unavailable: ${fullName}/${path}`);
     readme = { path, ref, markdown: blob.text };
   }
-  return { name: repo.name, fullName: repo.nameWithOwner, description: repo.description, url: repo.url, homepageUrl: repo.homepageUrl || null, license: repo.licenseInfo, defaultBranch: repo.defaultBranchRef?.name || null, commitCount: repo.defaultBranchRef?.target?.history?.totalCount ?? 0, readme };
+  let readmeEn = readme?.path === englishPath ? readme : null;
+  if (englishPath && ref && !readmeEn) {
+    const result = await run(`query($owner:String!,$name:String!,$expression:String!){repository(owner:$owner,name:$name){object(expression:$expression){... on Blob{text isBinary}}}}`, { owner, name, expression: `${ref}:${englishPath}` });
+    const blob = result.repository?.object;
+    if (!blob || blob.isBinary || typeof blob.text !== 'string') throw new Error(`README unavailable: ${fullName}/${englishPath}`);
+    readmeEn = { path: englishPath, ref, markdown: blob.text };
+  }
+  return { name: repo.name, fullName: repo.nameWithOwner, description: repo.description, url: repo.url, homepageUrl: repo.homepageUrl || null, license: repo.licenseInfo, defaultBranch: repo.defaultBranchRef?.name || null, commitCount: repo.defaultBranchRef?.target?.history?.totalCount ?? 0, readme, readmeEn };
 }
 
 export async function main({ token = process.env.GH_TOKEN, output = OUTPUT, run } = {}) {

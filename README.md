@@ -17,6 +17,11 @@ npm run preview  # 预览构建产物
 - 顶部 App Bar：始终显示，标题随页面切换。
 - 图标：`vite.config.js` 的 `ICONS` 列表统一维护，构建时从 `@material-design-icons/svg` 生成 `public/icons-sprite.svg`。
 
+## 外观主题
+
+设置页提供 Smartisan 风格的「跟随系统 / 亮色 / 暗色」分段切换，默认跟随系统并实时响应系统外观变化。
+手动选择会写入地址栏查询参数 `?theme=light` 或 `?theme=dark`，跨页面导航、刷新及分享链接均保留；切回跟随系统会移除此参数。浏览器前进、后退会同步恢复对应主题。
+
 ## 部署
 
 ### 本地拉取主页信息
@@ -29,7 +34,7 @@ npm run fetch-home-data
 npm run dev
 ```
 
-脚本拉取 GitHub 用户资料、头像、`bexino/bexino` 的 `main/README.zh-CN.md` 和其中的
+脚本拉取 GitHub 用户资料、头像、`bexino/bexino` 的 `main/README.zh-CN.md`、`main/README.md` 和其中的
 ghstats mini 徽章，写入 `public/cache/`，日志显示来源、头像压缩前后大小、README blob SHA 与徽章成功数。
 头像通过 sharp 自动裁切、缩放并压缩为 128×128 WebP，适配页面 64px 头像的两倍像素显示。
 缓存资料中的头像地址指向本站文件，文件名含内容指纹，头像变化后会使用新地址。
@@ -37,7 +42,8 @@ ghstats mini 徽章，写入 `public/cache/`，日志显示来源、头像压缩
 可通过环境变量 `GITHUB_TOKEN` 或 `GH_TOKEN` 提高 API 请求额度，令牌只发送给 GitHub API。
 每次运行会先清空主页拥有的旧缓存（保留 `public/cache/repos/`），拉取失败也不会恢复旧文件；请先确认本机可以访问 GitHub。
 
-网站只展示中文 README，更新英文 `README.md` 不会改变中文简介。
+设置页提供「简体中文 / English」Smartisan 分段控件。英文使用 `?lang=en`，在路由切换、刷新、分享和浏览器前进后退时保留；简体中文为默认语言。
+主页中文读取 `README.zh-CN.md`，英文读取 `README.md`，缓存和 CDN 模式均按语言选择。仓库详情按语言读取对应 README 缓存（英文优先 `README.en.md`，其次默认 README）。
 浏览器默认读取本站缓存；切换到 CDN 模式时使用远程资料和原始 GitHub 头像。
 ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 mini 徽章缓存范围内。
 

@@ -16,6 +16,10 @@ module.exports = {
           alert: { tip: require('tailwindcss/colors').green[700], important: require('tailwindcss/colors').purple[600] },
           page: '#f5f5f5',
           'page-real': '#f0f0f0',
+          // Semantic aliases from smartisan.css Tab Bar and SPalette (no new palette).
+          bar: 'rgb(255 255 255)',
+          control: { top: 'rgb(255 255 255)', bottom: 'rgb(252 252 252)', border: 'rgb(238 238 238)', 'pressed-top': 'rgb(235 235 235)', 'pressed-bottom': 'rgb(242 242 242)' },
+          tab: { frame: 'rgb(255 255 255)', text: 'rgb(99 99 99)', selected: 'rgb(178 178 178)', 'selected-bottom': 'rgb(178 178 178)', border: 'rgb(167 167 167)' },
           'sheet-body': '#efefef',
           'dialog-action': '#f7f7f7',
           'dialog-action-pressed': '#dfdfdf',
@@ -74,3 +78,59 @@ module.exports = {
     }
   }
 };
+
+// Keep all existing utilities and theme() references on one adaptive palette.
+// Dark neutrals follow smartisan-ui's SPalette.dark (the kit itself is light).
+const palette = module.exports.theme.extend;
+const light = {};
+function adaptiveColors(colors, path = []) {
+  return Object.fromEntries(Object.entries(colors).map(([key, value]) => {
+    const parts = [...path, key];
+    if (typeof value === 'object') return [key, adaptiveColors(value, parts)];
+    const name = `--s-${parts.join('-')}`;
+    light[name] = value;
+    return [key, `var(${name})`];
+  }));
+}
+palette.colors.s = adaptiveColors(palette.colors.s);
+// Foreground on selected controls stays white in both themes.
+palette.colors.s['on-selected'] = light['--s-white'];
+const dark = {
+  '--s-bar': 'rgb(30 30 30)',
+  // Raised neutral controls: SPalette.dark knobTop/Bottom and knobPressedTop/Bottom.
+  '--s-control-top': 'rgb(74 74 74)', '--s-control-bottom': 'rgb(60 60 60)',
+  '--s-control-border': 'rgb(46 46 46)',
+  '--s-control-pressed-top': 'rgb(53 53 53)', '--s-control-pressed-bottom': 'rgb(58 58 58)',
+  '--s-tab-frame': 'rgb(38 38 38)', '--s-tab-text': 'rgb(154 154 154)',
+  '--s-tab-selected': 'rgb(74 74 74)', '--s-tab-selected-bottom': 'rgb(64 64 64)',
+  '--s-tab-border': 'rgb(60 60 60)',
+  '--s-white': 'rgb(34 34 34)', '--s-page': 'rgb(22 22 22)',
+  '--s-page-real': 'rgb(25 25 25)',
+  '--s-grey-100': 'rgb(26 26 26)', '--s-grey-200': 'rgb(44 44 44)',
+  '--s-grey-300': 'rgb(46 46 46)', '--s-grey-400': 'rgb(51 51 51)',
+  '--s-grey-500': 'rgb(74 74 74)', '--s-grey-600': 'rgb(154 154 154)',
+  '--s-grey-700': 'rgb(189 189 189)', '--s-grey-800': 'rgb(196 196 196)',
+  '--s-grey-900': 'rgb(226 226 226)',
+  '--s-text-body': 'rgb(189 189 189)', '--s-text-desc': 'rgb(154 154 154)',
+  '--s-text-placeholder': 'rgb(126 126 126)',
+  '--s-icon-DEFAULT': 'rgb(156 156 156)', '--s-icon-disabled': 'rgb(126 126 126)',
+  '--s-icon-chevron': 'rgb(154 154 154)',
+  '--s-blue-300': 'rgb(106 147 240)', '--s-blue-400': 'rgb(127 162 242)',
+  '--s-appbar-border': 'rgb(46 46 46)', '--s-sheet-body': 'rgb(26 26 26)',
+  '--s-dialog-action': 'rgb(42 42 42)', '--s-dialog-action-pressed': 'rgb(51 51 51)',
+  '--s-dialog-action-text': 'rgb(127 162 242)',
+  '--s-alert-tip': require('tailwindcss/colors').green[400],
+  '--s-alert-important': require('tailwindcss/colors').purple[400],
+};
+// Surfaces are flat. Only raised controls receive the subtle kit gradient.
+delete palette.backgroundImage['s-white'];
+palette.backgroundImage['s-control'] = 'linear-gradient(180deg,var(--s-control-top),var(--s-control-bottom))';
+palette.backgroundImage['s-tab-selected'] = 'linear-gradient(180deg,var(--s-tab-selected),var(--s-tab-selected-bottom))';
+palette.boxShadow['s-tab-selected'] = 'inset 0 4px 10px rgba(0,0,0,0.06), inset 0 0 0 0.4px var(--s-tab-border)';
+palette.backgroundImage['s-white-pressed'] = 'linear-gradient(180deg,var(--s-grey-300),var(--s-grey-200))';
+palette.backgroundImage['s-sheet-header'] = 'linear-gradient(180deg,var(--s-white),var(--s-grey-100))';
+palette.backgroundImage['s-control-pressed'] = 'linear-gradient(180deg,var(--s-control-pressed-top),var(--s-control-pressed-bottom))';
+module.exports.plugins = [require('tailwindcss/plugin')(({ addBase }) => {
+  addBase({ ':root': { ...light, 'color-scheme': 'light' },
+    ':root[data-theme="dark"]': { ...dark, 'color-scheme': 'dark' } });
+})];

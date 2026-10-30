@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 // Build navigation from the rendered README so labels and anchors always agree.
 export function mountRepoOutline(trigger, readme, column, pageScroll) {
   const headings = [...readme.querySelectorAll('h1,h2,h3,h4,h5,h6')];
@@ -10,11 +11,11 @@ export function mountRepoOutline(trigger, readme, column, pageScroll) {
   header.className = 'repo-outline-header';
   const dialogTitle = document.createElement('h2');
   dialogTitle.id = 'repo-outline-title';
-  dialogTitle.textContent = '自述文件大纲';
+  dialogTitle.textContent = t('目录');
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'repo-button';
-  close.textContent = '完成';
+  close.textContent = t('关闭');
   header.append(dialogTitle, close);
   dialog.append(header);
   document.body.append(dialog);
@@ -59,18 +60,18 @@ export function mountRepoOutline(trigger, readme, column, pageScroll) {
   function navigation() {
     const nav = document.createElement('nav');
     nav.className = 'repo-outline-list';
-    nav.setAttribute('aria-label', '自述文件大纲');
+    nav.setAttribute('aria-label', t('目录'));
     if (!headings.length) {
       const empty = document.createElement('p');
       empty.className = 'repo-outline-empty';
-      empty.textContent = '自述文件暂无标题';
+      empty.textContent = t('自述文件暂无标题');
       nav.append(empty);
     }
     for (const heading of headings) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'repo-outline-item s-list-item';
-      button.textContent = heading.textContent.trim() || heading.querySelector('img')?.alt || '未命名章节';
+      button.textContent = heading.textContent.trim() || heading.querySelector('img')?.alt || t('未命名章节');
       button.style.setProperty('--outline-level', Number(heading.tagName[1]) - baseLevel);
       button.addEventListener('click', () => select(heading));
       buttons.get(heading).push(button);

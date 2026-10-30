@@ -1,3 +1,4 @@
+import { t, getLanguage } from './i18n.js';
 import { renderMarkdown } from './markdown.js';
 import { mountRepoOutline } from './repo-outline.js';
 
@@ -52,19 +53,19 @@ const detailUrl = (slug, name) => `${categoryUrl(slug)}/${name.split('/').map(en
 
 async function loadJson(path) {
   const response = await fetch(`./cache/repos/${path}`, { signal: AbortSignal.timeout(15000), cache: 'no-store' });
-  if (!response.ok) throw new Error('缓存暂不可用');
+  if (!response.ok) throw new Error(t('缓存暂不可用'));
   return response.json();
 }
 function loadIndex() {
   return indexPromise ||= loadJson('index.json').then(data => {
-    if (!Array.isArray(data.categories) || !data.repositories) throw new Error('缓存格式无效');
+    if (!Array.isArray(data.categories) || !data.repositories) throw new Error(t('缓存格式无效'));
     return data;
   }).catch(error => { indexPromise = null; throw error; });
 }
 function loadDetail(fullName) {
   if (!details.has(fullName)) {
     details.set(fullName, loadJson(`${fullName.split('/').map(encodeURIComponent).join('/')}.json`).then(data => {
-      if (data.fullName !== fullName || typeof data.name !== 'string') throw new Error('详情缓存无效');
+      if (data.fullName !== fullName || typeof data.name !== 'string') throw new Error(t('详情缓存无效'));
       return data;
     }).catch(error => { details.delete(fullName); throw error; }));
   }
@@ -75,12 +76,12 @@ function message(title, description, retry = false, returnUrl) {
   const box = element('div', 'repo-state');
   box.append(element('p', 'text-s-16 font-bold text-s-grey-800', title), element('p', 'text-s-14 text-s-text-desc', description));
   if (retry) {
-    const button = element('button', 'repo-button', '重试');
+    const button = element('button', 'repo-button', t('重试'));
     button.addEventListener('click', () => renderRepos());
     box.append(button);
   }
   if (returnUrl) {
-    const link = element('a', 'repo-button', '返回仓库分类');
+    const link = element('a', 'repo-button', t('返回仓库分类'));
     link.href = returnUrl;
     box.append(link);
   }
@@ -102,9 +103,9 @@ export function leaveRepos() {
 function renderCategories(data, slug) {
   const tabs = element('div', 'repo-tabs');
   tabs.setAttribute('role', 'tablist');
-  tabs.setAttribute('aria-label', '仓库分类');
+  tabs.setAttribute('aria-label', t('仓库分类'));
   for (const category of data.categories) {
-    const tab = element('button', 'repo-tab', category.name);
+    const tab = element('button', 'repo-tab', t(category.name));
     tab.id = `category-${category.slug}`;
     tab.setAttribute('role', 'tab');
     tab.setAttribute('aria-controls', 'repo-content');
@@ -139,7 +140,7 @@ function showList(data, category) {
   currentList = category.slug;
   selectedRepo = null;
   if (!category.repositories.length) {
-    message('暂无仓库', '这个分类还没有公开仓库。');
+    message(t('暂无仓库'), t('这个分类还没有公开仓库。'));
     return;
   }
   const list = element('div', 'repo-list');
@@ -150,7 +151,7 @@ function showList(data, category) {
     row.href = detailUrl(category.slug, fullName);
     row.dataset.repository = fullName;
     const text = element('div', 'min-w-0 flex-1');
-    text.append(element('h2', 'repo-name', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
+    text.append(element('h2', 'repo-name', repo.name), element('p', 'repo-description', t(repo.description) || t('暂无简介')));
     row.append(text, icon('chevron_right'));
     row.addEventListener('click', () => { selectedRepo = fullName; });
     list.append(row);
@@ -169,13 +170,13 @@ function showDetail(repo) {
   layoutObserver.observe(shell);
   layoutObserver.observe(appbarContent);
   const card = element('article', 'repo-summary');
-  card.append(element('h1', 'repo-meta-title', repo.name), element('p', 'repo-summary-description', repo.description || '暂无简介'));
+  card.append(element('h1', 'repo-meta-title', repo.name), element('p', 'repo-summary-description', t(repo.description) || t('暂无简介')));
   const metaCard = element('section', 'repo-meta-card');
-  const metaTitle = element('h2', 'repo-meta-title', '仓库信息');
+  const metaTitle = element('h2', 'repo-meta-title', t('仓库信息'));
   metaTitle.id = 'repo-meta-title';
   metaCard.setAttribute('aria-labelledby', metaTitle.id);
   const meta = element('dl', 'repo-meta');
-  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '保留所有权利', 'balance'], ['Commits', String(repo.commitCount), 'commit']];
+  const entries = [[t('许可证'), repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || t('保留所有权利'), 'balance'], ['Commits', String(repo.commitCount), 'commit']];
   for (const [label, value, glyph] of entries) {
     const item = element('div', 'repo-stat');
     const term = element('dt', 'repo-stat-label', label);
@@ -188,7 +189,7 @@ function showDetail(repo) {
   const action = element('div', 'repo-action');
   const outline = element('button', 'repo-outline-trigger repo-github');
   outline.type = 'button';
-  outline.append(icon('format_list_bulleted'), element('span', '', '目录'));
+  outline.append(icon('format_list_bulleted'), element('span', '', t('目录')));
   github.href = `https://github.com/${repo.fullName}`;
   github.hidden = false;
   action.append(outline);
@@ -196,7 +197,7 @@ function showDetail(repo) {
   try { website = new URL(repo.homepageUrl); } catch { /* Missing or invalid Website. */ }
   if (website && ['https:', 'http:'].includes(website.protocol)) {
     const demo = element('a', 'repo-github');
-    demo.append(icon('public'), element('span', '', '在线体验'));
+    demo.append(icon('public'), element('span', '', t('在线体验')));
     demo.href = website.href;
     demo.target = '_blank';
     demo.rel = 'noopener noreferrer';
@@ -213,8 +214,9 @@ function showDetail(repo) {
   layoutObserver.observe(card);
   layoutObserver.observe(readme);
   alignActions();
-  if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref, splitAtRules: false });
-  else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', '暂无自述文件'));
+  const readmeDocument = getLanguage() === 'en' ? repo.readmeEn : repo.readme;
+  if (readmeDocument) renderMarkdown(readme, readmeDocument.markdown, { repository: repo.fullName, readmePath: readmeDocument.path, ref: readmeDocument.ref, splitAtRules: false });
+  else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', t('暂无自述文件')));
   scroll.scrollTop = 0;
   clearOutline = mountRepoOutline(outline, readme, readmeColumn, scroll);
 }
@@ -231,7 +233,7 @@ export async function renderRepos() {
   content.removeAttribute('aria-labelledby');
   let parts;
   try { parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent); }
-  catch { message('地址无效', '无法解析仓库地址。', false, '#/repo'); content.setAttribute('aria-busy', 'false'); return; }
+  catch { message(t('地址无效'), t('无法解析仓库地址。'), false, '#/repo'); content.setAttribute('aria-busy', 'false'); return; }
   const [, slug, owner, name] = parts;
   const isDetail = parts.length === 4;
   categories.hidden = isDetail;
@@ -239,7 +241,7 @@ export async function renderRepos() {
     back.hidden = false;
     back.href = categoryUrl(slug);
   }
-  message('加载中…', '正在读取仓库缓存');
+  message(t('加载中…'), t('正在读取仓库缓存'));
   try {
     const data = await loadIndex();
     if (id !== generation) return;
@@ -256,7 +258,7 @@ export async function renderRepos() {
     if (!category || ![2, 4].includes(parts.length)) {
       categories.hidden = false;
       renderCategories(data, slug);
-      message('分类不存在', '请选择上方分类，或返回默认分类。', false, '#/repo');
+      message(t('分类不存在'), t('请选择上方分类，或返回默认分类。'), false, '#/repo');
       return;
     }
     if (!isDetail) {
@@ -266,7 +268,7 @@ export async function renderRepos() {
     }
     const fullName = `${owner}/${name}`;
     if (!category.repositories.includes(fullName)) {
-      message('仓库不存在', '该仓库不在当前分类中。', false, categoryUrl(slug));
+      message(t('仓库不存在'), t('该仓库不在当前分类中。'), false, categoryUrl(slug));
       return;
     }
     const repo = await loadDetail(fullName);
@@ -274,7 +276,7 @@ export async function renderRepos() {
     document.getElementById('appbar-title').textContent = repo.name;
     showDetail(repo);
   } catch {
-    if (id === generation) message('暂时无法加载', '仓库缓存尚未生成或读取失败，请稍后重试。', true, isDetail ? categoryUrl(slug) : undefined);
+    if (id === generation) message(t('暂时无法加载'), t('仓库缓存尚未生成或读取失败，请稍后重试。'), true, isDetail ? categoryUrl(slug) : undefined);
   } finally {
     if (id === generation) content.setAttribute('aria-busy', 'false');
   }

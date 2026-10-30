@@ -69,9 +69,19 @@ test('README and metadata use one pinned default-branch revision', async () => {
   assert.equal(result.homepageUrl, 'https://example.com/');
   assert.deepEqual(result.readme, { path: 'docs/README.zh-CN.md', ref: 'abc', markdown: '# 中文' });
   assert.equal(calls[2].expression, 'abc:docs/README.zh-CN.md');
+  assert.equal(calls[3].expression, 'abc:README.md');
+  assert.equal(result.readmeEn.path, 'README.md');
+  assert.equal(result.readmeEn.ref, result.readme.ref);
 });
 
 test('inaccessible repositories fail explicitly', async () => {
   await assert.rejects(fetchDetail('owner/missing', async () => ({ repository: null })), /unavailable/);
   await assert.rejects(fetchDetail('owner/private', async () => ({ repository: { isPrivate: true } })), /unavailable/);
+});
+
+test('English selects localized English then default README, excluding Chinese-only files', () => {
+  const entries = paths => paths.map(path => ({ path, type: 'blob' }));
+  assert.equal(selectReadme(entries(['README.zh-CN.md', 'README.md']), 'en'), 'README.md');
+  assert.equal(selectReadme(entries(['README.md', 'docs/README.en.md']), 'en'), 'docs/README.en.md');
+  assert.equal(selectReadme(entries(['README.zh-CN.md']), 'en'), null);
 });
