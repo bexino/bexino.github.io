@@ -1,4 +1,5 @@
 import { renderMarkdown } from './markdown.js';
+import { mountRepoOutline } from './repo-outline.js';
 
 const content = document.getElementById('repo-content');
 const categories = document.getElementById('repo-categories');
@@ -11,6 +12,7 @@ let indexPromise;
 let generation = 0;
 let currentList = null;
 let selectedRepo = null;
+let clearOutline;
 
 // Keep the app-bar action on the summary card's edge, including intrinsic width changes.
 const appbarContent = back.parentElement.parentElement;
@@ -83,6 +85,8 @@ function saveList() {
   currentList = null;
 }
 export function leaveRepos() {
+  clearOutline?.();
+  clearOutline = null;
   saveList();
   generation++;
 }
@@ -157,25 +161,35 @@ function showDetail(repo) {
   layoutObserver.observe(shell);
   layoutObserver.observe(appbarContent);
   const card = element('article', 'repo-summary');
-  card.append(element('h1', 'text-s-18 font-bold text-s-blue-300', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
+  card.append(element('h1', 'repo-summary-title', repo.name), element('p', 'repo-description', repo.description || '暂无简介'));
+  const metaCard = element('section', 'repo-meta-card');
+  const metaTitle = element('h2', 'repo-meta-title', '仓库信息');
+  metaTitle.id = 'repo-meta-title';
+  metaCard.setAttribute('aria-labelledby', metaTitle.id);
   const meta = element('dl', 'repo-meta');
-  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '保留所有权利', 'balance'], ['Commits', String(repo.commitCount), 'commit'], ['默认分支', repo.defaultBranch || '暂无默认分支', 'account_tree']];
+  const entries = [['许可证', repo.license?.spdxId && repo.license.spdxId !== 'NOASSERTION' ? repo.license.spdxId : repo.license?.name || '保留所有权利', 'balance'], ['Commits', String(repo.commitCount), 'commit']];
   for (const [label, value, glyph] of entries) {
     const item = element('div', 'repo-stat');
     const term = element('dt', 'repo-stat-label', label);
+    term.prepend(icon(glyph));
     const description = element('dd', 'repo-stat-value', value);
     description.title = value;
-    item.append(term, icon(glyph), description);
+    item.append(term, description);
     meta.append(item);
   }
-  card.append(meta);
-  const github = element('a', 'repo-external', '在 GitHub 查看');
+  const action = element('div', 'repo-action');
+  const outline = element('button', 'repo-outline-trigger repo-github');
+  outline.type = 'button';
+  outline.append(icon('format_list_bulleted'), element('span', '', '自述文件大纲'));
+  const github = element('a', 'repo-github');
+  github.append(icon('open_in_new'), element('span', '', '在 GitHub 中查看'));
   github.href = `https://github.com/${repo.fullName}`;
   github.target = '_blank';
   github.rel = 'noopener noreferrer';
-  card.append(github);
+  action.append(outline, github);
+  metaCard.append(metaTitle, meta, action);
   const profile = element('div', 'repo-profile');
-  profile.append(card);
+  profile.append(card, metaCard);
   const readmeColumn = element('div', 'repo-readme-column');
   const readme = element('div', 'repo-readme-body flex min-w-0 flex-col gap-3');
   readmeColumn.append(readme);
@@ -183,12 +197,15 @@ function showDetail(repo) {
   shell.classList.add('repo-shell--detail');
   layoutObserver.observe(card);
   alignBack();
-  if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref });
+  if (repo.readme) renderMarkdown(readme, repo.readme.markdown, { repository: repo.fullName, readmePath: repo.readme.path, ref: repo.readme.ref, splitAtRules: false });
   else readme.append(element('p', 'repo-summary text-s-14 text-s-text-desc', '暂无自述文件'));
   scroll.scrollTop = 0;
+  clearOutline = mountRepoOutline(outline, readme, readmeColumn, scroll);
 }
 
 export async function renderRepos() {
+  clearOutline?.();
+  clearOutline = null;
   saveList();
   const id = ++generation;
   content.setAttribute('aria-busy', 'true');
@@ -200,7 +217,6 @@ export async function renderRepos() {
   const [, slug, owner, name] = parts;
   const isDetail = parts.length === 4;
   categories.hidden = isDetail;
-  scroll.classList.toggle('pt-3', isDetail);
   if (isDetail) {
     back.hidden = false;
     back.href = categoryUrl(slug);

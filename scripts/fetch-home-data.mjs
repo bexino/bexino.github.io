@@ -15,6 +15,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
+import { isReadme } from '../src/home-data.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CACHE_DIR = join(ROOT, 'public', 'cache');
@@ -98,7 +99,9 @@ async function fetchReadme() {
       throw new Error('GitHub API did not return base64 README content');
     }
     console.log(`  readme from GitHub Contents API (blob ${json.sha})`);
-    return Buffer.from(json.content, 'base64').toString('utf8');
+    const markdown = Buffer.from(json.content, 'base64').toString('utf8');
+    if (!isReadme(markdown)) throw new Error('GitHub API returned an empty README or HTML document');
+    return markdown;
   } catch (e) {
     console.warn(`  GitHub Contents API failed: ${e.message}`);
   }
@@ -106,7 +109,7 @@ async function fetchReadme() {
     try {
       // GitHub 凭证只发送给 api.github.com，不发送到镜像或图片服务。
       const text = await get(url);
-      if (!text.trim() || /^\s*(?:<!doctype html|<html\b)/i.test(text)) {
+      if (!isReadme(text)) {
         throw new Error('source returned an empty README or HTML error page');
       }
       if (url.includes('jsdelivr.net')) console.warn('  warning: CDN fallback may lag behind GitHub');

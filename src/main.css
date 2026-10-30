@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Geist VF —— 全站字体（来自 @fontsource-variable/geist） */
+/* Google Sans Flex —— 全站 WOFF2 可变字体，本地打包加载 */
 @font-face {
-  font-family: 'Geist';
+  font-family: 'Google Sans Flex';
   font-style: normal;
-  font-weight: 100 900;
+  font-weight: 1 1000;
   font-display: swap;
-  src: url('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2-variations');
+  src: url('@fontsource-variable/google-sans-flex/files/google-sans-flex-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
@@ -77,19 +77,26 @@
   }
 }
 
-/* 桌面主页：个人信息留在左侧中央，右侧固定宽度并独立滚动。 */
+/* 桌面主页：左右卡片顶部对齐，两列作为整体垂直居中。 */
 @media (min-width: 960px) {
   #home-content {
     min-height: 0;
     overflow: hidden;
   }
 
+  #home-content:not(.hidden) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .home-layout {
-    height: 100%;
+    min-height: 0;
+    max-height: 100%;
     width: 816px;
     max-width: none;
     flex-direction: row;
-    gap: 24px;
+    gap: theme('spacing.3');
     padding: 16px;
   }
 
@@ -97,7 +104,7 @@
     display: flex;
     width: 280px;
     flex-shrink: 0;
-    align-items: center;
+    align-items: flex-start;
     min-height: 0;
     overflow-y: auto;
   }
@@ -117,12 +124,11 @@
     flex-shrink: 0;
     overflow-y: auto;
     scrollbar-gutter: stable;
-    padding: 0 4px;
+    padding: 0 4px 0 0;
   }
 
   .home-details > #readme-body {
     flex-shrink: 0;
-    margin-block: auto;
   }
 }
 
@@ -152,12 +158,13 @@
   }
 }
 
-/* 主页 README 渲染（.markdown-s）：Smartisan 灰阶 + 锤子蓝强调 */
+/* 全站 Markdown 渲染（.markdown-s）：Smartisan 灰阶 + 锤子蓝强调 */
 .markdown-s {
+  --markdown-marker-space: 1em;
   word-break: break-word;
 }
 .markdown-s h1 {
-  color: theme('colors.s.blue.300');
+  color: theme('colors.s.grey.900');
   font-size: 2em;
   line-height: 1.4;
   font-weight: bold;
@@ -195,34 +202,37 @@
 }
 .markdown-s ul {
   list-style: none;
-  padding-left: 1.4em;
-  margin: 0.5em 0;
+  padding-left: var(--markdown-marker-space);
+  margin: 0.3em 0;
 }
 .markdown-s ol {
   list-style: decimal;
-  padding-left: 1.4em;
-  margin: 0.5em 0;
+  padding-left: 1.2em;
+  margin: 0.3em 0;
 }
 .markdown-s ol > li::marker {
   color: theme('colors.s.blue.300');
 }
-/* 圆点与引用竖线共用左边界，正文均缩进 1.4em。 */
+/* 圆点、引用竖线与强调标题标记共用一个全角中文宽度的缩进。 */
 .markdown-s ul > li {
   position: relative;
 }
 .markdown-s ul > li::before {
   content: '';
   position: absolute;
-  left: -1.4em;
+  left: calc(-0.5 * var(--markdown-marker-space));
   top: 0.8125em;
   width: 0.25em;
   height: 0.25em;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   border-radius: theme('borderRadius.s-pill');
   background: theme('colors.s.blue.300');
 }
 .markdown-s li + li {
-  margin-top: 0.3em;
+  margin-top: 0.15em;
+}
+.markdown-s li > p {
+  margin: 0.3em 0;
 }
 .markdown-s img {
   /* 覆盖 Tailwind Preflight 的块级图片，让徽标遵循 Markdown 的行内换行规则。 */
@@ -231,10 +241,32 @@
   max-width: 100%;
 }
 .markdown-s blockquote {
-  box-shadow: inset 0.25em 0 0 theme('colors.s.grey.400');
-  margin: 0.5em 0;
-  padding: 0.1em 0 0.1em 1.4em;
+  position: relative;
+  margin: 0.3em 0;
+  padding: 0.1em 0 0.1em var(--markdown-marker-space);
   color: theme('colors.s.text.desc');
+}
+.markdown-s blockquote:not(.markdown-alert)::before {
+  content: '';
+  position: absolute;
+  left: calc(0.5 * var(--markdown-marker-space));
+  top: 0;
+  bottom: 0;
+  width: 0.25em;
+  transform: translateX(-50%);
+  background: theme('colors.s.grey.400');
+}
+.markdown-s blockquote > :first-child {
+  margin-top: 0;
+}
+.markdown-s blockquote > :last-child {
+  margin-bottom: 0;
+}
+.repo-readme-column .markdown-s :is(h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+.repo-readme-column .markdown-s :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
 }
 .markdown-s hr {
   border: 0;
@@ -265,6 +297,41 @@
   padding: 0;
   font-size: 0.92em;
 }
+.markdown-code-block {
+  @apply my-3 min-w-0 overflow-hidden rounded-s-md border-s-xs border-s-grey-300 bg-s-grey-100;
+}
+.markdown-code-toolbar {
+  @apply flex items-center justify-end gap-3 border-b-s-xs border-s-grey-300 px-3 py-1;
+}
+.markdown-code-language {
+  @apply mr-auto min-w-0 truncate text-s-12 font-semibold text-s-text-desc;
+  max-width: 40%;
+}
+.markdown-copy-button {
+  @apply shrink-0 rounded-s-sm border-s-xs border-s-grey-400 bg-s-white px-3 text-s-12 font-semibold text-s-grey-800 shadow-s-card-sm;
+  min-height: 32px;
+}
+.markdown-copy-button:active,
+.markdown-copy-button.is-pressed {
+  @apply bg-s-white-pressed shadow-s-inset-tab;
+}
+.markdown-copy-button:focus-visible {
+  @apply outline outline-2 outline-offset-2 outline-s-blue-300;
+}
+.markdown-copy-button[aria-busy="true"] { @apply cursor-wait opacity-50; }
+.markdown-copy-status { @apply text-s-12 text-s-text-desc; }
+.markdown-s .markdown-code-block > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.markdown-copy-field {
+  position: fixed;
+  top: 0;
+  left: -9999px;
+  opacity: 0;
+  font-size: 16px;
+}
 .markdown-s table {
   border-collapse: collapse;
   margin: 0.6em 0;
@@ -282,7 +349,15 @@
 }
 
 /* Repository pages use the same inset segmented controls and grouped rows as Settings. */
-.repo-categories { overflow-x: auto; scrollbar-width: thin; }
+.repo-categories {
+  position: absolute;
+  inset-inline: theme('spacing.3');
+  top: 50%;
+  transform: translateY(-50%);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.repo-categories[hidden] { display: none; }
 .repo-tabs {
   @apply flex w-max min-w-full overflow-hidden rounded-s-md border-s-xs border-s-grey-400 bg-s-white;
 }
@@ -294,18 +369,21 @@
   @apply bg-s-grey-500 text-s-white shadow-s-inset-tab;
 }
 .repo-tab.is-pressed { @apply bg-s-white-pressed; }
-.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible {
+.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible, .repo-github:focus-visible {
   @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
 }
 .repo-list, .repo-summary {
   @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
 }
 .repo-summary { @apply min-w-0 p-4; overflow-wrap: anywhere; }
+.repo-profile > .repo-summary { @apply text-left; }
+.repo-summary-title { @apply text-s-16 font-bold leading-relaxed text-s-grey-800; }
+.repo-summary > .repo-description { @apply mt-3; }
 .repo-row {
   @apply flex min-h-s-row items-center gap-3 border-b-s-md border-s-grey-200 px-4 py-3;
 }
 .repo-row:last-child { border-bottom: 0; }
-.repo-name { @apply text-s-16 font-bold text-s-blue-300; overflow-wrap: anywhere; }
+.repo-name { @apply text-s-16 font-bold text-s-grey-800; overflow-wrap: anywhere; }
 .repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
 .repo-row > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
 .repo-row.is-pressed { @apply bg-s-blue-300; }
@@ -325,40 +403,126 @@
 .repo-back[hidden] { display: none; }
 .repo-back .md-icon { width: 24px; height: 24px; }
 #appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.repo-meta {
-  @apply my-4 grid rounded-s-md border-s-sm border-s-grey-400 bg-s-white py-4 shadow-s-card-sm;
-  grid-template-columns: repeat(3, 1fr);
-  min-width: max-content;
+.repo-meta-card {
+  @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
 }
+.repo-meta-title {
+  @apply border-b-s-md border-s-grey-400 bg-s-sheet-header px-3 py-3 text-s-14 font-semibold text-s-grey-800;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-meta { @apply px-3; }
 .repo-stat {
-  @apply flex min-w-0 flex-col items-center justify-start gap-1 border-r-s-sm border-s-grey-200 px-2 text-center;
+  @apply flex min-w-0 items-center justify-between gap-3 border-b-s-md border-s-grey-200;
+  min-height: 60px;
 }
-.repo-stat:last-child { border-right: 0; }
-.repo-stat > .md-icon { @apply order-1 h-5 w-5 shrink-0 text-s-blue-300; }
-.repo-stat-value { @apply order-2 whitespace-nowrap text-s-18 font-bold leading-tight text-s-grey-900; overflow-wrap: normal; }
-.repo-stat-label { @apply order-3 mt-auto text-s-12 text-s-grey-600; }
-.repo-profile, .repo-readme-column { min-width: 0; }
-.repo-profile > .repo-summary { overflow-x: auto; }
-/* Match the home page's centered profile and independently scrolling README. */
+.repo-stat:last-child { @apply border-b-0; }
+.repo-stat-label {
+  @apply flex shrink-0 items-center gap-3 text-s-14 text-s-grey-800;
+}
+.repo-stat-label > .md-icon { @apply h-5 w-5 shrink-0 text-s-icon; }
+.repo-stat-value { @apply min-w-0 text-right text-s-14 font-medium text-s-grey-700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.repo-profile { @apply flex min-w-0 flex-col gap-3; }
+.repo-readme-column { min-width: 0; }
+.repo-action { @apply flex flex-col gap-3 border-t-s-md border-s-grey-200 bg-s-grey-100 p-3; }
+.repo-github {
+  @apply flex w-full items-center justify-center gap-3 rounded-s-md border-s-md border-s-grey-400 bg-s-white px-3 text-s-14 font-semibold text-s-grey-800 shadow-s-card-sm;
+  min-height: 48px;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-github > .md-icon { @apply h-4 w-4 shrink-0 text-s-icon; }
+.repo-github:hover { @apply text-s-blue-400; }
+.repo-github:active, .repo-github.is-pressed { @apply bg-s-white-pressed shadow-s-inset-tab; }
+/* Keep the sidebar cards together at the upper right of the left column. */
 @media (min-width: 960px) {
-  .repo-shell--detail { width: max-content; max-width: 100%; }
+  .repo-shell { width: 816px; max-width: 100%; }
+  .repo-list {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: theme('spacing.3');
+    overflow: visible; border: 0; background: transparent; box-shadow: none;
+  }
+  .repo-list > .repo-row {
+    @apply rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
+  }
+  .repo-list > .repo-row.is-pressed { @apply bg-s-blue-300; }
+  .repo-shell--detail { width: 816px; max-width: 100%; }
   .repo-shell--detail #repo-scroll { overflow: hidden; padding: 0; }
   .repo-shell--detail #repo-content {
-    height: 100%; min-height: 0; flex-direction: row; gap: 24px; padding: 16px;
+    height: 100%; min-height: 0; flex-direction: row; gap: theme('spacing.3'); padding: 16px;
   }
   .repo-shell--detail .repo-profile {
-    display: flex; flex-direction: column; width: max-content; min-width: 280px; max-width: calc(100% - 344px); min-height: 0; flex-shrink: 0; overflow-y: auto;
+    display: flex; flex-direction: column; width: 280px; min-height: 0; flex-shrink: 0; overflow-y: auto;
+    align-items: flex-end; justify-content: flex-start;
   }
   .repo-shell--detail .repo-profile > .repo-summary {
-    width: 100%; flex-shrink: 0; margin-block: auto; text-align: right;
+    width: 100%; flex-shrink: 0; margin-top: 0;
   }
+  .repo-shell--detail .repo-profile > .repo-meta-card { width: 100%; flex-shrink: 0; margin-bottom: 0; }
   .repo-shell--detail .repo-readme-column {
     display: flex; flex-direction: column; width: 480px; min-width: 320px; min-height: 0; flex-shrink: 1;
-    overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px;
+    overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px 0 0;
   }
   .repo-shell--detail .repo-readme-body { flex-shrink: 0; margin-block: auto; }
 }
-.repo-external { @apply text-s-14 text-s-blue-300 underline underline-offset-2; }
+
+/* Smartisan grouped outline rows in a dialog, with a bottom sheet on phones. */
+.repo-outline-list { position: relative; overflow-y: auto; overscroll-behavior: contain; }
+.repo-outline-item {
+  @apply block w-full border-b-s-md border-s-grey-200 py-3 pr-3 text-left text-s-14 text-s-grey-800;
+  min-height: 48px;
+  padding-left: calc(12px + var(--outline-level) * 12px);
+  overflow-wrap: anywhere;
+}
+.repo-outline-item:last-child { border-bottom: 0; }
+.repo-outline-item[aria-current] {
+  @apply bg-s-white-pressed font-semibold text-s-blue-400 shadow-s-inset-tab;
+}
+.repo-outline-item:active, .repo-outline-item.is-pressed { @apply bg-s-blue-300 text-s-white; }
+.repo-outline-item:focus-visible, .repo-outline-trigger:focus-visible {
+  @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
+}
+.repo-outline-empty { @apply p-3 text-s-14 text-s-text-desc; }
+.repo-outline-dialog {
+  @apply w-full max-w-s-screen overflow-hidden rounded-t-s-sheet border-s-md border-s-grey-400 bg-s-sheet-body p-0 text-s-grey-800 shadow-s-card;
+  position: fixed;
+  inset: auto 0 0;
+  margin: 0 auto;
+  max-height: min(72dvh, 720px);
+}
+.repo-outline-dialog[open] { display: flex; flex-direction: column; animation: repo-outline-enter 300ms ease-out; }
+.repo-outline-dialog::backdrop { background: rgb(0 0 0 / 0.6); animation: repo-outline-scrim 200ms ease-out; }
+.repo-outline-dialog.is-closing { animation: repo-outline-exit 250ms ease-in forwards; }
+.repo-outline-dialog.is-closing::backdrop { animation: repo-outline-scrim 250ms ease-in reverse forwards; }
+.repo-outline-header {
+  @apply relative flex shrink-0 items-center justify-end border-b-s-md border-s-grey-400 bg-s-sheet-header px-3;
+  min-height: 60px;
+}
+.repo-outline-header h2 {
+  @apply absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-s-16 font-bold;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-outline-header .repo-button { @apply bg-s-white px-3; min-height: 36px; }
+.repo-outline-dialog .repo-outline-list {
+  @apply mx-3 my-3 min-h-0 rounded-s-lg border-s-md border-s-grey-400 bg-s-white;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.repo-outline-dialog .repo-outline-item { min-height: 60px; }
+@keyframes repo-outline-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes repo-outline-exit { to { transform: translateY(100%); } }
+@keyframes repo-outline-scrim { from { opacity: 0; } to { opacity: 1; } }
+@media (min-width: 960px) {
+  .repo-outline-dialog {
+    @apply rounded-s-dialog;
+    width: 368px;
+    inset: 0;
+    margin: auto;
+  }
+  .repo-outline-dialog[open] { animation: repo-outline-pop 120ms ease-out; }
+  .repo-outline-dialog.is-closing { animation: repo-outline-fade 100ms ease-in forwards; }
+}
+@keyframes repo-outline-pop { from { transform: scale(.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes repo-outline-fade { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .repo-outline-dialog[open], .repo-outline-dialog::backdrop { animation: none; }
+}
 .markdown-table { max-width: 100%; overflow-x: auto; }
 .markdown-s .markdown-table table { width: max-content; min-width: 100%; }
 .markdown-s details { @apply my-2; }
@@ -366,8 +530,7 @@
 .markdown-s input[type="checkbox"] { @apply mr-1; accent-color: theme('colors.s.blue.300'); }
 .markdown-s li:has(> input[type="checkbox"])::before { display: none; }
 .markdown-s .markdown-alert {
-  @apply rounded-s-md border-s-sm border-s-grey-400 bg-s-grey-100 p-3 text-s-text-body;
-  box-shadow: inset 3px 0 0 var(--alert-color);
+  @apply my-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-3 text-s-grey-900 shadow-s-card;
   --alert-color: theme('colors.s.blue.300');
 }
 .markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.alert.tip'); }
@@ -375,7 +538,21 @@
 .markdown-s .markdown-alert--warning { --alert-color: theme('colors.s.chip.yellow-text'); }
 .markdown-s .markdown-alert--caution { --alert-color: theme('colors.s.chip.red-text'); }
 .markdown-s .markdown-alert-title {
-  display: flex; align-items: center; gap: 6px; margin-top: 0; font-weight: bold; color: var(--alert-color);
+  position: relative;
+  padding-left: var(--markdown-marker-space);
+  margin-top: 0;
+  font-weight: bold;
+  color: theme('colors.s.grey.800');
 }
-.markdown-alert-title .md-icon { width: 18px; height: 18px; }
+.markdown-s .markdown-alert-title::before {
+  content: '';
+  position: absolute;
+  left: calc(0.5 * var(--markdown-marker-space));
+  top: 0.8125em;
+  width: 0.25em;
+  height: 0.25em;
+  transform: translate(-50%, -50%);
+  border-radius: theme('borderRadius.s-pill');
+  background: var(--alert-color);
+}
 .markdown-s [id] { scroll-margin-top: 12px; }

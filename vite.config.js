@@ -21,6 +21,8 @@ const ICONS = [
   'balance',
   'commit',
   'account_tree',
+  'open_in_new',
+  'format_list_bulleted',
 ];
 
 const OUT = 'public/icons-sprite.svg';

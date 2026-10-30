@@ -1,9 +1,108 @@
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 
-const ALERTS = { NOTE: ['info', 'note'], TIP: ['lightbulb', 'tip'], IMPORTANT: ['announcement', 'important'], WARNING: ['warning', 'warning'], CAUTION: ['report', 'caution'] };
+const ALERTS = { NOTE: 'note', TIP: 'tip', IMPORTANT: 'important', WARNING: 'warning', CAUTION: 'caution' };
 
-export function renderMarkdown(body, markdown, { repository, readmePath, ref, transformImage } = {}) {
+async function copyCode(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return;
+  } catch {
+    // Older browsers and non-HTTPS previews may not expose the Clipboard API.
+  }
+  const active = document.activeElement;
+  const selection = window.getSelection();
+  const ranges = selection ? Array.from({ length: selection.rangeCount }, (_, i) => selection.getRangeAt(i).cloneRange()) : [];
+  const field = document.createElement('textarea');
+  field.value = text;
+  field.readOnly = true;
+  field.className = 'markdown-copy-field';
+  document.body.append(field);
+  try {
+    field.focus({ preventScroll: true });
+    field.select();
+    if (!document.execCommand('copy')) throw new Error('Copy failed');
+  } finally {
+    field.remove();
+    active?.focus({ preventScroll: true });
+    if (selection) {
+      selection.removeAllRanges();
+      ranges.forEach(range => selection.addRange(range));
+    }
+  }
+}
+
+function addCodeCopyButtons(content) {
+  content.querySelectorAll('pre').forEach(pre => {
+    const code = pre.querySelector('code') || pre;
+    const text = code.textContent;
+    const block = document.createElement('div');
+    block.className = 'markdown-code-block';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'markdown-code-toolbar';
+    const language = document.createElement('span');
+    language.className = 'markdown-code-language';
+    language.textContent = Array.from(code.classList).find(name => name.startsWith('language-'))?.slice(9) || '纯文本';
+    language.title = language.textContent;
+    const status = document.createElement('span');
+    status.className = 'markdown-copy-status';
+    status.setAttribute('role', 'status');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'markdown-copy-button';
+    button.textContent = '复制';
+    button.setAttribute('aria-label', '复制代码');
+    let resetTimer;
+    let copying = false;
+    button.addEventListener('click', async () => {
+      if (copying) return;
+      clearTimeout(resetTimer);
+      copying = true;
+      button.setAttribute('aria-busy', 'true');
+      status.textContent = '';
+      try {
+        await copyCode(text);
+        button.textContent = '已复制';
+        status.textContent = '代码已复制';
+      } catch {
+        button.textContent = '重试';
+        status.textContent = '复制失败，请重试或手动选择代码复制';
+      } finally {
+        copying = false;
+        button.removeAttribute('aria-busy');
+        resetTimer = setTimeout(() => {
+          button.textContent = '复制';
+          status.textContent = '';
+        }, 2500);
+      }
+    });
+    pre.replaceWith(block);
+    toolbar.append(language, status, button);
+    block.append(toolbar, pre);
+  });
+}
+
+function isShieldsUrl(value) {
+  try {
+    const hostname = new URL(value, 'https://localhost/').hostname.toLowerCase().replace(/\.$/, '');
+    return hostname === 'shields.io' || hostname.endsWith('.shields.io');
+  } catch {
+    return false;
+  }
+}
+
+function removeBadge(element) {
+  let parent = element.parentElement;
+  element.remove();
+  while (parent && parent.matches('a, p, span, div, picture') &&
+    !parent.textContent.trim() && !parent.querySelector('img, source, video, audio, svg, iframe, input, hr')) {
+    const next = parent.parentElement;
+    parent.remove();
+    parent = next;
+  }
+}
+
+export function renderMarkdown(body, markdown, { repository, readmePath, ref, transformImage, splitAtRules = true } = {}) {
   const cleaned = markdown.replace(/^<!--\s*fetchedAt:.*?-->\s*/, '');
   const template = document.createElement('template');
   template.innerHTML = DOMPurify.sanitize(marked.parse(cleaned, { breaks: false, gfm: true }), {
@@ -26,11 +125,10 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
     if (!match) return;
     const type = match[1].toUpperCase();
     marker.textContent = marker.textContent.slice(match[0].length);
-    const [icon, variant] = ALERTS[type];
+    const variant = ALERTS[type];
     quote.className = `markdown-alert markdown-alert--${variant}`;
     const title = document.createElement('p');
     title.className = 'markdown-alert-title';
-    title.innerHTML = `<svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-${icon}"/></svg>`;
     title.append(type[0] + type.slice(1).toLowerCase());
     quote.prepend(title);
     if (!first.textContent.trim() && !first.querySelector('img')) first.remove();
@@ -46,8 +144,17 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
   }
   content.querySelectorAll('img[src],source[src],video[src],audio[src]').forEach(element => {
     element.setAttribute('src', relativeUrl(element.getAttribute('src'), rawBase));
+    // Filter before cache rewriting so every page and data mode uses the same rule.
+    if (isShieldsUrl(element.getAttribute('src'))) {
+      removeBadge(element);
+      return;
+    }
     if (element.tagName === 'IMG') {
       if (transformImage) element.setAttribute('src', transformImage(element.getAttribute('src')));
+      if (isShieldsUrl(element.getAttribute('src'))) {
+        removeBadge(element);
+        return;
+      }
       element.loading = 'lazy';
       element.onerror = () => { element.hidden = true; };
     }
@@ -77,6 +184,7 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
     table.replaceWith(scroller);
     scroller.append(table);
   });
+  addCodeCopyButtons(content);
   const cards = document.createDocumentFragment();
   let card;
   const start = () => {
@@ -88,7 +196,7 @@ export function renderMarkdown(body, markdown, { repository, readmePath, ref, tr
   };
   start();
   for (const node of Array.from(content.childNodes)) {
-    if (node.nodeName === 'HR') { finish(); start(); }
+    if (splitAtRules && node.nodeName === 'HR') { finish(); start(); }
     else card.append(node);
   }
   finish();

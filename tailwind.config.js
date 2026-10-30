@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        s: ['Geist', 'Smartisan Compact', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'sans-serif'],
+        s: ['Google Sans Flex', 'Smartisan Compact', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', 'sans-serif'],
       },
     },
   },

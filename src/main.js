@@ -2,10 +2,11 @@ import './main.css';
 import './smartisan.js';
 import { renderMarkdown } from './markdown.js';
 import { renderRepos, leaveRepos } from './repos.js';
+import { isReadme, parseProfile } from './home-data.js';
 
 const TITLES = {
   home: '主页',
-  repo: '仓库',
+  repo: '',
   me: '设置',
 };
 
@@ -42,6 +43,7 @@ function apply() {
 
   document.getElementById('appbar-title').textContent = TITLES[tab];
   document.getElementById('repo-back').hidden = true;
+  document.getElementById('repo-categories').hidden = true;
   if (tab === 'repo') renderRepos();
 }
 
@@ -67,7 +69,7 @@ async function fetchWithTimeout(url, timeoutMs, headers) {
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(url, { signal: ctrl.signal, headers, cache: 'no-store' });
-    if (!res.ok) return null;
+    if (!res.ok || /text\/html|application\/xhtml\+xml/i.test(res.headers.get('content-type') || '')) return null;
     return await res.text();
   } catch {
     return null;
@@ -82,7 +84,7 @@ async function fetchFirst(urls, deadline) {
     const remain = deadline - Date.now();
     if (remain <= 0) return null;
     const text = await fetchWithTimeout(url, remain);
-    if (text !== null) return text;
+    if (text !== null && (url === GH_USER_API ? parseProfile(text) : isReadme(text))) return text;
   }
   return null;
 }
@@ -236,23 +238,26 @@ async function loadHomeData(mode = 'cache') {
   document.getElementById('gh-avatar-fallback').classList.remove('hidden');
   document.getElementById('readme-body').replaceChildren();
 
-  if (profileText) {
-    let obj = null;
-    try {
-      obj = JSON.parse(profileText);
-    } catch {
-      obj = null;
-    }
-    if (obj && obj.fetchedAt && obj.profile) {
-      obj = obj.profile;
-    }
-    if (obj) {
-      renderProfile(obj);
-    }
+  const profile = parseProfile(profileText);
+  if (profile) renderProfile(profile);
+  else document.getElementById('gh-bio').textContent = '个人资料暂不可用，请稍后重试。';
+
+  if (isReadme(readmeText)) {
+    renderReadme(readmeText, mode);
+  } else {
+    const message = document.createElement('p');
+    message.className = 'rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 text-s-14 text-s-text-desc shadow-s-card';
+    message.textContent = '主页简介暂不可用，请稍后重试。';
+    document.getElementById('readme-body').append(message);
   }
 
-  if (readmeText) {
-    renderReadme(readmeText, mode);
+  if (!profile || !isReadme(readmeText)) {
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'text-s-14 text-s-blue-300 p-3';
+    retry.textContent = '重新加载';
+    retry.addEventListener('click', () => loadHomeData(homeSource));
+    document.getElementById('readme-body').append(retry);
   }
 
   document.getElementById('home-content').setAttribute('aria-busy', 'false');

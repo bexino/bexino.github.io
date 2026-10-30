@@ -8,9 +8,10 @@
   <body class="font-s bg-s-page text-s-grey-900">
     <div id="app" class="flex h-dvh flex-col">
       <!-- App Bar -->
-      <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white">
+      <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white sm:pl-16">
         <div class="relative mx-auto flex h-s-bar max-w-s-screen items-center">
         <span class="flex-1"><a id="repo-back" class="repo-back" href="#/repo/web-and-agent" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-chevron_left"/></svg>返回</a></span>
+        <div id="repo-categories" class="repo-categories" hidden></div>
         <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
         <span class="flex-1"></span>
         </div>
@@ -58,8 +59,7 @@
         </section>
         <section data-tab="repo" class="absolute inset-0 hidden">
           <div class="repo-shell mx-auto flex h-full max-w-s-screen flex-col">
-            <div id="repo-categories" class="repo-categories shrink-0 p-3"></div>
-            <div id="repo-scroll" class="min-h-0 flex-1 overflow-y-auto px-3 pb-6" tabindex="-1">
+            <div id="repo-scroll" class="min-h-0 flex-1 overflow-y-auto px-3 pt-3 pb-6" tabindex="-1">
               <div id="repo-content" class="flex min-w-0 flex-col gap-3" aria-live="polite"></div>
             </div>
           </div>
