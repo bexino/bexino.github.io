@@ -64,16 +64,13 @@ function addCodeCopyButtons(content) {
       status.textContent = '';
       try {
         await copyCode(text);
-        button.textContent = t('已复制');
-        status.textContent = t('代码已复制');
+        status.textContent = t('已复制');
       } catch {
-        button.textContent = t('重试');
         status.textContent = t('复制失败，请重试或手动选择代码复制');
       } finally {
         copying = false;
         button.removeAttribute('aria-busy');
         resetTimer = setTimeout(() => {
-          button.textContent = t('复制');
           status.textContent = '';
         }, 2500);
       }

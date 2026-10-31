@@ -142,11 +142,13 @@ html[lang="en"] #bottom-nav .text-s-nav {
 }
 
 /* 设置分段控件：按内容自适应宽度，统一高度并保持单行。 */
-.source-switch {
+.source-switch, .repo-tabs {
   @apply flex h-7 w-max shrink-0 flex-nowrap overflow-hidden rounded-s-md border-s-xs border-s-grey-400;
 }
-.source-switch-option {
+.source-switch-option, .repo-tab {
   @apply flex h-full items-center justify-center whitespace-nowrap border-r-s-xs border-s-grey-200 bg-s-tab-frame px-3 text-s-12 font-bold text-s-tab-text;
+}
+.source-switch-option {
   @apply active:bg-s-white-pressed peer-checked:bg-s-tab-selected peer-checked:text-s-on-selected peer-checked:shadow-s-inset-tab;
   @apply peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-s-blue-300;
 }
@@ -154,13 +156,11 @@ html[lang="en"] #bottom-nav .text-s-nav {
   @apply border-r-0;
 }
 
-/* 主页顶栏语言 Tab：居中对称，沿用 Smartisan 内凹分段选中态。 */
+/* 主页顶栏语言 Tab 居中显示。 */
 .home-language-tabs {
   @apply absolute left-1/2 -translate-x-1/2;
 }
 .home-language-tabs[hidden] { display: none; }
-.home-language-tabs > label { @apply flex-1; }
-.home-language-tabs .source-switch-option { @apply min-w-24; }
 
 /* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
 .home-spinner {
@@ -379,10 +379,7 @@ html[lang="en"] #bottom-nav .text-s-nav {
 }
 .repo-categories[hidden] { display: none; }
 .repo-tabs {
-  @apply flex w-max min-w-full overflow-hidden rounded-s-md border-s-xs border-s-grey-400 bg-s-white;
-}
-.repo-tab {
-  @apply flex-1 whitespace-nowrap border-r-s-sm border-s-grey-200 px-3 py-2 text-s-12 font-bold text-s-grey-800;
+  @apply mx-auto;
 }
 .repo-tab:last-child { border-right: 0; }
 .repo-tab[aria-selected="true"] {
@@ -565,6 +562,9 @@ html[lang="en"] #bottom-nav .text-s-nav {
 .markdown-s .markdown-alert {
   @apply my-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-3 text-s-grey-900 shadow-s-card;
   --alert-color: theme('colors.s.blue.300');
+}
+.markdown-s .markdown-alert > :is(ul, ol) {
+  margin-left: var(--markdown-marker-space);
 }
 .markdown-s .markdown-alert ul > li::before {
   background: theme('colors.s.grey.800');
