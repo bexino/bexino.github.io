@@ -400,6 +400,7 @@ html[lang="en"] #bottom-nav .text-s-nav {
 }
 .repo-row:last-child { border-bottom: 0; }
 .repo-name { @apply text-s-16 font-bold text-s-grey-800; overflow-wrap: anywhere; }
+.repo-name-icons { @apply ml-1.5 inline-flex items-center gap-1.5 align-middle text-s-16 text-s-icon; }
 .repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
 .repo-row > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
 .repo-row.is-pressed { @apply bg-s-blue-300; }

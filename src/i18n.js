@@ -1,7 +1,7 @@
 // URL is the source of truth; query parameters survive all hash routes.
 const EN = {
-  "主页": "Home",
-  "仓库": "Repos",
+  "关于": "About",
+  "项目": "Projects",
   "设置": "Settings",
   "返回": "Back",
   "访问 GitHub 仓库（新窗口）": "View GitHub repository (new window)",

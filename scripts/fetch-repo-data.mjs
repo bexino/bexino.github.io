@@ -99,6 +99,7 @@ export async function main({ token = process.env.GH_TOKEN, output = OUTPUT, run 
   const { categories, repositories } = await collectRepos(run);
   for (const fullName of repositories.keys()) {
     const detail = await fetchDetail(fullName, run);
+    Object.assign(repositories.get(fullName), { homepageUrl: detail.homepageUrl, hasReleases: detail.hasReleases });
     const file = join(resolved, ...fullName.split('/')) + '.json';
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, JSON.stringify({ fetchedAt, ...detail }, null, 2) + '\n');

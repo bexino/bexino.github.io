@@ -1,7 +1,7 @@
 import { t, getLanguage } from './i18n.js';
 import { renderMarkdown } from './markdown.js';
 import { mountRepoOutline } from './repo-outline.js';
-import { dataSource, directSummary, directDetail } from './github-data.js';
+import { dataSource, directSummary, directDetail, githubRequest } from './github-data.js';
 
 const content = document.getElementById('repo-content');
 const categories = document.getElementById('repo-categories');
@@ -153,7 +153,22 @@ function showList(data, category) {
     row.href = detailUrl(category.slug, fullName);
     row.dataset.repository = fullName;
     const text = element('div', 'min-w-0 flex-1');
-    text.append(element('h2', 'repo-name', repo.name), element('p', 'repo-description', t(repo.description) || t('暂无简介')));
+    const name = element('h2', 'repo-name', repo.name);
+    const badges = element('span', 'repo-name-icons');
+    let website;
+    try { website = new URL(repo.homepageUrl); } catch { /* Missing or invalid Website. */ }
+    for (const [visible, glyph, label] of [
+      [website && ['https:', 'http:'].includes(website.protocol), 'web', t('在线体验')],
+      [repo.hasReleases, 'download', t('下载')],
+    ]) {
+      if (!visible) continue;
+      const badge = element('span', 'inline-flex');
+      badge.title = label;
+      badge.append(icon(glyph), element('span', 'sr-only', label));
+      badges.append(badge);
+    }
+    if (badges.childElementCount) name.append(badges);
+    text.append(name, element('p', 'repo-description', t(repo.description) || t('暂无简介')));
     row.append(text, icon('chevron_right'));
     row.addEventListener('click', () => { selectedRepo = fullName; });
     list.append(row);
@@ -276,7 +291,10 @@ export async function renderRepos() {
       renderCategories(data, slug);
       // GitHub Lists have no unauthenticated public endpoint; only membership
       // comes from the index cache. Fetch displayed metadata directly.
-      const repositories = direct ? Object.fromEntries(await Promise.all(category.repositories.map(async fullName => [fullName, await directSummary(fullName)]))) : data.repositories;
+      const repositories = direct ? Object.fromEntries(await Promise.all(category.repositories.map(async fullName => {
+        const [summary, releases] = await Promise.all([directSummary(fullName), githubRequest(`repos/${fullName.split('/').map(encodeURIComponent).join('/')}/releases?per_page=1`)]);
+        return [fullName, { ...summary, hasReleases: releases.data.length > 0 }];
+      }))) : data.repositories;
       if (id !== generation) return;
       showList({ ...data, repositories }, category);
       return;

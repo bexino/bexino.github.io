@@ -45,57 +45,79 @@
     "bexino/siss": {
       "name": "siss",
       "fullName": "bexino/siss",
-      "description": "值日分配系统。"
+      "description": "值日分配系统。",
+      "homepageUrl": "https://bexino.github.io/siss/",
+      "hasReleases": false
     },
     "bexino/prompt": {
       "name": "prompt",
       "fullName": "bexino/prompt",
-      "description": "静态提示词浏览站点。"
+      "description": "静态提示词浏览站点。",
+      "homepageUrl": "https://bexino.github.io/prompt/",
+      "hasReleases": false
     },
     "bexino/bexino.github.io": {
       "name": "bexino.github.io",
       "fullName": "bexino/bexino.github.io",
-      "description": "Personal Homepage."
+      "description": "Personal Homepage.",
+      "homepageUrl": "https://bexino.github.io/",
+      "hasReleases": false
     },
     "bexino/userdata-changer": {
       "name": "userdata-changer",
       "fullName": "bexino/userdata-changer",
-      "description": "Migrates Chrome user data off C: via mlink junction, lossless."
+      "description": "Migrates Chrome user data off C: via mlink junction, lossless.",
+      "homepageUrl": null,
+      "hasReleases": false
     },
     "bexino/FTP-Silver": {
       "name": "FTP-Silver",
       "fullName": "bexino/FTP-Silver",
-      "description": "A lightweight tool to easily start an FTP server."
+      "description": "A lightweight tool to easily start an FTP server.",
+      "homepageUrl": null,
+      "hasReleases": true
     },
     "bexino/MrsLiusSon": {
       "name": "MrsLiusSon",
       "fullName": "bexino/MrsLiusSon",
-      "description": "Adds Markdown to the Windows right-click New menu."
+      "description": "Adds Markdown to the Windows right-click New menu.",
+      "homepageUrl": null,
+      "hasReleases": true
     },
     "bexino/napa-pdf": {
       "name": "napa-pdf",
       "fullName": "bexino/napa-pdf",
-      "description": "Add file names to PDF headers in batches."
+      "description": "Add file names to PDF headers in batches.",
+      "homepageUrl": null,
+      "hasReleases": true
     },
     "bexino/sonnet": {
       "name": "sonnet",
       "fullName": "bexino/sonnet",
-      "description": "Claude Typora theme."
+      "description": "Claude Typora theme.",
+      "homepageUrl": null,
+      "hasReleases": false
     },
     "bexino/magicbook14_fixed": {
       "name": "magicbook14_fixed",
       "fullName": "bexino/magicbook14_fixed",
-      "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux."
+      "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux.",
+      "homepageUrl": null,
+      "hasReleases": false
     },
     "bexino/oh-my-rime-config": {
       "name": "oh-my-rime-config",
       "fullName": "bexino/oh-my-rime-config",
-      "description": "Linux 输入法解决方案。"
+      "description": "Linux 输入法解决方案。",
+      "homepageUrl": null,
+      "hasReleases": false
     },
     "bexino/qqmusic-linux-fix": {
       "name": "qqmusic-linux-fix",
       "fullName": "bexino/qqmusic-linux-fix",
-      "description": "修复 Flatpak 版 QQ 音乐显示问题。"
+      "description": "修复 Flatpak 版 QQ 音乐显示问题。",
+      "homepageUrl": null,
+      "hasReleases": false
     }
   }
 }

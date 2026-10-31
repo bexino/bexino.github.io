@@ -25,6 +25,7 @@ const ICONS = [
   'open_in_new',
   'format_list_bulleted',
   'public',
+  'web',
   'download',
   'github',
 ];
