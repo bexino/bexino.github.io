@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-31T05:58:45.731Z",
+  "fetchedAt": "2026-10-31T09:04:20.947Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -59,35 +59,35 @@
     "bexino/bexino.github.io": {
       "name": "bexino.github.io",
       "fullName": "bexino/bexino.github.io",
-      "description": "Personal Homepage.",
+      "description": "Personal Homepage: 个人主页。",
       "homepageUrl": "https://bexino.github.io/",
       "hasReleases": false
     },
     "bexino/userdata-changer": {
       "name": "userdata-changer",
       "fullName": "bexino/userdata-changer",
-      "description": "Migrates Chrome user data off C: via mlink junction, lossless.",
+      "description": "Migrate all Chrome user data on drive C to another partition without loss: 将 C 盘 Chrome 用户数据全量无损迁移至其他分区。",
       "homepageUrl": null,
-      "hasReleases": false
+      "hasReleases": true
     },
     "bexino/FTP-Silver": {
       "name": "FTP-Silver",
       "fullName": "bexino/FTP-Silver",
-      "description": "A lightweight tool to easily start an FTP server.",
+      "description": "A lightweight tool to easily start an FTP server: 轻松启动 FTP 服务器的轻量工具。",
       "homepageUrl": null,
       "hasReleases": true
     },
     "bexino/MrsLiusSon": {
       "name": "MrsLiusSon",
       "fullName": "bexino/MrsLiusSon",
-      "description": "Adds Markdown to the Windows right-click New menu.",
+      "description": "Adds Markdown to the Windows right-click New menu: 为 Windows 右键添加“新建 Markdown”。",
       "homepageUrl": null,
       "hasReleases": true
     },
     "bexino/napa-pdf": {
       "name": "napa-pdf",
       "fullName": "bexino/napa-pdf",
-      "description": "Add file names to PDF headers in batches.",
+      "description": "Add file names to PDF headers in batches: 批量将文件名添加至 PDF 页眉。",
       "homepageUrl": null,
       "hasReleases": true
     },
@@ -96,28 +96,28 @@
       "fullName": "bexino/sonnet",
       "description": "Claude Typora theme.",
       "homepageUrl": null,
-      "hasReleases": false
+      "hasReleases": true
     },
     "bexino/magicbook14_fixed": {
       "name": "magicbook14_fixed",
       "fullName": "bexino/magicbook14_fixed",
       "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux.",
       "homepageUrl": null,
-      "hasReleases": false
+      "hasReleases": true
     },
     "bexino/oh-my-rime-config": {
       "name": "oh-my-rime-config",
       "fullName": "bexino/oh-my-rime-config",
       "description": "Linux 输入法解决方案。",
       "homepageUrl": null,
-      "hasReleases": false
+      "hasReleases": true
     },
     "bexino/qqmusic-linux-fix": {
       "name": "qqmusic-linux-fix",
       "fullName": "bexino/qqmusic-linux-fix",
       "description": "修复 Flatpak 版 QQ 音乐显示问题。",
       "homepageUrl": null,
-      "hasReleases": false
+      "hasReleases": true
     }
   }
 }
