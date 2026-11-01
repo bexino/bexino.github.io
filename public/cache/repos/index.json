@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-31T19:37:21.028Z",
+  "fetchedAt": "2026-11-01T08:47:18.355Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -101,7 +101,7 @@
     "bexino/magicbook14_fixed": {
       "name": "magicbook14_fixed",
       "fullName": "bexino/magicbook14_fixed",
-      "description": "Fixes touchpad, keyboard, and fingerprint recognition issues on the HONOR MagicBook 14 2026 (BCC-N, M1070) under Linux.",
+      "description": "Fixes touchpad, keyboard, and fingerprint on the HONOR MagicBook 14 2026 under Linux: 修复荣耀 MagicBook 14 2026 在 Linux 系统上的：触摸板、键盘、指纹问题。",
       "homepageUrl": null,
       "hasReleases": true
     },
