@@ -24,8 +24,9 @@ const ICONS = [
   'account_tree',
   'open_in_new',
   'format_list_bulleted',
+  'vertical_align_top',
   'public',
-  'web',
+  'language',
   'download',
   'github',
 ];

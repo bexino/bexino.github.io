@@ -17,7 +17,16 @@
       <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white sm:pl-16">
         <div class="relative mx-auto flex h-s-bar max-w-s-screen items-center">
         <span class="flex-1"><a id="repo-back" class="repo-back" href="#/repo/web-and-agent" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-chevron_left"/></svg><span data-i18n="返回">返回</span></a></span>
-        <div id="repo-categories" class="repo-categories" hidden></div>
+        <fieldset id="project-control" class="source-switch project-tabs" aria-label="项目类型" data-i18n-label="项目类型" hidden>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="project-view" value="repo" />
+            <span class="source-switch-option" data-i18n="程序">程序</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="project-view" value="site" checked />
+            <span class="source-switch-option" data-i18n="站点">站点</span>
+          </label>
+        </fieldset>
         <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
         <fieldset id="language-control" class="source-switch home-language-tabs" aria-label="语言" data-i18n-label="语言" hidden>
           <label class="relative cursor-pointer">
@@ -75,6 +84,7 @@
         </section>
         <section data-tab="repo" class="absolute inset-0 hidden">
           <div class="repo-shell mx-auto flex h-full max-w-s-screen flex-col">
+            <nav id="repo-categories" class="repo-categories" aria-label="仓库分类" data-i18n-label="仓库分类" hidden></nav>
             <div id="repo-scroll" class="min-h-0 flex-1 overflow-y-auto px-3 pt-3 pb-6" tabindex="-1">
               <div id="repo-content" class="flex min-w-0 flex-col gap-3" aria-live="polite"></div>
             </div>
@@ -127,7 +137,7 @@
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-home" /></svg>
           <span class="text-s-nav" data-i18n="关于">关于</span>
         </a>
-        <a href="#/repo" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="repo">
+        <a href="#/site" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="repo">
           <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-folder" /></svg>
           <span class="text-s-nav" data-i18n="项目">项目</span>
         </a>

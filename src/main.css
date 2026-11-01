@@ -161,6 +161,8 @@ html[lang="en"] #bottom-nav .text-s-nav {
   @apply absolute left-1/2 -translate-x-1/2;
 }
 .home-language-tabs[hidden] { display: none; }
+.project-tabs { @apply absolute left-1/2 -translate-x-1/2; }
+.project-tabs[hidden] { display: none; }
 
 /* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
 .home-spinner {
@@ -370,23 +372,24 @@ html[lang="en"] #bottom-nav .text-s-nav {
 
 /* Repository pages use the same inset segmented controls and grouped rows as Settings. */
 .repo-categories {
-  position: absolute;
-  inset-inline: theme('spacing.3');
-  top: 50%;
-  transform: translateY(-50%);
+  @apply shrink-0 bg-s-page px-3 py-3;
   overflow-x: auto;
   scrollbar-width: thin;
 }
+.repo-group { @apply flex min-w-0 flex-col gap-3; scroll-margin-top: 12px; }
+.repo-group + .repo-group { @apply mt-3; }
+.repo-group-title { @apply px-3 text-s-14 font-semibold text-s-grey-700; }
+.repo-group-empty { @apply rounded-s-lg border-s-md border-s-grey-400 bg-s-white p-3 text-s-14 text-s-text-desc shadow-s-card; }
 .repo-categories[hidden] { display: none; }
 .repo-tabs {
   @apply mx-auto;
 }
 .repo-tab:last-child { border-right: 0; }
-.repo-tab[aria-selected="true"] {
+.repo-tab[aria-current="location"] {
   @apply bg-s-tab-selected text-s-on-selected shadow-s-inset-tab;
 }
-.repo-tab.is-pressed:not([aria-selected="true"]) { @apply bg-s-white-pressed; }
-.repo-tab:focus-visible, .repo-row:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-external:focus-visible, .repo-github:focus-visible, .repo-appbar-github:focus-visible {
+.repo-tab.is-pressed:not([aria-current]) { @apply bg-s-white-pressed; }
+.repo-tab:focus-visible, .repo-row:focus-visible, .repo-detail-link:focus-visible, .repo-website:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-github:focus-visible, .repo-appbar-github:focus-visible {
   @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
 }
 .repo-list, .repo-summary {
@@ -400,11 +403,12 @@ html[lang="en"] #bottom-nav .text-s-nav {
 }
 .repo-row:last-child { border-bottom: 0; }
 .repo-name { @apply text-s-16 font-bold text-s-grey-800; overflow-wrap: anywhere; }
-.repo-name-icons { @apply ml-1.5 inline-flex items-center gap-1.5 align-middle text-s-16 text-s-icon; }
 .repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
-.repo-row > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
+.repo-detail-link { @apply flex min-w-0 flex-1 items-center self-stretch gap-3; }
+.repo-website:hover, .repo-website:focus-visible { @apply text-s-blue-300; }
+.repo-row > .md-icon, .repo-detail-link > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
 .repo-row.is-pressed { @apply bg-s-blue-300; }
-.repo-row.is-pressed :is(h2,p,svg) { @apply text-s-on-selected; }
+.repo-row.is-pressed :is(h3,p,svg) { @apply text-s-on-selected; }
 .repo-state { @apply flex flex-col items-center gap-3 py-12 text-center; }
 .repo-button {
   @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
@@ -454,6 +458,46 @@ html[lang="en"] #bottom-nav .text-s-nav {
 .repo-stat-value { @apply min-w-0 text-right text-s-14 font-medium text-s-grey-700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .repo-profile { @apply flex min-w-0 flex-col gap-3; }
 .repo-readme-column { min-width: 0; }
+.repo-readme-column { position: relative; }
+.repo-readme-body > :first-child { padding-top: 50px; }
+.repo-readme-body > :last-child { padding-bottom: 66px; }
+.repo-readme-toolbar, .repo-readme-footer {
+  @apply flex items-start justify-center gap-3 px-3;
+  position: fixed;
+  height: 96px;
+  padding-top: 9px;
+  z-index: 10;
+  pointer-events: none;
+}
+.repo-readme-toolbar[hidden], .repo-readme-footer[hidden] { display: none; }
+.repo-readme-toolbar.is-scrolled {
+  background: linear-gradient(to bottom,
+    theme('colors.s.white') 0px,
+    color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
+    color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
+    color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
+    transparent 96px);
+}
+.repo-readme-footer {
+  align-items: flex-end;
+  padding-block: 0 9px;
+  background: linear-gradient(to top,
+    theme('colors.s.white') 0px,
+    color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
+    color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
+    color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
+    transparent 96px);
+}
+.repo-readme-button {
+  @apply gap-1.5 whitespace-nowrap px-4 py-1 text-s-14 shadow-s-slider-thumb;
+  min-height: 36px;
+  height: 36px;
+  border-radius: 1000px;
+  pointer-events: auto;
+}
+.repo-readme-button > .md-icon { @apply h-3.5 w-3.5 shrink-0 text-s-icon; }
+.repo-readme-button:focus-visible { @apply outline outline-2 outline-offset-2 outline-s-blue-300; }
+.repo-readme-column .markdown-s [id] { scroll-margin-top: 50px; }
 .repo-action { @apply flex flex-col gap-3 border-t-s-md border-s-grey-200 bg-s-grey-100 p-3; }
 .repo-github {
   @apply flex w-full items-center justify-center gap-3 rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-3 text-s-14 font-semibold text-s-grey-800 shadow-s-card-sm;
@@ -474,7 +518,7 @@ html[lang="en"] #bottom-nav .text-s-nav {
     @apply rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
   }
   .repo-list > .repo-row.is-pressed { @apply bg-s-blue-300; }
-  .repo-shell--detail { width: 816px; max-width: 100%; }
+  .repo-shell--detail { width: 960px; max-width: 100%; }
   .repo-shell--detail #repo-scroll { overflow: hidden; padding: 0; }
   .repo-shell--detail #repo-content {
     height: 100%; min-height: 0; flex-direction: row; gap: theme('spacing.3'); padding: 16px;
@@ -488,10 +532,10 @@ html[lang="en"] #bottom-nav .text-s-nav {
   }
   .repo-shell--detail .repo-profile > .repo-meta-card { width: 100%; flex-shrink: 0; margin-bottom: 0; }
   .repo-shell--detail .repo-readme-column {
-    display: flex; flex-direction: column; width: 480px; min-width: 320px; min-height: 0; flex-shrink: 1;
+    display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0;
     overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px 0 0;
   }
-  .repo-shell--detail .repo-readme-body { flex-shrink: 0; margin-block: auto; }
+  .repo-shell--detail .repo-readme-body { flex-shrink: 0; }
 }
 
 /* Smartisan grouped outline rows in a dialog, with a bottom sheet on phones. */
@@ -606,8 +650,8 @@ html[lang="en"] #bottom-nav .text-s-nav {
 #appbar, #bottom-nav { @apply bg-s-bar; }
 .repo-tabs { @apply bg-s-tab-frame; }
 .repo-tab { @apply text-s-tab-text; }
-.repo-tab[aria-selected="true"] { @apply text-s-on-selected; }
+.repo-tab[aria-current="location"] { @apply text-s-on-selected; }
 .source-switch input:checked + .source-switch-option,
-.repo-tab[aria-selected="true"] {
+.repo-tab[aria-current="location"] {
   @apply shadow-s-tab-selected border-r-transparent;
 }

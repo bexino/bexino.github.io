@@ -10,31 +10,29 @@ import { dataSource } from './github-data.js';
 const TITLES = {
   home: '',
   repo: '',
+  site: '',
   me: '设置',
 };
 
 function parseHash() {
   const route = location.hash.replace(/^#\/?/, '');
   const tab = route.split('/')[0];
-  if (tab !== 'repo' && route !== tab) return 'home';
+  if (!['repo', 'site'].includes(tab) && route !== tab) return 'home';
   return Object.hasOwn(TITLES, tab) ? tab : 'home';
 }
 
 function apply() {
-  if (/^#\/?repo\/?$/.test(location.hash)) {
-    history.replaceState(null, '', `${location.pathname}${location.search}#/repo/web-and-agent`);
-  }
   const tab = parseHash();
-  if (tab !== 'repo') leaveRepos();
+  if (!['repo', 'site'].includes(tab)) leaveRepos();
 
   // 视图切换
   document.querySelectorAll('main > section[data-tab]').forEach((s) => {
-    s.classList.toggle('hidden', s.dataset.tab !== tab);
+    s.classList.toggle('hidden', s.dataset.tab !== (tab === 'site' ? 'repo' : tab));
   });
 
   // 底栏选中态：图标放大变品牌蓝，标签同色；未选中浅灰
   document.querySelectorAll('#bottom-nav [data-tab-link]').forEach((a) => {
-    const active = a.dataset.tabLink === tab;
+    const active = a.dataset.tabLink === (tab === 'site' ? 'repo' : tab);
     if (active) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
     const icon = a.querySelector('.md-icon');
@@ -49,8 +47,16 @@ function apply() {
   document.getElementById('language-control').hidden = tab !== 'home';
   document.getElementById('repo-back').hidden = true;
   document.getElementById('repo-categories').hidden = true;
-  if (tab === 'repo') renderRepos();
+  document.getElementById('project-control').hidden = !['repo', 'site'].includes(tab) || location.hash.replace(/^#\/?/, '').split('/').length === 4;
+  document.querySelectorAll('input[name="project-view"]').forEach(input => {
+    input.checked = input.value === tab;
+  });
+  if (['repo', 'site'].includes(tab)) renderRepos();
 }
+
+document.getElementById('project-control').addEventListener('change', event => {
+  location.hash = event.target.value === 'site' ? '#/site' : '#/repo';
+});
 
 window.addEventListener('hashchange', apply);
 translatePage();
@@ -286,7 +292,7 @@ function syncHomeSource() {
   if (mode === homeSource) return;
   homeSource = mode;
   loadHomeData(mode);
-  if (parseHash() === 'repo') renderRepos();
+  if (['repo', 'site'].includes(parseHash())) renderRepos();
 }
 
 sourceControl.addEventListener('change', (event) => {
