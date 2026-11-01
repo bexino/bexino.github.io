@@ -1,6 +1,21 @@
 # bexino.github.io
 
-个人集合网站（Smartisan OS 风格）。Vite + Tailwind CSS v3（smartisan-ui preset）。
+个人集合网站（Smartisan OS 风格）。
+
+## 在线体验
+
+https://bexino.github.io/
+
+## 技术细节
+
+### 外观主题
+
+设置页提供 Smartisan 风格的「跟随系统 / 亮色 / 暗色」分段切换，默认跟随系统并实时响应系统外观变化。
+手动选择会写入地址栏查询参数 `?theme=light` 或 `?theme=dark`，跨页面导航、刷新及分享链接均保留；切回跟随系统会移除此参数。浏览器前进、后退会同步恢复对应主题。
+
+### 技术栈
+
+Vite + Tailwind CSS v3（smartisan-ui preset）。
 
 ## 开发
 
@@ -11,20 +26,15 @@ npm run build    # 构建到 dist/
 npm run preview  # 预览构建产物
 ```
 
-## 结构
+### 结构
 
 - 底部 Bottom Navigation（始终显示）：主页 `#/`、仓库 `#/repo`（跳转到 `#/repo/web-and-agent`）、我的 `#/me`。
 - 顶部 App Bar：始终显示，标题随页面切换。
 - 图标：`vite.config.js` 的 `ICONS` 列表统一维护，构建时从 `@material-design-icons/svg` 生成 `public/icons-sprite.svg`。
 
-## 外观主题
+### 部署
 
-设置页提供 Smartisan 风格的「跟随系统 / 亮色 / 暗色」分段切换，默认跟随系统并实时响应系统外观变化。
-手动选择会写入地址栏查询参数 `?theme=light` 或 `?theme=dark`，跨页面导航、刷新及分享链接均保留；切回跟随系统会移除此参数。浏览器前进、后退会同步恢复对应主题。
-
-## 部署
-
-### 本地拉取主页信息
+#### 本地拉取主页信息
 
 需要 Node.js 20.19+ 或 22.12+。在本仓库目录执行：
 
@@ -55,11 +65,11 @@ ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 
 `public/cache/` 中主页拥有的旧数据（保留仓库缓存），再写入本次成功获取的资料、压缩头像、README 和徽章，
 不会合并或回用旧文件。拉取失败也会提交清理结果，并保留 Action 的失败状态。
 
-### GitHub Pages（自动）
+#### GitHub Pages（自动）
 
 推送到 `main` 即触发 `.github/workflows/deploy.yml`。首次使用需在仓库 **Settings → Pages → Source** 选择 **GitHub Actions**。
 
-### Cloudflare Pages（自动，重点）
+#### Cloudflare Pages（自动，重点）
 
 1. Cloudflare Dashboard → Workers & Pages → 创建 Pages 项目 → 连接本 Git 仓库。
 2. 构建设置：
@@ -69,7 +79,7 @@ ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 
 3. 保存后每次推送 `main` 自动部署。
 
 
-### 仓库分类与详情缓存
+#### 仓库分类与详情缓存
 
 仓库页从 `bexino` 的公开 GitHub Star Lists 读取分类，首次进入 `#/repo` 时替换地址为
 `#/repo/web-and-agent`。分类路由为 `#/repo/<GitHub list slug>`，详情路由为
@@ -118,3 +128,7 @@ README 优先读取 `README.zh-CN.md`，依次检查根目录、`docs/`、`.gith
 
 运行 `npm test` 检查分页、去重、README 选择和 GraphQL 错误处理；运行
 `npm run build` 验证生产构建。真实 GraphQL 权限和线上缓存更新需要配置 Secret 后验证。
+
+## 许可证
+
+Apache License Version 2.0
