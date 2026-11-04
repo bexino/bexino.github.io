@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-03T21:21:13.481Z",
+  "fetchedAt": "2026-11-04T21:37:14.392Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -8,7 +8,8 @@
       "repositories": [
         "bexino/siss",
         "bexino/prompt",
-        "bexino/bexino.github.io"
+        "bexino/bexino.github.io",
+        "bexino/fetch2word"
       ]
     },
     {
@@ -61,6 +62,13 @@
       "fullName": "bexino/bexino.github.io",
       "description": "Personal Homepage: 个人主页。",
       "homepageUrl": "https://bexino.github.io/",
+      "hasReleases": false
+    },
+    "bexino/fetch2word": {
+      "name": "fetch2word",
+      "fullName": "bexino/fetch2word",
+      "description": null,
+      "homepageUrl": null,
       "hasReleases": false
     },
     "bexino/userdata-changer": {
