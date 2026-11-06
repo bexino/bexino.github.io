@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-05T21:40:40.486Z",
+  "fetchedAt": "2026-11-06T21:09:18.842Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -67,7 +67,7 @@
     "bexino/fetch2word": {
       "name": "fetch2word",
       "fullName": "bexino/fetch2word",
-      "description": null,
+      "description": "（专用）把微信公众号推文批量转成统一版式的 Word 文档。",
       "homepageUrl": null,
       "hasReleases": false
     },
