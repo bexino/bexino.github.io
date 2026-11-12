@@ -27,15 +27,24 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install tencentcloud-sdk-python-scf
       - name: Prepare function package
         run: |
-          mkdir -p .scf-package
+          mkdir -p .scf-package/site
           cp scripts/scf-server.cjs .scf-package/app.js
-          printf '{"type":"commonjs"}\n' > .scf-package/package.json
-          cp -R dist .scf-package/site
-      - name: Deploy to Tencent Cloud
-        uses: woodyyan/tencent-serverless-action@main
+          cp scripts/scf_bootstrap .scf-package/scf_bootstrap
+          chmod 755 .scf-package/scf_bootstrap
+          cp -R dist/. .scf-package/site/
+          cd .scf-package
+          zip -qr ../scf.zip .
+      - name: Update existing function
+        run: python scripts/deploy-scf.py scf.zip
         env:
-          SERVERLESS_PLATFORM_VENDOR: tencent
           TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
           TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}
+          SCF_FUNCTION_NAME: ${{ vars.SCF_FUNCTION_NAME }}
+          SCF_NAMESPACE: ${{ vars.SCF_NAMESPACE }}
+          SCF_REGION: ${{ vars.SCF_REGION }}

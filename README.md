@@ -79,6 +79,23 @@ ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 
 3. 保存后每次推送 `main` 自动部署。
 
 
+#### 腾讯云 SCF（自动）
+
+`.github/workflows/tencent-scf.yml` 在推送 `main`、缓存工作流结束或手动触发时构建站点，
+通过腾讯云 Python SDK 的 `GetFunction` 和 `UpdateFunctionCode` 更新已有 Web 函数的 `$LATEST` 代码，
+不会创建函数、发布版本或修改触发器。配置前请在腾讯云控制台核对目标函数、地域、命名空间、
+公网入口及回滚方式，并保留上一个可部署代码包。现有配置使用 Node.js 16.13；
+启动文件依赖该运行时，更新脚本会在类型或运行时不匹配时停止。
+
+在 GitHub 仓库 **Settings → Secrets and variables → Actions** 中设置：
+
+- Secrets：`TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY`，使用有相应 SCF 权限的腾讯云密钥。
+- Variables：`SCF_FUNCTION_NAME`、`SCF_NAMESPACE`、`SCF_REGION`，填写控制台中已核实的值；
+  原配置地域为 `ap-guangzhou`，函数名和命名空间以控制台实际值为准。
+
+工作流将 `dist`、静态文件服务和可执行的 `scf_bootstrap` 打包，直接上传 ZIP；超过 20 MiB 时停止。
+首次运行后检查 Actions 日志，并访问现有公网入口的首页和静态资源，确认更新生效。
+
 #### 仓库分类与详情缓存
 
 仓库页从 `bexino` 的公开 GitHub Star Lists 读取分类，首次进入 `#/repo` 时替换地址为
