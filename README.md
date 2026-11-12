@@ -1,0 +1,134 @@
+# bexino.github.io
+
+个人集合网站（Smartisan OS 风格）。
+
+## 在线体验
+
+https://bexino.github.io/
+
+## 技术细节
+
+### 外观主题
+
+设置页提供 Smartisan 风格的「跟随系统 / 亮色 / 暗色」分段切换，默认跟随系统并实时响应系统外观变化。
+手动选择会写入地址栏查询参数 `?theme=light` 或 `?theme=dark`，跨页面导航、刷新及分享链接均保留；切回跟随系统会移除此参数。浏览器前进、后退会同步恢复对应主题。
+
+### 技术栈
+
+Vite + Tailwind CSS v3（smartisan-ui preset）。
+
+## 开发
+
+```bash
+npm install
+npm run dev      # 开发服务器
+npm run build    # 构建到 dist/
+npm run preview  # 预览构建产物
+```
+
+### 结构
+
+- 底部 Bottom Navigation（始终显示）：主页 `#/`、仓库 `#/repo`（跳转到 `#/repo/web-and-agent`）、我的 `#/me`。
+- 顶部 App Bar：始终显示，标题随页面切换。
+- 图标：`vite.config.js` 的 `ICONS` 列表统一维护，构建时从 `@material-design-icons/svg` 生成 `public/icons-sprite.svg`。
+
+### 部署
+
+#### 本地拉取主页信息
+
+需要 Node.js 20.19+ 或 22.12+。在本仓库目录执行：
+
+```bash
+npm ci
+npm run fetch-home-data
+npm run dev
+```
+
+脚本拉取 GitHub 用户资料、头像、`bexino/bexino` 的 `main/README.zh-CN.md`、`main/README.md` 和其中的
+ghstats mini 徽章，写入 `public/cache/`，日志显示来源、头像压缩前后大小、README blob SHA 与徽章成功数。
+头像通过 sharp 自动裁切、缩放并压缩为 128×128 WebP，适配页面 64px 头像的两倍像素显示。
+缓存资料中的头像地址指向本站文件，文件名含内容指纹，头像变化后会使用新地址。
+优先读取 GitHub Contents API，失败后依次尝试 raw 和 CDN 镜像；CDN 可能有更新延迟。
+可通过环境变量 `GITHUB_TOKEN` 或 `GH_TOKEN` 提高 API 请求额度，令牌只发送给 GitHub API。
+每次运行会先清空主页拥有的旧缓存（保留 `public/cache/repos/`），拉取失败也不会恢复旧文件；请先确认本机可以访问 GitHub。
+
+设置页提供「简体中文 / English」Smartisan 分段控件。英文使用 `?lang=en`，在路由切换、刷新、分享和浏览器前进后退时保留；简体中文为默认语言。
+主页中文读取 `README.zh-CN.md`，英文读取 `README.md`，缓存和 CDN 模式均按语言选择。仓库详情按语言读取对应 README 缓存（英文优先 `README.en.md`，其次默认 README）。
+浏览器默认读取本站缓存；切换到 CDN 模式时使用远程资料和原始 GitHub 头像。
+ghstats 的 card / langs 图片仍直接访问外部服务，不在此脚本的 mini 徽章缓存范围内。
+
+本地拉取不会更新线上网站。确认结果后提交并推送本仓库的 `public/cache/`，触发部署。
+`bexino/bexino` 的提交不会直接触发本网站仓库的工作流；定时拉取为每天北京时间 00:00，
+也可在本网站仓库 Actions 中手动运行 **Cache homepage data**。
+
+主页数据由 `.github/workflows/cache.yml` 定时或手动拉取。每次执行先删除
+`public/cache/` 中主页拥有的旧数据（保留仓库缓存），再写入本次成功获取的资料、压缩头像、README 和徽章，
+不会合并或回用旧文件。拉取失败也会提交清理结果，并保留 Action 的失败状态。
+
+#### GitHub Pages（自动）
+
+推送到 `main` 即触发 `.github/workflows/deploy.yml`。首次使用需在仓库 **Settings → Pages → Source** 选择 **GitHub Actions**。
+
+#### Cloudflare Pages（自动，重点）
+
+1. Cloudflare Dashboard → Workers & Pages → 创建 Pages 项目 → 连接本 Git 仓库。
+2. 构建设置：
+   - 框架预设：**Vite**
+   - 构建命令：`npm run build`
+   - 输出目录：`dist`
+3. 保存后每次推送 `main` 自动部署。
+
+
+#### 仓库分类与详情缓存
+
+仓库页从 `bexino` 的公开 GitHub Star Lists 读取分类，首次进入 `#/repo` 时替换地址为
+`#/repo/web-and-agent`。分类路由为 `#/repo/<GitHub list slug>`，详情路由为
+`#/repo/<slug>/<owner>/<repo>`。若 GitHub 为 Web & Agent 返回不同 slug，默认入口会继续替换为该分类的真实地址。
+不展示私有分类或私有仓库，也不增加“全部”分类。
+
+在仓库 **Settings → Secrets and variables → Actions** 添加 `REPO_DATA_TOKEN`，值为可读取
+目标公开 Star Lists 和仓库内容的 GitHub token。该 Secret 通过 `GH_TOKEN` 交给 GraphQL
+脚本，凭证只发送给 GitHub API，不进入网站产物。此处不使用 Actions 的临时 token。
+没有配置 Secret 时会跳过仓库抓取，已提交的仓库缓存保持原样，主页仍正常更新。
+配置凭证后，继续通过 **Cache homepage data** 工作流每天北京时间 00:00、推送 main
+或手动运行来更新两类数据。现有 GitHub Pages 工作流会在缓存工作流结束后部署快照。
+
+需要本地抓取时，在 PowerShell 中先配置当前会话的 `GH_TOKEN`，然后运行：
+
+```powershell
+npm run fetch-repo-data
+npm run dev
+```
+
+通常无需本地抓取：配置 Secret 并提交代码后，在 Actions 手动运行缓存工作流，
+完成后 `git pull` 即可使用真实缓存调试，也可以直接访问 GitHub Pages。
+本地命令缺少 `GH_TOKEN` 时会明确报错，并且不会更改缓存。
+
+产物位于 `public/cache/repos/`：
+
+- `index.json`：`fetchedAt`、`categories`（id/name/slug/repositories）以及按 `owner/repo`
+  索引的 `repositories` 摘要（name/fullName/description）。
+- `<owner>/<repo>.json`：抓取时间、仓库资料、Website（`homepageUrl`）、许可证、默认分支、该分支累计提交数，
+  以及 README 的 path/ref/markdown。相同仓库跨分类只保存一次详情。
+
+部署后的 `./cache/repos/index.json` 和详情 JSON 是公开只读静态数据接口。
+分类索引完整加载后才展示列表，详情按需加载；仓库页始终使用本站缓存，不受主页的
+缓存/CDN 设置影响。所有时间都是快照时间，页面不实时请求 GitHub。
+详情页提供“目录”和“GitHub”按钮；缓存中存在有效的 HTTP/HTTPS Website 时，额外显示
+带地球图标的“在线体验”按钮，在新标签页打开该地址。旧缓存需重新抓取后才会包含 Website。
+
+README 优先读取 `README.zh-CN.md`，依次检查根目录、`docs/`、`.github/`；缺少中文时，
+按相同目录顺序查找默认 README（支持 `.md`、`.markdown` 和无扩展名）。文件名匹配
+忽略大小写。相对资源绑定到抓取时的默认分支 commit，避免 README 与图片版本错配。
+许可证缺失、空仓库、无 README 均有独立空状态。第三方 Markdown 经 DOMPurify 清理。
+
+每次有凭证的抓取先清空仓库缓存，再全量获取。请求失败会使工作流失败，并按现有
+提交流程提交清理结果，不恢复旧快照；索引只在全部详情成功后写入，防止展示不完整
+分类。若分类被删除或改名，旧地址显示错误提示，用户可从 Tab 选择新分类。
+
+运行 `npm test` 检查分页、去重、README 选择和 GraphQL 错误处理；运行
+`npm run build` 验证生产构建。真实 GraphQL 权限和线上缓存更新需要配置 Secret 后验证。
+
+## 许可证
+
+Apache License Version 2.0

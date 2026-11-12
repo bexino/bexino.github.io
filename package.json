@@ -1,0 +1,30 @@
+{
+  "name": "bexino.github.io",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "fetch-home-data": "node scripts/fetch-home-data.mjs",
+    "fetch-repo-data": "node scripts/fetch-repo-data.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@material-design-icons/svg": "^0.14.15",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@fontsource-variable/google-sans-flex": "^5.3.2",
+    "dompurify": "^3.4.17",
+    "marked": "^18.1.1"
+  }
+}

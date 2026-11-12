@@ -1,0 +1,147 @@
+{
+  "fetchedAt": "2026-11-11T22:22:03.493Z",
+  "categories": [
+    {
+      "id": "UL_kwDOBawuZ84Ai3-g",
+      "name": "Web & Agent",
+      "slug": "web-agent",
+      "repositories": [
+        "bexino/siss",
+        "bexino/prompt",
+        "bexino/bexino.github.io",
+        "bexino/fetch2word",
+        "bexino/PubSkill"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-a",
+      "name": "Linux",
+      "slug": "linux",
+      "repositories": [
+        "bexino/magicbook14_fixed",
+        "bexino/oh-my-rime-config",
+        "bexino/qqmusic-linux-fix",
+        "bexino/AVF-Initializer"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-Y",
+      "name": "Windows",
+      "slug": "windows",
+      "repositories": [
+        "bexino/userdata-changer",
+        "bexino/FTP-Silver",
+        "bexino/MrsLiusSon",
+        "bexino/napa-pdf"
+      ]
+    },
+    {
+      "id": "UL_kwDOBawuZ84Ai3-t",
+      "name": "Contribute",
+      "slug": "contribute",
+      "repositories": [
+        "bexino/sonnet"
+      ]
+    }
+  ],
+  "repositories": {
+    "bexino/siss": {
+      "name": "siss",
+      "fullName": "bexino/siss",
+      "description": "值日分配系统。",
+      "homepageUrl": "https://bexino.github.io/siss/",
+      "hasReleases": false
+    },
+    "bexino/prompt": {
+      "name": "prompt",
+      "fullName": "bexino/prompt",
+      "description": "静态提示词浏览站点。",
+      "homepageUrl": "https://bexino.github.io/prompt/",
+      "hasReleases": false
+    },
+    "bexino/bexino.github.io": {
+      "name": "bexino.github.io",
+      "fullName": "bexino/bexino.github.io",
+      "description": "Personal Homepage: 个人主页。",
+      "homepageUrl": "https://bexino.github.io/",
+      "hasReleases": false
+    },
+    "bexino/fetch2word": {
+      "name": "fetch2word",
+      "fullName": "bexino/fetch2word",
+      "description": "（专用）把微信公众号推文批量转成统一版式的 Word 文档。",
+      "homepageUrl": null,
+      "hasReleases": false
+    },
+    "bexino/PubSkill": {
+      "name": "PubSkill",
+      "fullName": "bexino/PubSkill",
+      "description": "（专用/WIP）推文生成skill。",
+      "homepageUrl": null,
+      "hasReleases": false
+    },
+    "bexino/magicbook14_fixed": {
+      "name": "magicbook14_fixed",
+      "fullName": "bexino/magicbook14_fixed",
+      "description": "Fixes touchpad, keyboard, and fingerprint on the HONOR MagicBook 14 2026 under Linux: 修复荣耀 MagicBook 14 2026 在 Linux 系统上的：触摸板、键盘、指纹问题。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/oh-my-rime-config": {
+      "name": "oh-my-rime-config",
+      "fullName": "bexino/oh-my-rime-config",
+      "description": "Linux 输入法解决方案。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/qqmusic-linux-fix": {
+      "name": "qqmusic-linux-fix",
+      "fullName": "bexino/qqmusic-linux-fix",
+      "description": "修复 Flatpak 版 QQ 音乐显示问题。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/AVF-Initializer": {
+      "name": "AVF-Initializer",
+      "fullName": "bexino/AVF-Initializer",
+      "description": "Android AVF Debian 12 ARM64 初始化脚本",
+      "homepageUrl": null,
+      "hasReleases": false
+    },
+    "bexino/userdata-changer": {
+      "name": "userdata-changer",
+      "fullName": "bexino/userdata-changer",
+      "description": "Migrate all Chrome user data on drive C to another partition without loss: 将 C 盘 Chrome 用户数据全量无损迁移至其他分区。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/FTP-Silver": {
+      "name": "FTP-Silver",
+      "fullName": "bexino/FTP-Silver",
+      "description": "A lightweight tool to easily start an FTP server: 轻松启动 FTP 服务器的轻量工具。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/MrsLiusSon": {
+      "name": "MrsLiusSon",
+      "fullName": "bexino/MrsLiusSon",
+      "description": "Adds Markdown to the Windows right-click New menu: 为 Windows 右键添加“新建 Markdown”。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/napa-pdf": {
+      "name": "napa-pdf",
+      "fullName": "bexino/napa-pdf",
+      "description": "Add file names to PDF headers in batches: 批量将文件名添加至 PDF 页眉。",
+      "homepageUrl": null,
+      "hasReleases": true
+    },
+    "bexino/sonnet": {
+      "name": "sonnet",
+      "fullName": "bexino/sonnet",
+      "description": "Claude Typora theme.",
+      "homepageUrl": null,
+      "hasReleases": true
+    }
+  }
+}

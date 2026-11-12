@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      // Apply before first paint; URL is the single source of truth.
+      const theme = new URL(location.href).searchParams.get('theme');
+      document.documentElement.dataset.theme = theme === 'dark' ||
+        (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    </script>
+    <title>Bexino</title>
+  </head>
+  <body class="font-s bg-s-page text-s-grey-900">
+    <div id="app" class="flex h-dvh flex-col">
+      <!-- App Bar -->
+      <header id="appbar" class="shrink-0 border-b border-s-appbar-border bg-s-white sm:pl-16">
+        <div class="relative mx-auto flex h-s-bar max-w-s-screen items-center">
+        <span class="flex-1"><a id="repo-back" class="repo-back" href="#/repo/web-and-agent" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-chevron_left"/></svg><span data-i18n="返回">返回</span></a></span>
+        <fieldset id="project-control" class="source-switch project-tabs" aria-label="项目类型" data-i18n-label="项目类型" hidden>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="project-view" value="repo" />
+            <span class="source-switch-option" data-i18n="程序">程序</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="project-view" value="site" checked />
+            <span class="source-switch-option" data-i18n="站点">站点</span>
+          </label>
+        </fieldset>
+        <span id="appbar-title" class="absolute left-1/2 -translate-x-1/2 text-s-16 font-bold text-s-grey-800"></span>
+        <fieldset id="language-control" class="source-switch home-language-tabs" aria-label="语言" data-i18n-label="语言" hidden>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="language" value="zh-CN" checked />
+            <span class="source-switch-option" lang="zh-CN">简体中文</span>
+          </label>
+          <label class="relative cursor-pointer">
+            <input class="peer sr-only" type="radio" name="language" value="en" />
+            <span class="source-switch-option" lang="en">English</span>
+          </label>
+        </fieldset>
+        <span class="flex-1"><a id="repo-github-link" class="repo-appbar-github" target="_blank" rel="noopener noreferrer" aria-label="访问 GitHub 仓库（新窗口）" data-i18n-label="访问 GitHub 仓库（新窗口）" title="访问 GitHub" data-i18n-title="访问 GitHub" hidden><svg class="md-icon" aria-hidden="true"><use href="./icons-sprite.svg#si-github"/></svg></a></span>
+        </div>
+      </header>
+
+      <!-- 视图区：宽屏时为固定侧栏让出左侧空间 -->
+      <main class="relative min-h-0 flex-1 sm:pl-16">
+        <section data-tab="home" class="absolute inset-0">
+          <div class="flex h-full flex-col bg-s-page">
+            <!-- 加载态：全部数据就绪后才切换到内容 -->
+            <div id="home-loading" class="flex flex-1 flex-col items-center justify-center gap-3">
+              <svg class="home-spinner" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.18"></circle>
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="26 57"></circle>
+              </svg>
+              <p class="text-s-12 text-s-text-desc" data-i18n="加载中…">加载中…</p>
+            </div>
+
+            <div id="home-content" class="hidden flex-1 overflow-y-auto">
+              <div class="home-layout mx-auto flex max-w-s-screen flex-col gap-3 p-4 pb-6">
+                <div class="home-profile">
+                <!-- GitHub 个人信息卡片 -->
+                <article class="flex flex-col items-start gap-4 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
+                  <div class="relative h-16 w-16 shrink-0">
+                    <img id="gh-avatar" class="h-16 w-16 rounded-full border-s-sm border-s-grey-400 bg-s-grey-200 object-cover" alt="" hidden />
+                    <span id="gh-avatar-fallback" class="absolute inset-0 flex items-center justify-center rounded-full bg-s-grey-200 text-s-grey-500">
+                      <svg class="md-icon" style="width: 32px; height: 32px;"><use href="./icons-sprite.svg#si-person" /></svg>
+                    </span>
+                  </div>
+                  <div class="min-w-0 w-full">
+                    <p id="gh-name" class="text-s-18 font-bold text-s-grey-900">—</p>
+                    <a id="gh-login" href="https://github.com/bexino" target="_blank" rel="noopener" class="text-s-14 text-s-blue-300"></a>
+                    <p id="gh-bio" class="mt-1 whitespace-pre-line text-s-14 leading-relaxed text-s-text-body"></p>
+                  </div>
+                </article>
+                </div>
+
+                <!-- Localized README：分割线之间的内容各自显示为卡片 -->
+                <div class="home-details">
+                  <div id="readme-body" class="flex min-w-0 flex-col gap-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section data-tab="repo" class="absolute inset-0 hidden">
+          <div class="repo-shell mx-auto flex h-full max-w-s-screen flex-col">
+            <nav id="repo-categories" class="repo-categories" aria-label="仓库分类" data-i18n-label="仓库分类" hidden></nav>
+            <div id="repo-scroll" class="min-h-0 flex-1 overflow-y-auto px-3 pt-3 pb-6" tabindex="-1">
+              <div id="repo-content" class="flex min-w-0 flex-col gap-3" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+        <section data-tab="me" class="absolute inset-0 hidden overflow-y-auto">
+          <div class="mx-auto flex max-w-s-screen flex-col gap-3 p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
+              <span id="theme-heading" class="shrink-0 whitespace-nowrap text-s-14 text-s-text-body" data-i18n="外观">外观</span>
+              <fieldset id="theme-control" class="source-switch" aria-labelledby="theme-heading">
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="theme" value="system" checked />
+                  <span class="source-switch-option" data-i18n="跟随系统">跟随系统</span>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="theme" value="light" />
+                  <span class="source-switch-option" data-i18n="亮色">亮色</span>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="theme" value="dark" />
+                  <span class="source-switch-option" data-i18n="暗色">暗色</span>
+                </label>
+              </fieldset>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-4 shadow-s-card">
+              <span id="source-heading" class="shrink-0 whitespace-nowrap text-s-14 text-s-text-body" data-i18n="数据来源">数据来源</span>
+              <fieldset id="home-data-source" class="source-switch" aria-labelledby="source-heading">
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="cache" checked />
+                  <span class="source-switch-option" data-i18n="缓存">缓存</span>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="cdn" />
+                  <span class="source-switch-option">CDN</span>
+                </label>
+                <label class="relative cursor-pointer">
+                  <input class="peer sr-only" type="radio" name="data-source" value="direct" />
+                  <span class="source-switch-option" data-i18n="直连">直连</span>
+                </label>
+              </fieldset>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Bottom Navigation：窄屏为底栏；宽屏固定为左侧竖向浮层（覆盖顶栏，最高层级） -->
+      <nav id="bottom-nav" class="shrink-0 bg-s-white">
+        <div class="mx-auto flex h-s-action max-w-s-screen items-center justify-center gap-1 sm:mx-0 sm:h-full sm:w-full sm:max-w-none sm:flex-col sm:items-center sm:justify-center sm:gap-2 sm:px-1 sm:py-3">
+        <a href="#/" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="home">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-home" /></svg>
+          <span class="text-s-nav" data-i18n="关于">关于</span>
+        </a>
+        <a href="#/site" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="repo">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-folder" /></svg>
+          <span class="text-s-nav" data-i18n="项目">项目</span>
+        </a>
+        <a href="#/me" class="flex w-[64px] flex-col items-center justify-center gap-1 py-[3px] sm:w-full sm:py-1.5" data-tab-link="me">
+          <svg class="md-icon nav-icon"><use href="./icons-sprite.svg#si-settings" /></svg>
+          <span class="text-s-nav" data-i18n="设置">设置</span>
+        </a>
+        </div>
+      </nav>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

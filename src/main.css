@@ -1,0 +1,657 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Google Sans Flex —— 全站 WOFF2 可变字体，本地打包加载 */
+@font-face {
+  font-family: 'Google Sans Flex';
+  font-style: normal;
+  font-weight: 1 1000;
+  font-display: swap;
+  src: url('@fontsource-variable/google-sans-flex/files/google-sans-flex-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Material Design Icon sprite 图标默认尺寸 */
+.md-icon {
+  display: inline-block;
+  fill: currentColor;
+  width: 1em;
+  height: 1em;
+}
+
+/* Bottom Navigation 图标状态（smartisan-ui Bottom Nav；选中用锤子蓝强调色） */
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  color: theme('colors.s.icon.disabled');
+}
+.nav-icon--active {
+  color: theme('colors.s.blue.300');
+}
+
+/* 英文导航标签略放大，中文仍使用 preset 的 8px。 */
+html[lang="en"] #bottom-nav .text-s-nav {
+  font-size: 10px;
+}
+
+/* 顶栏向下投影，与底栏、桌面侧栏使用相同的柔和淡阴影。 */
+#appbar {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+/* 底栏向上投影（柔和淡阴影，比 preset 的 shadow-s-bar 更轻） */
+#bottom-nav {
+  box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 10;
+}
+
+/* 宽屏（≥640px）：底栏固定为左侧竖向浮层，覆盖顶栏，层级最高 */
+@media (min-width: 640px) {
+  main > section[data-tab] {
+    left: 64px;
+  }
+
+  #bottom-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    height: 100vh;
+    width: 64px;
+    border-right: 1px solid theme('colors.s.appbar-border');
+    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.04);
+  }
+
+  /* 左上角填色覆盖侧栏宽度，与顶栏内容及底边等高，不占布局空间。 */
+  #bottom-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(theme('spacing.s-bar') + 1px);
+    background-color: theme('colors.s.grey.200');
+    box-shadow: inset 0 -1px 0 theme('colors.s.appbar-border');
+    pointer-events: none;
+  }
+}
+
+/* 桌面主页：左右卡片顶部对齐，两列作为整体垂直居中。 */
+@media (min-width: 960px) {
+  #home-content {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #home-content:not(.hidden) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .home-layout {
+    min-height: 0;
+    max-height: 100%;
+    width: 816px;
+    max-width: none;
+    flex-direction: row;
+    gap: theme('spacing.3');
+    padding: 16px;
+  }
+
+  .home-profile {
+    display: flex;
+    width: 312px;
+    flex-shrink: 0;
+    align-items: flex-start;
+    min-height: 0;
+    overflow-y: auto;
+    /* 为卡片投影留出绘制空间，负外边距抵消水平留白，保持列宽和间距。 */
+    padding: 0 16px 28px;
+    margin: 0 -16px;
+  }
+
+  .home-profile > article {
+    width: 100%;
+    max-height: 100%;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .home-details {
+    display: flex;
+    flex-direction: column;
+    width: 512px;
+    min-height: 0;
+    flex-shrink: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding: 0 20px 28px 16px;
+    margin: 0 -16px;
+  }
+
+  .home-details > #readme-body {
+    flex-shrink: 0;
+  }
+}
+
+/* 设置分段控件：按内容自适应宽度，统一高度并保持单行。 */
+.source-switch, .repo-tabs {
+  @apply flex h-7 w-max shrink-0 flex-nowrap overflow-hidden rounded-s-md border-s-xs border-s-grey-400;
+}
+.source-switch-option, .repo-tab {
+  @apply flex h-full items-center justify-center whitespace-nowrap border-r-s-xs border-s-grey-200 bg-s-tab-frame px-3 text-s-12 font-bold text-s-tab-text;
+}
+.source-switch-option {
+  @apply active:bg-s-white-pressed peer-checked:bg-s-tab-selected peer-checked:text-s-on-selected peer-checked:shadow-s-inset-tab;
+  @apply peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-s-blue-300;
+}
+.source-switch label:last-child .source-switch-option {
+  @apply border-r-0;
+}
+
+/* 主页顶栏语言 Tab 居中显示。 */
+.home-language-tabs {
+  @apply absolute left-1/2 -translate-x-1/2;
+}
+.home-language-tabs[hidden] { display: none; }
+.project-tabs { @apply absolute left-1/2 -translate-x-1/2; }
+.project-tabs[hidden] { display: none; }
+
+/* 主页加载指示器：锤子蓝细环旋转（无 Material ripple） */
+.home-spinner {
+  color: theme('colors.s.blue.300');
+  animation: home-spin 900ms linear infinite;
+}
+@keyframes home-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-spinner {
+    animation-duration: 2400ms;
+  }
+}
+
+/* 全站 Markdown 渲染（.markdown-s）：Smartisan 灰阶 + 锤子蓝强调 */
+.markdown-s {
+  --markdown-marker-space: 1em;
+  word-break: break-word;
+}
+.markdown-s h1 {
+  color: theme('colors.s.grey.900');
+  font-size: 2em;
+  line-height: 1.4;
+  font-weight: bold;
+  margin: 0.8em 0 0.4em;
+  padding-bottom: 0.4em;
+  border-bottom: theme('borderWidth.s-sm') solid theme('colors.s.grey.300');
+}
+.markdown-s > :first-child {
+  margin-top: 0;
+}
+.markdown-s > :last-child {
+  margin-bottom: 0;
+}
+.markdown-s h2,
+.markdown-s h3,
+.markdown-s h4,
+.markdown-s h5,
+.markdown-s h6 {
+  color: theme('colors.s.blue.300');
+  font-weight: bold;
+  margin: 0.8em 0 0.4em;
+}
+.markdown-s h2 { font-size: 1.5em; }
+.markdown-s h3 { font-size: 1.25em; }
+.markdown-s h4 { font-size: 1.1em; }
+.markdown-s h5 { font-size: 1em; }
+.markdown-s h6 { font-size: 0.95em; }
+.markdown-s p {
+  margin: 0.5em 0;
+}
+.markdown-s a {
+  color: theme('colors.s.blue.300');
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.markdown-s ul {
+  list-style: none;
+  padding-left: var(--markdown-marker-space);
+  margin: 0.3em 0;
+}
+.markdown-s ol {
+  list-style: decimal;
+  padding-left: 1.2em;
+  margin: 0.3em 0;
+}
+.markdown-s ol > li::marker {
+  color: theme('colors.s.blue.300');
+}
+/* 圆点、引用竖线与强调标题标记共用一个全角中文宽度的缩进。 */
+.markdown-s ul > li {
+  position: relative;
+}
+.markdown-s ul > li::before {
+  content: '';
+  position: absolute;
+  left: calc(-0.5 * var(--markdown-marker-space));
+  top: 0.8125em;
+  width: 0.25em;
+  height: 0.25em;
+  transform: translate(-50%, -50%);
+  border-radius: theme('borderRadius.s-pill');
+  background: theme('colors.s.blue.300');
+}
+.markdown-s li + li {
+  margin-top: 0.15em;
+}
+.markdown-s li > p {
+  margin: 0.3em 0;
+}
+.markdown-s img {
+  /* 覆盖 Tailwind Preflight 的块级图片，让徽标遵循 Markdown 的行内换行规则。 */
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+}
+.markdown-s blockquote {
+  position: relative;
+  margin: 0.3em 0;
+  padding: 0.1em 0 0.1em var(--markdown-marker-space);
+  color: theme('colors.s.text.desc');
+}
+.markdown-s blockquote:not(.markdown-alert)::before {
+  content: '';
+  position: absolute;
+  left: calc(0.5 * var(--markdown-marker-space));
+  top: 0;
+  bottom: 0;
+  width: 0.25em;
+  transform: translateX(-50%);
+  background: theme('colors.s.grey.400');
+}
+.markdown-s blockquote > :first-child {
+  margin-top: 0;
+}
+.markdown-s blockquote > :last-child {
+  margin-bottom: 0;
+}
+.repo-readme-column .markdown-s :is(h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+.repo-readme-column .markdown-s :is(h1, h2, h3, h4, h5, h6) a {
+  color: inherit;
+}
+.markdown-s hr {
+  border: 0;
+  border-top: 1px solid theme('colors.s.grey.300');
+  margin: 1em 0;
+}
+/* 代码块/行内代码：与全站共用字体栈，Google Sans Flex 优先，中文回退到微软雅黑。 */
+.markdown-s code,
+.markdown-s pre {
+  @apply font-s;
+}
+.markdown-s code {
+  background: theme('colors.s.grey.200');
+  border-radius: theme('borderRadius.s-sm');
+  padding: 0.1em 0.4em;
+  font-size: 0.92em;
+}
+.markdown-s pre {
+  background: theme('colors.s.grey.100');
+  border: theme('borderWidth.s-xs') solid theme('colors.s.grey.300');
+  border-radius: theme('borderRadius.s-md');
+  padding: 0.8em 1em;
+  margin: 0.6em 0;
+  overflow-x: auto;
+}
+.markdown-s pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.92em;
+}
+.markdown-code-block {
+  @apply my-3 min-w-0 overflow-hidden rounded-s-md border-s-xs border-s-grey-300 bg-s-grey-100;
+}
+.markdown-code-toolbar {
+  @apply flex items-center justify-end gap-3 border-b-s-xs border-s-grey-300 px-3 py-1;
+}
+.markdown-code-language {
+  @apply mr-auto min-w-0 truncate text-s-12 font-semibold text-s-text-desc;
+  max-width: 40%;
+}
+.markdown-copy-button {
+  @apply shrink-0 rounded-s-sm border-s-xs border-s-control-border bg-s-white bg-s-control px-3 text-s-12 font-semibold text-s-grey-800 shadow-s-card-sm;
+  min-height: 32px;
+}
+.markdown-copy-button:active,
+.markdown-copy-button.is-pressed {
+  @apply bg-s-control-pressed shadow-s-inset-tab;
+}
+.markdown-copy-button:focus-visible {
+  @apply outline outline-2 outline-offset-2 outline-s-blue-300;
+}
+.markdown-copy-button[aria-busy="true"] { @apply cursor-wait opacity-50; }
+.markdown-copy-status { @apply text-s-12 text-s-text-desc; }
+.markdown-s .markdown-code-block > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.markdown-copy-field {
+  position: fixed;
+  top: 0;
+  left: -9999px;
+  opacity: 0;
+  font-size: 16px;
+}
+.markdown-s table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  width: 100%;
+}
+.markdown-s th,
+.markdown-s td {
+  border: theme('borderWidth.s-sm') solid theme('colors.s.grey.400');
+  padding: 0.3em 0.6em;
+  text-align: left;
+}
+.markdown-s th {
+  background: theme('colors.s.grey.100');
+  font-weight: bold;
+}
+
+/* Repository pages use the same inset segmented controls and grouped rows as Settings. */
+.repo-categories {
+  @apply shrink-0 bg-s-page px-3 py-3;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.repo-group { @apply flex min-w-0 flex-col gap-3; scroll-margin-top: 12px; }
+.repo-group + .repo-group { @apply mt-3; }
+.repo-group-title { @apply px-3 text-s-14 font-semibold text-s-grey-700; }
+.repo-group-empty { @apply rounded-s-lg border-s-md border-s-grey-400 bg-s-white p-3 text-s-14 text-s-text-desc shadow-s-card; }
+.repo-categories[hidden] { display: none; }
+.repo-tabs {
+  @apply mx-auto;
+}
+.repo-tab:last-child { border-right: 0; }
+.repo-tab[aria-current="location"] {
+  @apply bg-s-tab-selected text-s-on-selected shadow-s-inset-tab;
+}
+.repo-tab.is-pressed:not([aria-current]) { @apply bg-s-white-pressed; }
+.repo-tab:focus-visible, .repo-row:focus-visible, .repo-detail-link:focus-visible, .repo-website:focus-visible, .repo-button:focus-visible, .repo-back:focus-visible, .repo-github:focus-visible, .repo-appbar-github:focus-visible {
+  @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
+}
+.repo-list, .repo-summary {
+  @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
+}
+.repo-summary { @apply min-w-0 p-4; overflow-wrap: anywhere; }
+.repo-profile > .repo-summary { @apply p-0 text-left; }
+.repo-summary-description { @apply flex min-h-s-row items-center px-3 py-3 text-s-14 leading-relaxed text-s-grey-800; }
+.repo-row {
+  @apply flex min-h-s-row items-center gap-3 border-b-s-md border-s-grey-200 px-4 py-3;
+}
+.repo-row:last-child { border-bottom: 0; }
+.repo-name { @apply text-s-16 font-bold text-s-grey-800; overflow-wrap: anywhere; }
+.repo-description { @apply mt-1 text-s-14 leading-relaxed text-s-text-desc; overflow-wrap: anywhere; }
+.repo-detail-link { @apply flex min-w-0 flex-1 items-center self-stretch gap-3; }
+.repo-website:hover, .repo-website:focus-visible { @apply text-s-blue-300; }
+.repo-row > .md-icon, .repo-detail-link > .md-icon { @apply shrink-0 text-s-18 text-s-icon-chevron; }
+.repo-row.is-pressed { @apply bg-s-blue-300; }
+.repo-row.is-pressed :is(h3,p,svg) { @apply text-s-on-selected; }
+.repo-state { @apply flex flex-col items-center gap-3 py-12 text-center; }
+.repo-button {
+  @apply inline-flex items-center justify-center rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-4 py-2 text-s-14 font-bold text-s-grey-800 shadow-s-card-sm;
+}
+.repo-button:active, .repo-button.is-pressed { @apply bg-s-control-pressed shadow-s-inset-tab; }
+.repo-back {
+  @apply inline-flex items-center text-s-14 font-bold text-s-grey-800;
+  position: absolute;
+  left: var(--repo-back-left, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.repo-back[hidden] { display: none; }
+.repo-back .md-icon { width: 24px; height: 24px; }
+.repo-appbar-github {
+  @apply inline-flex h-11 w-11 items-center justify-center text-s-grey-800;
+  position: absolute;
+  right: var(--repo-github-right, 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.repo-appbar-github[hidden] { display: none; }
+.repo-appbar-github .md-icon { @apply h-6 w-6; transition: transform 120ms ease-out; }
+.repo-appbar-github:active, .repo-appbar-github.is-pressed { @apply text-s-grey-900; }
+.repo-appbar-github:active .md-icon, .repo-appbar-github.is-pressed .md-icon { transform: scale(1.33); }
+@media (prefers-reduced-motion: reduce) {
+  .repo-appbar-github .md-icon { transition: none; }
+}
+#appbar-title { max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repo-meta-card {
+  @apply overflow-hidden rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
+}
+.repo-meta-title {
+  @apply border-b-s-md border-s-grey-400 bg-s-sheet-header px-3 py-3 text-s-14 font-semibold text-s-grey-800;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-meta { @apply px-3; }
+.repo-stat {
+  @apply flex min-w-0 items-center justify-between gap-3 border-b-s-md border-s-grey-200;
+  min-height: 60px;
+}
+.repo-stat:last-child { @apply border-b-0; }
+.repo-stat-label {
+  @apply flex shrink-0 items-center gap-3 text-s-14 text-s-grey-800;
+}
+.repo-stat-label > .md-icon { @apply h-5 w-5 shrink-0 text-s-icon; }
+.repo-stat-value { @apply min-w-0 text-right text-s-14 font-medium text-s-grey-700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.repo-profile { @apply flex min-w-0 flex-col gap-3; }
+.repo-readme-column { min-width: 0; }
+.repo-readme-column { position: relative; }
+.repo-readme-body > :first-child { padding-top: 50px; }
+.repo-readme-body > :last-child { padding-bottom: 66px; }
+.repo-readme-toolbar, .repo-readme-footer {
+  @apply flex items-start justify-center gap-3 px-3;
+  position: fixed;
+  height: 96px;
+  padding-top: 9px;
+  z-index: 10;
+  pointer-events: none;
+}
+.repo-readme-toolbar[hidden], .repo-readme-footer[hidden] { display: none; }
+.repo-readme-toolbar.is-scrolled {
+  background: linear-gradient(to bottom,
+    theme('colors.s.white') 0px,
+    color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
+    color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
+    color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
+    transparent 96px);
+}
+.repo-readme-footer {
+  align-items: flex-end;
+  padding-block: 0 9px;
+  background: linear-gradient(to top,
+    theme('colors.s.white') 0px,
+    color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
+    color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
+    color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
+    transparent 96px);
+}
+.repo-readme-button {
+  @apply gap-1.5 whitespace-nowrap px-4 py-1 text-s-14 shadow-s-slider-thumb;
+  min-height: 36px;
+  height: 36px;
+  border-radius: 1000px;
+  pointer-events: auto;
+}
+.repo-readme-button > .md-icon { @apply h-3.5 w-3.5 shrink-0 text-s-icon; }
+.repo-readme-button:focus-visible { @apply outline outline-2 outline-offset-2 outline-s-blue-300; }
+.repo-readme-column .markdown-s [id] { scroll-margin-top: 50px; }
+.repo-action { @apply flex flex-col gap-3 border-t-s-md border-s-grey-200 bg-s-grey-100 p-3; }
+.repo-github {
+  @apply flex w-full items-center justify-center gap-3 rounded-s-md border-s-md border-s-control-border bg-s-white bg-s-control px-3 text-s-14 font-semibold text-s-grey-800 shadow-s-card-sm;
+  min-height: 48px;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-github > .md-icon { @apply h-4 w-4 shrink-0 text-s-icon; }
+.repo-github:hover { @apply text-s-blue-400; }
+.repo-github:active, .repo-github.is-pressed { @apply bg-s-control-pressed shadow-s-inset-tab; }
+/* Keep the sidebar cards together at the upper right of the left column. */
+@media (min-width: 960px) {
+  .repo-shell { width: 816px; max-width: 100%; }
+  .repo-list {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: theme('spacing.3');
+    overflow: visible; border: 0; background: transparent; box-shadow: none;
+  }
+  .repo-list > .repo-row {
+    @apply rounded-s-lg border-s-md border-s-grey-400 bg-s-white shadow-s-card;
+  }
+  .repo-list > .repo-row.is-pressed { @apply bg-s-blue-300; }
+  .repo-shell--detail { width: 960px; max-width: 100%; }
+  .repo-shell--detail #repo-scroll { overflow: hidden; padding: 0; }
+  .repo-shell--detail #repo-content {
+    height: 100%; min-height: 0; flex-direction: row; gap: theme('spacing.3'); padding: 16px;
+  }
+  .repo-shell--detail .repo-profile {
+    display: flex; flex-direction: column; width: 280px; min-height: 0; flex-shrink: 0; overflow-y: auto;
+    align-items: flex-end; justify-content: flex-start;
+  }
+  .repo-shell--detail .repo-profile > .repo-summary {
+    width: 100%; flex-shrink: 0; margin-top: 0;
+  }
+  .repo-shell--detail .repo-profile > .repo-meta-card { width: 100%; flex-shrink: 0; margin-bottom: 0; }
+  .repo-shell--detail .repo-readme-column {
+    display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0;
+    overflow-y: auto; scrollbar-gutter: stable; padding: 0 4px 0 0;
+  }
+  .repo-shell--detail .repo-readme-body { flex-shrink: 0; }
+}
+
+/* Smartisan grouped outline rows in a dialog, with a bottom sheet on phones. */
+.repo-outline-list { position: relative; overflow-y: auto; overscroll-behavior: contain; }
+.repo-outline-item {
+  @apply block w-full border-b-s-md border-s-grey-200 py-3 pr-3 text-left text-s-14 text-s-grey-800;
+  min-height: 48px;
+  padding-left: calc(12px + var(--outline-level) * 12px);
+  overflow-wrap: anywhere;
+}
+.repo-outline-item:last-child { border-bottom: 0; }
+.repo-outline-item[aria-current] {
+  @apply bg-s-white-pressed font-semibold text-s-blue-400 shadow-s-inset-tab;
+}
+.repo-outline-item:active, .repo-outline-item.is-pressed { @apply bg-s-blue-300 text-s-on-selected; }
+.repo-outline-item:focus-visible, .repo-outline-trigger:focus-visible {
+  @apply outline outline-2 outline-offset-[-2px] outline-s-blue-300;
+}
+.repo-outline-empty { @apply p-3 text-s-14 text-s-text-desc; }
+.repo-outline-dialog {
+  @apply w-full max-w-s-screen overflow-hidden rounded-t-s-sheet border-s-md border-s-grey-400 bg-s-sheet-body p-0 text-s-grey-800 shadow-s-card;
+  position: fixed;
+  inset: auto 0 0;
+  margin: 0 auto;
+  max-height: min(72dvh, 720px);
+}
+.repo-outline-dialog[open] { display: flex; flex-direction: column; animation: repo-outline-enter 300ms ease-out; }
+.repo-outline-dialog::backdrop { background: rgb(0 0 0 / 0.6); animation: repo-outline-scrim 200ms ease-out; }
+.repo-outline-dialog.is-closing { animation: repo-outline-exit 250ms ease-in forwards; }
+.repo-outline-dialog.is-closing::backdrop { animation: repo-outline-scrim 250ms ease-in reverse forwards; }
+.repo-outline-header {
+  @apply relative flex shrink-0 items-center justify-end border-b-s-md border-s-grey-400 bg-s-sheet-header px-3;
+  min-height: 60px;
+}
+.repo-outline-header h2 {
+  @apply absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-s-16 font-bold;
+  text-shadow: 0 1px 0 theme('colors.s.white');
+}
+.repo-outline-header .repo-button { @apply px-3; min-height: 36px; }
+.repo-outline-dialog .repo-outline-list {
+  @apply mx-3 my-3 min-h-0 rounded-s-lg border-s-md border-s-grey-400 bg-s-white;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.repo-outline-dialog .repo-outline-item { min-height: 60px; }
+@keyframes repo-outline-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes repo-outline-exit { to { transform: translateY(100%); } }
+@keyframes repo-outline-scrim { from { opacity: 0; } to { opacity: 1; } }
+@media (min-width: 960px) {
+  .repo-outline-dialog {
+    @apply rounded-s-dialog;
+    width: 368px;
+    inset: 0;
+    margin: auto;
+  }
+  .repo-outline-dialog[open] { animation: repo-outline-pop 120ms ease-out; }
+  .repo-outline-dialog.is-closing { animation: repo-outline-fade 100ms ease-in forwards; }
+}
+@keyframes repo-outline-pop { from { transform: scale(.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes repo-outline-fade { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .repo-outline-dialog[open], .repo-outline-dialog::backdrop { animation: none; }
+}
+.markdown-table { max-width: 100%; overflow-x: auto; }
+.markdown-s .markdown-table table { width: max-content; min-width: 100%; }
+.markdown-s details { @apply my-2; }
+.markdown-s summary { @apply cursor-pointer text-s-blue-300; }
+.markdown-s input[type="checkbox"] { @apply mr-1; accent-color: theme('colors.s.blue.300'); }
+.markdown-s li:has(> input[type="checkbox"])::before { display: none; }
+.markdown-s .markdown-alert {
+  @apply my-3 rounded-s-lg border-s-sm border-s-grey-400 bg-s-white p-3 text-s-grey-900 shadow-s-card;
+  --alert-color: theme('colors.s.blue.300');
+}
+.markdown-s .markdown-alert > :is(ul, ol) {
+  margin-left: var(--markdown-marker-space);
+}
+.markdown-s .markdown-alert ul > li::before {
+  background: theme('colors.s.grey.800');
+}
+.markdown-s .markdown-alert ol > li::marker {
+  color: theme('colors.s.grey.800');
+}
+.markdown-s .markdown-alert--tip { --alert-color: theme('colors.s.alert.tip'); }
+.markdown-s .markdown-alert--important { --alert-color: theme('colors.s.alert.important'); }
+.markdown-s .markdown-alert--warning { --alert-color: theme('colors.s.chip.yellow-text'); }
+.markdown-s .markdown-alert--caution { --alert-color: theme('colors.s.chip.red-text'); }
+.markdown-s .markdown-alert-title {
+  position: relative;
+  padding-left: var(--markdown-marker-space);
+  margin-top: 0;
+  font-weight: bold;
+  color: theme('colors.s.grey.800');
+}
+.markdown-s .markdown-alert-title::before {
+  content: '';
+  position: absolute;
+  left: calc(0.5 * var(--markdown-marker-space));
+  top: 0.8125em;
+  width: 0.25em;
+  height: 0.25em;
+  transform: translate(-50%, -50%);
+  border-radius: theme('borderRadius.s-pill');
+  background: var(--alert-color);
+}
+.markdown-s [id] { scroll-margin-top: 12px; }
+
+/* Avoid a light embossed edge on dark headings and buttons. */
+:root[data-theme="dark"] :is(.repo-meta-title, .repo-github, .repo-outline-header h2) {
+  text-shadow: none;
+}
+
+/* Distinguish chrome, flat cards and raised controls in both palettes. */
+#appbar, #bottom-nav { @apply bg-s-bar; }
+.repo-tabs { @apply bg-s-tab-frame; }
+.repo-tab { @apply text-s-tab-text; }
+.repo-tab[aria-current="location"] { @apply text-s-on-selected; }
+.source-switch input:checked + .source-switch-option,
+.repo-tab[aria-current="location"] {
+  @apply shadow-s-tab-selected border-r-transparent;
+}

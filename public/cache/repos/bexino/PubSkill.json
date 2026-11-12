@@ -1,0 +1,18 @@
+{
+  "fetchedAt": "2026-11-11T22:22:03.493Z",
+  "name": "PubSkill",
+  "fullName": "bexino/PubSkill",
+  "description": "（专用/WIP）推文生成skill。",
+  "url": "https://github.com/bexino/PubSkill",
+  "homepageUrl": null,
+  "hasReleases": false,
+  "license": {
+    "name": "GNU Affero General Public License v3.0",
+    "spdxId": "AGPL-3.0",
+    "url": "http://choosealicense.com/licenses/agpl-3.0/"
+  },
+  "defaultBranch": "main",
+  "commitCount": 2,
+  "readme": null,
+  "readmeEn": null
+}

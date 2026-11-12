@@ -1,0 +1,74 @@
+import { isReadme, parseProfile } from './src/home-data.js';
+import { defineConfig } from 'vite';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+/**
+ * 收集项目用到的 Material Design Icons，构建时合并成单一 SVG Sprite（public/icons-sprite.svg）。
+ * 列表集中维护在这里，新增图标只需往 ICONS 里加一项。
+ */
+const ICONS = [
+  'home',
+  'folder',
+  'person',
+  'settings',
+  'chevron_left',
+  'chevron_right',
+  'info',
+  'lightbulb',
+  'announcement',
+  'warning',
+  'report',
+  'balance',
+  'commit',
+  'account_tree',
+  'open_in_new',
+  'format_list_bulleted',
+  'vertical_align_top',
+  'public',
+  'language',
+  'download',
+  'github',
+];
+
+const OUT = 'public/icons-sprite.svg';
+
+export default defineConfig({
+  base: './',
+  plugins: [
+    {
+      name: 'validate-home-cache',
+      buildStart() {
+        // Missing snapshots show the app's retry state; corrupt ones must not be deployed.
+        for (const [file, validate] of [
+          ['github-user.json', parseProfile],
+          ['readme-zh.md', isReadme],
+          ['readme-en.md', isReadme],
+        ]) {
+          const path = resolve('public/cache', file);
+          if (existsSync(path) && !validate(readFileSync(path, 'utf8'))) {
+            this.error(`Invalid homepage cache: public/cache/${file}. Resolve merge conflicts or refresh the cache before building.`);
+          }
+        }
+      },
+    },
+    {
+      name: 'mdi-sprite',
+      // build 与 dev 启动时都生成一次
+      buildStart() {
+        const symbols = ICONS.map((name) => {
+          const svg = readFileSync(
+            resolve(name === 'github' ? 'src/icons/github.svg' : `node_modules/@material-design-icons/svg/filled/${name}.svg`),
+            'utf8',
+          );
+          // 去掉外层 <svg ...>，把内部内容包成 <symbol>
+          const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+          const viewBox = svg.match(/viewBox="([^"]+)"/)[1];
+          return `<symbol id="si-${name}" viewBox="${viewBox}">${inner}</symbol>`;
+        });
+        const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0">\n${symbols.join('\n')}\n</svg>\n`;
+        writeFileSync(OUT, sprite);
+      },
+    },
+  ],
+});
