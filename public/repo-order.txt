@@ -1,0 +1,6 @@
+# 项目分类按从上到下的顺序显示，名称须与 GitHub 分类名称一致。
+# 未列出的分类会按原有顺序排在最后；以 # 开头的行是注释。
+Windows
+Linux
+Web & Agent
+Contribute
