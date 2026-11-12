@@ -498,12 +498,14 @@ html[lang="en"] #bottom-nav .text-s-nav {
 .repo-readme-footer {
   align-items: flex-end;
   padding-block: 0 9px;
+  /* 底部白色渐变覆盖暂时停用。
   background: linear-gradient(to top,
     theme('colors.s.white') 0px,
     color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
     color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
     color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
     transparent 96px);
+  */
 }
 .repo-readme-button {
   @apply gap-1.5 whitespace-nowrap px-4 py-1 text-s-14 shadow-s-slider-thumb;
