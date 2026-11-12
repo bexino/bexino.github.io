@@ -1,0 +1,41 @@
+name: Deploy to Tencent Cloud SCF
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Cache homepage data]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tencent-scf
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Prepare function package
+        run: |
+          mkdir -p .scf-package
+          cp scripts/scf-server.cjs .scf-package/app.js
+          printf '{"type":"commonjs"}\n' > .scf-package/package.json
+          cp -R dist .scf-package/site
+      - name: Deploy to Tencent Cloud
+        uses: woodyyan/tencent-serverless-action@main
+        env:
+          SERVERLESS_PLATFORM_VENDOR: tencent
+          TENCENT_SECRET_ID: ${{ secrets.TENCENT_SECRET_ID }}
+          TENCENT_SECRET_KEY: ${{ secrets.TENCENT_SECRET_KEY }}

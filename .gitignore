@@ -1,3 +1,5 @@
 node_modules/
 dist/
+.scf-package/
+.serverless/
 .claude/
