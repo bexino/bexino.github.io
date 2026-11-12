@@ -21,14 +21,17 @@ let listLanguage;
 let scrollFrame;
 let categoryJump;
 
-function orderedCategories(data) {
-  const ordered = [...data.categories];
-  const web = ordered.find(category => category.name.toLowerCase().trim() === 'web & agent');
-  if (web && ordered.some(category => category.name.toLowerCase().trim() === 'windows')) {
-    ordered.splice(ordered.indexOf(web), 1);
-    ordered.splice(ordered.findIndex(category => category.name.toLowerCase().trim() === 'windows') + 1, 0, web);
-  }
-  return ordered;
+async function orderedCategories(data) {
+  let order = [];
+  try {
+    const response = await fetch('./repo-order.txt', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
+    if (response.ok) order = (await response.text()).split(/\r?\n/).map(line => line.trim().toLowerCase()).filter(line => line && !line.startsWith('#'));
+  } catch { /* 配置不可用时保留原始顺序。 */ }
+  const rank = name => {
+    const index = order.indexOf(name.trim().toLowerCase());
+    return index < 0 ? Infinity : index;
+  };
+  return [...data.categories].sort((a, b) => rank(a.name) - rank(b.name));
 }
 
 function markCategory(slug) {
@@ -380,7 +383,7 @@ export async function renderRepos() {
   message(t('加载中…'), t(direct ? '正在连接 GitHub' : '正在读取仓库缓存'));
   try {
     const index = await loadIndex();
-    const data = { ...index, categories: orderedCategories(index) };
+    const data = { ...index, categories: await orderedCategories(index) };
     if (sites && isDetail && slug === 'sites') {
       data.categories = [{
         slug: 'sites', name: '站点',

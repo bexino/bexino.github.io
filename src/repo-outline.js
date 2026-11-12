@@ -33,7 +33,7 @@ export function mountRepoOutline(trigger, readme, column, pageScroll) {
   const backToTop = floatingButton('vertical_align_top', t('回到顶部'));
   backToTop.addEventListener('click', () => {
     const scroller = root();
-    scroller.scrollTo({ top: documentTop(), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    scroller.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     trigger.focus({ preventScroll: true });
   });
   footer.append(backToTop);

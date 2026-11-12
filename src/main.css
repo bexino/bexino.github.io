@@ -51,8 +51,23 @@ html[lang="en"] #bottom-nav .text-s-nav {
   z-index: 10;
 }
 
+.beian-footer {
+  position: fixed;
+  right: 0;
+  bottom: theme('spacing.s-action');
+  left: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+.beian-footer a { pointer-events: auto; }
+
 /* 宽屏（≥640px）：底栏固定为左侧竖向浮层，覆盖顶栏，层级最高 */
 @media (min-width: 640px) {
+  .beian-footer {
+    bottom: 0;
+    left: 64px;
+  }
+
   main > section[data-tab] {
     left: 64px;
   }
@@ -471,22 +486,26 @@ html[lang="en"] #bottom-nav .text-s-nav {
 }
 .repo-readme-toolbar[hidden], .repo-readme-footer[hidden] { display: none; }
 .repo-readme-toolbar.is-scrolled {
+  /* 顶部白色渐变覆盖暂时停用。
   background: linear-gradient(to bottom,
     theme('colors.s.white') 0px,
     color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
     color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
     color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
     transparent 96px);
+  */
 }
 .repo-readme-footer {
   align-items: flex-end;
   padding-block: 0 9px;
+  /* 底部白色渐变覆盖暂时停用。
   background: linear-gradient(to top,
     theme('colors.s.white') 0px,
     color-mix(in srgb, theme('colors.s.white') 96%, transparent) 24px,
     color-mix(in srgb, theme('colors.s.white') 75%, transparent) 48px,
     color-mix(in srgb, theme('colors.s.white') 32%, transparent) 72px,
     transparent 96px);
+  */
 }
 .repo-readme-button {
   @apply gap-1.5 whitespace-nowrap px-4 py-1 text-s-14 shadow-s-slider-thumb;

@@ -47,6 +47,7 @@ function apply() {
   document.getElementById('language-control').hidden = tab !== 'home';
   document.getElementById('repo-back').hidden = true;
   document.getElementById('repo-categories').hidden = true;
+  document.querySelector('.beian-footer').hidden = ['repo', 'site'].includes(tab) && location.hash.replace(/^#\/?/, '').split('/').length === 4;
   document.getElementById('project-control').hidden = !['repo', 'site'].includes(tab) || location.hash.replace(/^#\/?/, '').split('/').length === 4;
   document.querySelectorAll('input[name="project-view"]').forEach(input => {
     input.checked = input.value === tab;
