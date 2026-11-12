@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-12T08:53:38.879Z",
+  "fetchedAt": "2026-11-12T21:57:40.138Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -10,7 +10,9 @@
         "bexino/prompt",
         "bexino/bexino.github.io",
         "bexino/fetch2word",
-        "bexino/PubSkill"
+        "bexino/PubSkill",
+        "bexino/github-tencent-scf",
+        "bexino/musica"
       ]
     },
     {
@@ -77,6 +79,20 @@
       "name": "PubSkill",
       "fullName": "bexino/PubSkill",
       "description": "（专用/WIP）推文生成skill。",
+      "homepageUrl": null,
+      "hasReleases": false
+    },
+    "bexino/github-tencent-scf": {
+      "name": "github-tencent-scf",
+      "fullName": "bexino/github-tencent-scf",
+      "description": "将静态站点部署到腾讯云 SCF，使用 GitHub Actions 和腾讯云 Python SDK 更新函数代码，也支持迁移已有 Serverless 应用。",
+      "homepageUrl": null,
+      "hasReleases": false
+    },
+    "bexino/musica": {
+      "name": "musica",
+      "fullName": "bexino/musica",
+      "description": "(WIP) Music player developed with React and Electron.",
       "homepageUrl": null,
       "hasReleases": false
     },

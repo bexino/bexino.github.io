@@ -1,0 +1,26 @@
+{
+  "fetchedAt": "2026-11-12T21:57:40.138Z",
+  "name": "musica",
+  "fullName": "bexino/musica",
+  "description": "(WIP) Music player developed with React and Electron.",
+  "url": "https://github.com/bexino/musica",
+  "homepageUrl": null,
+  "hasReleases": false,
+  "license": {
+    "name": "GNU Affero General Public License v3.0",
+    "spdxId": "AGPL-3.0",
+    "url": "http://choosealicense.com/licenses/agpl-3.0/"
+  },
+  "defaultBranch": "main",
+  "commitCount": 2,
+  "readme": {
+    "path": "README.md",
+    "ref": "0ed539a7601cea6414a1795ba753e6f03ed12ee9",
+    "markdown": "# 舞台歌词播放器\n\n## 使用\n\n在安装 Node.js 的电脑上执行 `npm install`，然后运行 `npm run dev` 预览。替换 `attachments` 中的 `music.mp3`、`cover.jpg`、`lyrics.srt`、`intro.md` 和可选的 `vocabulary.json`，再重新构建。歌词使用 UTF-8 SRT；相同时间的英文和中文条目会合并，播放时显示中文。词汇 JSON 每项为 `term`（显示词语）、`meaning`（中文解释）、`match`（用于匹配英文歌词的文本），以及可选的 `partOfSpeech`（词性）、`otherMeaning`（其他释义）。\n\n`npm run build:single` 生成无需网络的 `dist-single/index.html`；`npm run build:mhtml` 同时尝试生成 `dist-single/stage-player.mhtml`。当前 Edge 实测 MHTML 仅保留静态页面，不能播放；请勿用于演出。Chrome 或 Edge 安装在非默认位置时，可通过环境变量 `CHROME_PATH` 指定浏览器路径。\n\n`npm run build:exe` 分别生成 32 位及 64 位 Windows 便携版 EXE。双击运行，首次启动需要解压。Electron 22 是最后支持 Windows 7 的主版本；播放器以离线固定素材运行。播放时单击屏幕可暂停或继续；快速连续点击右半屏三次会停止播放并进入感谢页，连续点击左半屏三次会重新加载；兼容模式可关闭模糊动画。Windows 7 支持需要在实际 Windows 7 设备上验收。\n\n背景使用 [Apple Music-like Lyrics](https://github.com/amll-dev/applemusic-like-lyrics) 的 React `BackgroundRender` 和 `MeshGradientRenderer`，从本地 `cover.jpg` 生成柔和流动的封面色彩，暂停播放时停止流动。兼容模式及系统“减少动态效果”设置下使用静态封面柔焦背景，页面隐藏时暂停渲染。所有资源随离线文件打包，无需联网。\n\n网格背景经过整体柔焦，并在视口外扩展后裁切，避免形变色块之间出现清晰的波浪分界或边缘露底。\n\n首页开始按钮使用中性无色样式。生词卡片和歌曲背景说明采用带封面色调的半透明毛玻璃：通过官方 `@material/material-color-utilities` 对封面缩略图取色，生成容器色及对应文字色，叠加半透明底色、背景模糊和细边框，让背景的动态色彩自然透入；保留原有模糊、缩放与淡入淡出动画，无液态折射。取色失败时使用中性底色，兼容模式关闭背景模糊并使用实心底色。\n\n最终产物只保留 `dist-single/index.html`、`release/Stage-Lyrics-1.0.0-x64.exe`（64 位）和 `release/Stage-Lyrics-1.0.0-ia32.exe`（32 位）。EXE 构建成功后自动清理 `dist/`、解包目录及调试清单；单独执行 `npm run build` 仍可生成 `dist/`。旧版重复发布目录已移除。\n\n`npm test` 检查字幕解析。`npm run verify:offline` 自动检查离线 HTML 的封面背景、播放、双语同步、暂停、词汇卡片、全屏和结束页；`npm run verify:offline -- --electron` 同时检查两个 portable EXE。可用 `CHROME_PATH` 指定浏览器。\n"
+  },
+  "readmeEn": {
+    "path": "README.md",
+    "ref": "0ed539a7601cea6414a1795ba753e6f03ed12ee9",
+    "markdown": "# 舞台歌词播放器\n\n## 使用\n\n在安装 Node.js 的电脑上执行 `npm install`，然后运行 `npm run dev` 预览。替换 `attachments` 中的 `music.mp3`、`cover.jpg`、`lyrics.srt`、`intro.md` 和可选的 `vocabulary.json`，再重新构建。歌词使用 UTF-8 SRT；相同时间的英文和中文条目会合并，播放时显示中文。词汇 JSON 每项为 `term`（显示词语）、`meaning`（中文解释）、`match`（用于匹配英文歌词的文本），以及可选的 `partOfSpeech`（词性）、`otherMeaning`（其他释义）。\n\n`npm run build:single` 生成无需网络的 `dist-single/index.html`；`npm run build:mhtml` 同时尝试生成 `dist-single/stage-player.mhtml`。当前 Edge 实测 MHTML 仅保留静态页面，不能播放；请勿用于演出。Chrome 或 Edge 安装在非默认位置时，可通过环境变量 `CHROME_PATH` 指定浏览器路径。\n\n`npm run build:exe` 分别生成 32 位及 64 位 Windows 便携版 EXE。双击运行，首次启动需要解压。Electron 22 是最后支持 Windows 7 的主版本；播放器以离线固定素材运行。播放时单击屏幕可暂停或继续；快速连续点击右半屏三次会停止播放并进入感谢页，连续点击左半屏三次会重新加载；兼容模式可关闭模糊动画。Windows 7 支持需要在实际 Windows 7 设备上验收。\n\n背景使用 [Apple Music-like Lyrics](https://github.com/amll-dev/applemusic-like-lyrics) 的 React `BackgroundRender` 和 `MeshGradientRenderer`，从本地 `cover.jpg` 生成柔和流动的封面色彩，暂停播放时停止流动。兼容模式及系统“减少动态效果”设置下使用静态封面柔焦背景，页面隐藏时暂停渲染。所有资源随离线文件打包，无需联网。\n\n网格背景经过整体柔焦，并在视口外扩展后裁切，避免形变色块之间出现清晰的波浪分界或边缘露底。\n\n首页开始按钮使用中性无色样式。生词卡片和歌曲背景说明采用带封面色调的半透明毛玻璃：通过官方 `@material/material-color-utilities` 对封面缩略图取色，生成容器色及对应文字色，叠加半透明底色、背景模糊和细边框，让背景的动态色彩自然透入；保留原有模糊、缩放与淡入淡出动画，无液态折射。取色失败时使用中性底色，兼容模式关闭背景模糊并使用实心底色。\n\n最终产物只保留 `dist-single/index.html`、`release/Stage-Lyrics-1.0.0-x64.exe`（64 位）和 `release/Stage-Lyrics-1.0.0-ia32.exe`（32 位）。EXE 构建成功后自动清理 `dist/`、解包目录及调试清单；单独执行 `npm run build` 仍可生成 `dist/`。旧版重复发布目录已移除。\n\n`npm test` 检查字幕解析。`npm run verify:offline` 自动检查离线 HTML 的封面背景、播放、双语同步、暂停、词汇卡片、全屏和结束页；`npm run verify:offline -- --electron` 同时检查两个 portable EXE。可用 `CHROME_PATH` 指定浏览器。\n"
+  }
+}
