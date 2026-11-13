@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-12T21:57:40.138Z",
+  "fetchedAt": "2026-11-13T21:43:10.605Z",
   "name": "github-tencent-scf",
   "fullName": "bexino/github-tencent-scf",
   "description": "将静态站点部署到腾讯云 SCF，使用 GitHub Actions 和腾讯云 Python SDK 更新函数代码，也支持迁移已有 Serverless 应用。",
@@ -12,15 +12,15 @@
     "url": "http://choosealicense.com/licenses/agpl-3.0/"
   },
   "defaultBranch": "main",
-  "commitCount": 7,
+  "commitCount": 11,
   "readme": {
     "path": "README.md",
-    "ref": "c291a96f7083e9424836f8fdb50982bd8ab45816",
-    "markdown": "# GitHub 部署腾讯云函数技能\n\n将静态站点部署到腾讯云 SCF，使用 GitHub Actions 和腾讯云 Python SDK 更新函数代码，也支持迁移已有 Serverless 应用。\n\n## 使用\n\ne.g.\n\n```text\n请安装并使用使用 [github-tencent-scf](https://github.com/bexino/github-tencent-scf/) 技能，将本项目部署到腾讯云函数。\n```\n\n按提示登录腾讯云。Agent 会核实站点及资源归属、配置访问入口；新网站默认创建独立函数，迁移时仅沿用确认属于该网站的现有函数。\n\n## GitHub 配置\n\n在目标仓库的 **Settings → Secrets and variables → Actions** 中配置：\n\n- **Secrets**：示例工作流需要 `TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY`，分别为腾讯云 SecretId 和 SecretKey；已有可用配置可以继续使用。\n- **Variables**：`SCF_FUNCTION_NAME`、`SCF_NAMESPACE` 和 `SCF_REGION` 分别为实际函数名、命名空间和地域，Agent 会在有权限时配置并核对。\n\n不要在聊天或公开仓库中提供密钥。技能说明见 [SKILL.md](SKILL.md)，`assets/` 包含需要根据目标项目调整的示例。\n\n## 许可证\n\nAGPL-3.0\n"
+    "ref": "f8a81684c55081c0f9c9e7c553b212d1c3922a7e",
+    "markdown": "# 【skills】GitHub 部署腾讯云函数技能\n\n将静态站点部署到腾讯云 SCF，也支持迁移已有 Serverless 应用。\n\n## 快速入门\n\n### 须知\n\n> [!CAUTION]\n> **请勿在聊天或公开仓库中提供密钥！**  \n> 　包括但不限于：\n>\n> - `TENCENT_SECRET_ID`\n> - `TENCENT_SECRET_KEY`\n> - Github Token\n>\n> 若泄露已经发生，请立即手动销毁密钥，使其失效，以减少损失。\n\n> [!IMPORTANT]\n> 用户未指定地域时，默认使用上海（`ap-shanghai`）;\n\n### 示例提示词\n\n**[建议预先完成前置工作，以提高效率](###前置工作)**  \n\n```markdown\n/goal  \n\n请安装并使用skills：[github-tencent-scf](https://github.com/bexino/github-tencent-scf/)\n\n将本站点部署到腾讯云。  \n\n- 目标站点：`example.com`  \n- 已在内置浏览器登录好腾讯云和GitHub\n\n**一直部署，直到该站点可以访问。**\n```\n\n### 前置工作\n\n1. 在内置浏览器中：  \n   - 登录腾讯云（必须）；  \n   - 登录 Github（可选）。  \n\n> [!NOTE]\n> `TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY` 需要在腾讯云中获取。\n> - **初次配置**：跟随 Agent 指引即可。\n>   - 待配置完成后，建议自行备份方便下次使用。\n> - **再次使用时**：可以根据下文内容预先填写到 Github 以提高效率，该配置可以复用。\n\n- 在目标仓库的 `Settings → Secrets and variables → Actions` 中配置：  \n  - 在 `Repository Secrets`中：  \n    - 新建（`New repository secret`）：   \n      - `TENCENT_SECRET_ID` ：对应腾讯云 `SecretId` 值；  \n      -  `TENCENT_SECRET_KEY` ；对应腾讯云 ` SecretKey` 值。  \n\n## 技术细节\n\n- 技能说明见 [SKILL.md](SKILL.md)，`  \n- Agent 会核实站点及资源归属、配置访问入口；新网站默认创建独立函数。  \n- 迁移时仅沿用确认属于该网站的现有函数。    \n- `assets/` 包含需要根据目标项目调整的示例。  \n- `Variables`：`SCF_FUNCTION_NAME`、`SCF_NAMESPACE` 和 `SCF_REGION` 分别为实际函数名、命名空间和地域，Agent 会在有权限时自动配置并核对。  \n\n### 技术栈\n\n- GitHub Actions；  \n- 腾讯云 Python SDK 更新；  \n- 腾讯云云函数。\n\n## 许可证\n\nAGPL-3.0\n"
   },
   "readmeEn": {
     "path": "README.md",
-    "ref": "c291a96f7083e9424836f8fdb50982bd8ab45816",
-    "markdown": "# GitHub 部署腾讯云函数技能\n\n将静态站点部署到腾讯云 SCF，使用 GitHub Actions 和腾讯云 Python SDK 更新函数代码，也支持迁移已有 Serverless 应用。\n\n## 使用\n\ne.g.\n\n```text\n请安装并使用使用 [github-tencent-scf](https://github.com/bexino/github-tencent-scf/) 技能，将本项目部署到腾讯云函数。\n```\n\n按提示登录腾讯云。Agent 会核实站点及资源归属、配置访问入口；新网站默认创建独立函数，迁移时仅沿用确认属于该网站的现有函数。\n\n## GitHub 配置\n\n在目标仓库的 **Settings → Secrets and variables → Actions** 中配置：\n\n- **Secrets**：示例工作流需要 `TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY`，分别为腾讯云 SecretId 和 SecretKey；已有可用配置可以继续使用。\n- **Variables**：`SCF_FUNCTION_NAME`、`SCF_NAMESPACE` 和 `SCF_REGION` 分别为实际函数名、命名空间和地域，Agent 会在有权限时配置并核对。\n\n不要在聊天或公开仓库中提供密钥。技能说明见 [SKILL.md](SKILL.md)，`assets/` 包含需要根据目标项目调整的示例。\n\n## 许可证\n\nAGPL-3.0\n"
+    "ref": "f8a81684c55081c0f9c9e7c553b212d1c3922a7e",
+    "markdown": "# 【skills】GitHub 部署腾讯云函数技能\n\n将静态站点部署到腾讯云 SCF，也支持迁移已有 Serverless 应用。\n\n## 快速入门\n\n### 须知\n\n> [!CAUTION]\n> **请勿在聊天或公开仓库中提供密钥！**  \n> 　包括但不限于：\n>\n> - `TENCENT_SECRET_ID`\n> - `TENCENT_SECRET_KEY`\n> - Github Token\n>\n> 若泄露已经发生，请立即手动销毁密钥，使其失效，以减少损失。\n\n> [!IMPORTANT]\n> 用户未指定地域时，默认使用上海（`ap-shanghai`）;\n\n### 示例提示词\n\n**[建议预先完成前置工作，以提高效率](###前置工作)**  \n\n```markdown\n/goal  \n\n请安装并使用skills：[github-tencent-scf](https://github.com/bexino/github-tencent-scf/)\n\n将本站点部署到腾讯云。  \n\n- 目标站点：`example.com`  \n- 已在内置浏览器登录好腾讯云和GitHub\n\n**一直部署，直到该站点可以访问。**\n```\n\n### 前置工作\n\n1. 在内置浏览器中：  \n   - 登录腾讯云（必须）；  \n   - 登录 Github（可选）。  \n\n> [!NOTE]\n> `TENCENT_SECRET_ID` 和 `TENCENT_SECRET_KEY` 需要在腾讯云中获取。\n> - **初次配置**：跟随 Agent 指引即可。\n>   - 待配置完成后，建议自行备份方便下次使用。\n> - **再次使用时**：可以根据下文内容预先填写到 Github 以提高效率，该配置可以复用。\n\n- 在目标仓库的 `Settings → Secrets and variables → Actions` 中配置：  \n  - 在 `Repository Secrets`中：  \n    - 新建（`New repository secret`）：   \n      - `TENCENT_SECRET_ID` ：对应腾讯云 `SecretId` 值；  \n      -  `TENCENT_SECRET_KEY` ；对应腾讯云 ` SecretKey` 值。  \n\n## 技术细节\n\n- 技能说明见 [SKILL.md](SKILL.md)，`  \n- Agent 会核实站点及资源归属、配置访问入口；新网站默认创建独立函数。  \n- 迁移时仅沿用确认属于该网站的现有函数。    \n- `assets/` 包含需要根据目标项目调整的示例。  \n- `Variables`：`SCF_FUNCTION_NAME`、`SCF_NAMESPACE` 和 `SCF_REGION` 分别为实际函数名、命名空间和地域，Agent 会在有权限时自动配置并核对。  \n\n### 技术栈\n\n- GitHub Actions；  \n- 腾讯云 Python SDK 更新；  \n- 腾讯云云函数。\n\n## 许可证\n\nAGPL-3.0\n"
   }
 }
