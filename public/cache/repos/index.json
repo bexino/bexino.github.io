@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-14T20:13:41.970Z",
+  "fetchedAt": "2026-11-15T20:39:05.403Z",
   "categories": [
     {
       "id": "UL_kwDOBawuZ84Ai3-g",
@@ -9,8 +9,6 @@
         "bexino/sched",
         "bexino/prompt",
         "bexino/bexino.github.io",
-        "bexino/fetch2word",
-        "bexino/PubSkill",
         "bexino/github-tencent-scf",
         "bexino/musica"
       ]
@@ -66,20 +64,6 @@
       "fullName": "bexino/bexino.github.io",
       "description": "Personal Homepage: 个人主页。",
       "homepageUrl": "https://bexino.github.io/",
-      "hasReleases": false
-    },
-    "bexino/fetch2word": {
-      "name": "fetch2word",
-      "fullName": "bexino/fetch2word",
-      "description": "（专用）把微信公众号推文批量转成统一版式的 Word 文档。",
-      "homepageUrl": null,
-      "hasReleases": false
-    },
-    "bexino/PubSkill": {
-      "name": "PubSkill",
-      "fullName": "bexino/PubSkill",
-      "description": "（专用/WIP）推文生成skill。",
-      "homepageUrl": null,
       "hasReleases": false
     },
     "bexino/github-tencent-scf": {
