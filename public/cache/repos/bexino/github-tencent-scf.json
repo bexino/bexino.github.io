@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-16T23:54:17.174Z",
+  "fetchedAt": "2026-11-17T23:13:51.237Z",
   "name": "github-tencent-scf",
   "fullName": "bexino/github-tencent-scf",
   "description": "将静态站点部署到腾讯云 SCF，使用 GitHub Actions 和腾讯云 Python SDK 更新函数代码，也支持迁移已有 Serverless 应用。",
